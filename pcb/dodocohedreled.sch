@@ -4782,20 +4782,6 @@ type 0309, grid 2.5 mm</description>
 <wire x1="30.48" y1="78.74" x2="45.72" y2="78.74" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="GOUT"/>
-<pinref part="LED1" gate="G$1" pin="GRN-C"/>
-<wire x1="45.72" y1="81.28" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$4" class="0">
-<segment>
-<pinref part="LED1" gate="G$1" pin="RED-C"/>
-<pinref part="U$1" gate="G$1" pin="ROUT"/>
-<wire x1="30.48" y1="83.82" x2="45.72" y2="83.82" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="GND" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="GND"/>
@@ -4876,6 +4862,24 @@ type 0309, grid 2.5 mm</description>
 <junction x="83.82" y="58.42"/>
 <pinref part="U$6" gate="G$1" pin="CENTER"/>
 <junction x="104.14" y="58.42"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="ROUT"/>
+<wire x1="45.72" y1="83.82" x2="40.64" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="83.82" x2="38.1" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="LED1" gate="G$1" pin="GRN-C"/>
+<wire x1="38.1" y1="81.28" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<pinref part="LED1" gate="G$1" pin="RED-C"/>
+<wire x1="30.48" y1="83.82" x2="38.1" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="83.82" x2="40.64" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="GOUT"/>
+<wire x1="40.64" y1="81.28" x2="45.72" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
