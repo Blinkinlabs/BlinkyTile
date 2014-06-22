@@ -152,6 +152,8 @@
 <wire x1="-19.56" y1="8.98" x2="-2.5" y2="21.38" width="0.254" layer="20"/>
 <wire x1="-2.5" y1="21.38" x2="-2.5" y2="3.44" width="0.254" layer="20"/>
 <wire x1="-2.5" y1="3.44" x2="-19.56" y2="8.98" width="0.254" layer="20"/>
+<text x="5.5" y="0" size="1.27" layer="25" rot="R18">blinkinlabs.com</text>
+<text x="-20.5" y="5" size="1.27" layer="25" rot="R342">BlinkyTile Rev. B</text>
 </plain>
 <libraries>
 <library name="blinkinlabs">
@@ -646,6 +648,14 @@ design rules under a new name.</description>
 <wire x1="0.635" y1="4.9" x2="0.635" y2="3.735" width="0.6096" layer="1"/>
 <wire x1="0.635" y1="3.735" x2="0" y2="3.1" width="0.6096" layer="1"/>
 <wire x1="0" y1="3.1" x2="0" y2="2.2" width="0.6096" layer="1"/>
+</signal>
+<signal name="N$4">
+<polygon width="0.254" layer="1">
+<vertex x="-17" y="-14"/>
+<vertex x="-15" y="-14"/>
+<vertex x="-14.5" y="-16"/>
+<vertex x="-16.5" y="-17.5"/>
+</polygon>
 </signal>
 </signals>
 <errors>
