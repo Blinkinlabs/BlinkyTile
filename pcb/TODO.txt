@@ -1,0 +1,12 @@
+BlinkyTile
+
+RevC:
+-Make address program pad bigger
+x-Remove data program pad?
+x-Make edge wider for better conduction
+x-replace edge drill with slot
+x-Round outline edges to meet manufacturing reality
+x-Align ADRI/GND inputs to .1" spacing
+x-Clean up ground inputs
+
+-align slot to .1" spacing (not for this rev)

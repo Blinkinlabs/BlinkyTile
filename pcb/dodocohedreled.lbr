@@ -53,7 +53,7 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
@@ -105,6 +105,49 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <pad name="P$5" x="12" y="-0.75" drill="2.8" diameter="4.5" thermals="no"/>
 <wire x1="-15.45" y1="0" x2="15.45" y2="0" width="0.127" layer="51"/>
 </package>
+<package name="D_EDGE_SLOT">
+<wire x1="-15.45" y1="0" x2="15.45" y2="0" width="0.127" layer="51"/>
+<smd name="P$3" x="0" y="0" dx="4.572" dy="3.048" layer="1" roundness="100" thermals="no" cream="no"/>
+<smd name="P$2" x="-6" y="0" dx="4.572" dy="3.048" layer="1" roundness="100" thermals="no" cream="no"/>
+<smd name="P$1" x="-12" y="0" dx="4.572" dy="3.048" layer="1" roundness="100" thermals="no" cream="no"/>
+<smd name="P$4" x="6" y="0" dx="4.572" dy="3.048" layer="1" roundness="100" thermals="no" cream="no"/>
+<smd name="P$5" x="12" y="0" dx="4.572" dy="3.048" layer="1" roundness="100" thermals="no" cream="no"/>
+<wire x1="-13.75" y1="0" x2="-13.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-13.45" y1="-0.3" x2="-10.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-10.55" y1="-0.3" x2="-10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.25" y1="0" x2="-10.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.55" y1="0.3" x2="-13.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-13.45" y1="0.3" x2="-13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.55" y1="0.3" x2="-7.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-7.45" y1="0.3" x2="-7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.75" y1="0" x2="-7.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.45" y1="-0.3" x2="-4.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-4.55" y1="-0.3" x2="-4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.25" y1="0" x2="-4.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="1.45" y1="0.3" x2="-1.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-1.45" y1="0.3" x2="-1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.75" y1="0" x2="-1.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.45" y1="-0.3" x2="1.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="1.45" y1="-0.3" x2="1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="1.75" y1="0" x2="1.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.75" y1="0" x2="7.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.45" y1="0.3" x2="4.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="4.55" y1="0.3" x2="4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="4.25" y1="0" x2="4.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="4.55" y1="-0.3" x2="7.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="7.45" y1="-0.3" x2="7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="10.25" y1="0" x2="10.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="10.55" y1="-0.3" x2="13.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="13.45" y1="-0.3" x2="13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="13.75" y1="0" x2="13.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="13.45" y1="0.3" x2="10.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="10.55" y1="0.3" x2="10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<smd name="P$6" x="-12" y="0" dx="4.572" dy="3.048" layer="16" roundness="100" rot="R180" thermals="no" cream="no"/>
+<smd name="P$7" x="-6" y="0" dx="4.572" dy="3.048" layer="16" roundness="100" rot="R180" thermals="no" cream="no"/>
+<smd name="P$8" x="0" y="0" dx="4.572" dy="3.048" layer="16" roundness="100" rot="R180" thermals="no" cream="no"/>
+<smd name="P$9" x="6" y="0" dx="4.572" dy="3.048" layer="16" roundness="100" rot="R180" thermals="no" cream="no"/>
+<smd name="P$10" x="12" y="0" dx="4.572" dy="3.048" layer="16" roundness="100" rot="R180" thermals="no" cream="no"/>
+</package>
 </packages>
 <symbols>
 <symbol name="WS2821A">
@@ -122,9 +165,9 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <wire x1="15.24" y1="-5.08" x2="-2.54" y2="-5.08" width="0.254" layer="94"/>
 </symbol>
 <symbol name="D_EDGE">
-<pin name="CENTER" x="0" y="0" length="middle"/>
-<pin name="MID" x="0" y="-2.54" length="middle"/>
-<pin name="EDGE" x="0" y="-5.08" length="middle"/>
+<pin name="DATA" x="0" y="0" length="middle"/>
+<pin name="5V" x="0" y="-2.54" length="middle"/>
+<pin name="GND" x="0" y="-5.08" length="middle"/>
 <wire x1="5.08" y1="2.54" x2="5.08" y2="-7.62" width="0.254" layer="94"/>
 </symbol>
 </symbols>
@@ -156,11 +199,21 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <gate name="G$1" symbol="D_EDGE" x="-2.54" y="2.54"/>
 </gates>
 <devices>
-<device name="" package="D_EDGE">
+<device name="HOLE" package="D_EDGE">
 <connects>
-<connect gate="G$1" pin="CENTER" pad="P$3"/>
-<connect gate="G$1" pin="EDGE" pad="P$1 P$5"/>
-<connect gate="G$1" pin="MID" pad="P$2 P$4"/>
+<connect gate="G$1" pin="5V" pad="P$2 P$4"/>
+<connect gate="G$1" pin="DATA" pad="P$3"/>
+<connect gate="G$1" pin="GND" pad="P$1 P$5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="SLOT" package="D_EDGE_SLOT">
+<connects>
+<connect gate="G$1" pin="5V" pad="P$2 P$4 P$7 P$9"/>
+<connect gate="G$1" pin="DATA" pad="P$3 P$8"/>
+<connect gate="G$1" pin="GND" pad="P$1 P$5 P$6 P$10"/>
 </connects>
 <technologies>
 <technology name=""/>
