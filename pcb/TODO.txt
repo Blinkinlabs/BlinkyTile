@@ -1,7 +1,13 @@
 BlinkyTile
 
+RevE:
+-Panelize
+
+RevD:
+x-Use WS2822S LED instead of WS2821+separate LED
+x-Make address program pad bigger
+
 RevC:
--Make address program pad bigger
 x-Remove data program pad?
 x-Make edge wider for better conduction
 x-replace edge drill with slot
