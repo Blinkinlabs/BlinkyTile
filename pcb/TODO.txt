@@ -4,7 +4,7 @@ RevG:
 -Consider static protection for inputs
 
 RevF:
--Bring components closer to LED, to tighten up routing
+x-Bring components closer to LED, to tighten up routing
 
 RevE:
 x-Add microvias to help top/bottom conduction when slot plating is of poor quality

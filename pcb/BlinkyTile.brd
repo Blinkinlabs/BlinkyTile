@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.5" altunitdist="mm" altunit="mm"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -46,9 +46,9 @@
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
 <layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
 <layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="yes"/>
-<layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="no" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
@@ -148,8 +148,8 @@
 <wire x1="9.3601625" y1="-17.320665625" x2="8.872346875" y2="-18.27" width="0.254" layer="20" curve="-125.607197"/>
 <wire x1="8.872346875" y1="-18.27" x2="-8.872346875" y2="-18.27" width="0.254" layer="20"/>
 <wire x1="-8.872346875" y1="-18.27" x2="-9.3601625" y2="-17.320665625" width="0.254" layer="20" curve="-125.607197"/>
-<text x="5.5" y="0" size="1.27" layer="25" rot="R18">blinkinlabs.com</text>
-<text x="-20.5" y="5" size="1.27" layer="25" rot="R342">BlinkyTile Rev. E</text>
+<text x="5.5" y="0" size="1.27" layer="25" rot="R18">Blinkinlabs.com</text>
+<text x="-18" y="4" size="1.27" layer="25" rot="R342">BlinkyTile by</text>
 <wire x1="13.542615625" y1="-14.23260625" x2="4.501234375" y2="-1.965946875" width="0.254" layer="20"/>
 <wire x1="4.501234375" y1="-1.965946875" x2="4.802721875" y2="-1.038065625" width="0.254" layer="20" curve="-108.785562"/>
 <wire x1="4.802721875" y1="-1.038065625" x2="19.327515625" y2="3.57148125" width="0.254" layer="20"/>
@@ -174,13 +174,7 @@
 <wire x1="2.50605625" y1="19.55221875" x2="3.458484375" y2="20.0384" width="0.254" layer="20" curve="-125.894921"/>
 <wire x1="3.458484375" y1="20.0384" x2="18.0081875" y2="9.47854375" width="0.254" layer="20"/>
 <wire x1="18.0081875" y1="9.47854375" x2="17.841228125" y2="8.42234375" width="0.254" layer="20" curve="-126.022777"/>
-<polygon width="0.6096" layer="41">
-<vertex x="-2" y="6"/>
-<vertex x="2" y="6"/>
-<vertex x="2" y="4"/>
-<vertex x="2" y="3"/>
-<vertex x="-2" y="3"/>
-</polygon>
+<text x="0" y="14" size="3.5" layer="25" rot="R90" align="center">14</text>
 </plain>
 <libraries>
 <library name="blinkinlabs">
@@ -502,9 +496,9 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="C1" library="adafruit" package="C0603" value=".1uF" x="-0.7" y="6.5" smashed="yes"/>
-<element name="R1" library="adafruit" package="R0603" value="75" x="-1.5" y="9" smashed="yes" rot="R270"/>
-<element name="R2" library="adafruit" package="R0603" value="10k" x="1.6" y="9" smashed="yes" rot="R90"/>
+<element name="C1" library="adafruit" package="C0603" value=".1uF" x="-1.6" y="5.4" smashed="yes" rot="R90"/>
+<element name="R1" library="adafruit" package="R0603" value="75" x="0" y="5.4" smashed="yes" rot="R270"/>
+<element name="R2" library="adafruit" package="R0603" value="10k" x="1.6" y="5.4" smashed="yes" rot="R90"/>
 <element name="U$2" library="dodocohedreled" package="D_EDGE_SLOT" value="D_EDGESLOT" x="0" y="-21.2"/>
 <element name="U$3" library="dodocohedreled" package="D_EDGE_SLOT" value="D_EDGESLOT" x="20.2" y="-6.5" rot="R72"/>
 <element name="U$4" library="dodocohedreled" package="D_EDGE_SLOT" value="D_EDGESLOT" x="-20.2" y="-6.5" rot="R288"/>
@@ -546,8 +540,8 @@ design rules under a new name.</description>
 <wire x1="1.6" y1="-2.45" x2="2.45" y2="-2.45" width="0.6096" layer="1"/>
 <wire x1="2.45" y1="-2.45" x2="3" y2="-3" width="0.6096" layer="1"/>
 <via x="3" y="-3" extent="1-16" drill="0.6"/>
-<wire x1="-1.5" y1="9.85" x2="-1.5" y2="11.29" width="0.6096" layer="1"/>
-<via x="-1.5" y="11.29" extent="1-16" drill="0.6"/>
+<wire x1="0" y1="6.25" x2="0" y2="7.7" width="0.6096" layer="1"/>
+<via x="0" y="7.7" extent="1-16" drill="0.6"/>
 <contactref element="U$2" pad="PWRVIA1"/>
 <contactref element="U$2" pad="PWRVIA2"/>
 <contactref element="U$2" pad="PWRVIA3"/>
@@ -618,10 +612,10 @@ design rules under a new name.</description>
 <wire x1="23.908203125" y1="4.912678125" x2="22.208203125" y2="10.146575" width="3" layer="16"/>
 <wire x1="2.79179375" y1="24.253421875" x2="-2.69179375" y2="24.253421875" width="3" layer="16"/>
 <wire x1="-2.69179375" y1="24.253421875" x2="0" y2="24.9" width="1" layer="16"/>
-<wire x1="0" y1="24.9" x2="0" y2="19" width="1.5" layer="16"/>
-<via x="0" y="19" extent="1-16" drill="0.6"/>
-<wire x1="0" y1="19" x2="0" y2="18.5" width="1" layer="1"/>
-<via x="0" y="20.3" extent="1-16" drill="0.6"/>
+<wire x1="0" y1="24.9" x2="0" y2="18.8" width="1.5" layer="16"/>
+<via x="0" y="18.8" extent="1-16" drill="0.6"/>
+<wire x1="0" y1="18.8" x2="0" y2="18.3" width="1" layer="1"/>
+<via x="0" y="20" extent="1-16" drill="0.6"/>
 <wire x1="22.208203125" y1="10.146575" x2="23.8" y2="7.8" width="1" layer="16"/>
 <wire x1="23.8" y1="7.8" x2="17.53" y2="5.67" width="1.5" layer="16"/>
 <via x="17.53" y="5.67" extent="1-16" drill="0.6"/>
@@ -664,15 +658,12 @@ design rules under a new name.</description>
 <via x="22.48" y="7.35" extent="1-16" drill="0.6"/>
 <via x="13.91" y="-19.08" extent="1-16" drill="0.6"/>
 <contactref element="U$7" pad="4"/>
-<wire x1="0.15" y1="6.5" x2="0.15" y2="7.85" width="0.6096" layer="1"/>
-<wire x1="0.15" y1="7.85" x2="0" y2="8" width="0.6096" layer="1"/>
-<via x="0" y="8" extent="1-16" drill="0.6"/>
-<wire x1="0" y1="8" x2="1.5" y2="8" width="1.5" layer="16"/>
-<wire x1="1.5" y1="8" x2="1.5" y2="2.25" width="1.5" layer="16"/>
-<wire x1="1.5" y1="2.25" x2="2.5" y2="2.25" width="1.5" layer="16"/>
-<wire x1="2.5" y1="2.25" x2="4.75" y2="3" width="1.5" layer="16"/>
-<via x="4.75" y="3" extent="1-16" drill="0.6"/>
-<via x="3.25" y="2.5" extent="1-16" drill="0.6"/>
+<via x="-1.5" y="8.9" extent="1-16" drill="0.6"/>
+<wire x1="-1.5" y1="8.9" x2="-1.5" y2="2.25" width="1.5" layer="16"/>
+<wire x1="-1.5" y1="2.25" x2="-2.5" y2="2.25" width="1.5" layer="16"/>
+<wire x1="-2.5" y1="2.25" x2="-4.35" y2="2.9" width="1.5" layer="16"/>
+<via x="-4.35" y="2.9" extent="1-16" drill="0.6"/>
+<via x="-3.25" y="2.5" extent="1-16" drill="0.6"/>
 <contactref element="U$2" pad="GNDVIA1"/>
 <contactref element="U$2" pad="GNDVIA2"/>
 <contactref element="U$2" pad="GNDVIA3"/>
@@ -703,6 +694,7 @@ design rules under a new name.</description>
 <contactref element="U$6" pad="GNDVIA4"/>
 <contactref element="U$6" pad="GNDVIA5"/>
 <contactref element="U$6" pad="GNDVIA6"/>
+<via x="-1.5" y="7.7" extent="1-16" drill="0.6"/>
 <wire x1="-15.5407375" y1="-17.603659375" x2="-15.262621875" y2="-18.459609375" width="0" layer="19" extent="1-1"/>
 <wire x1="-15.818853125" y1="-16.747709375" x2="-15.5407375" y2="-17.603659375" width="0" layer="19" extent="1-1"/>
 <wire x1="-16.49179375" y1="-17.912678125" x2="-15.5407375" y2="-17.603659375" width="0" layer="19" extent="1-1"/>
@@ -771,9 +763,9 @@ design rules under a new name.</description>
 <vertex x="-14.6" y="-15.3"/>
 <vertex x="-17" y="-16.6"/>
 </polygon>
-<wire x1="1.6" y1="9.85" x2="1.6" y2="10.55" width="0.6096" layer="1"/>
-<wire x1="1.6" y1="10.55" x2="1.9" y2="11" width="0.6096" layer="1"/>
-<wire x1="1.9" y1="11" x2="1.9" y2="21.5" width="0.6096" layer="1"/>
+<wire x1="1.6" y1="6.25" x2="1.6" y2="6.95" width="0.6096" layer="1"/>
+<wire x1="1.6" y1="6.95" x2="1.9" y2="7.4" width="0.6096" layer="1"/>
+<wire x1="1.9" y1="7.4" x2="1.9" y2="21.5" width="0.6096" layer="1"/>
 <contactref element="U$2" pad="P$8"/>
 <contactref element="U$3" pad="P$8"/>
 <contactref element="U$4" pad="P$8"/>
@@ -812,21 +804,21 @@ design rules under a new name.</description>
 <contactref element="U$7" pad="3"/>
 <contactref element="C1" pad="1"/>
 <contactref element="R1" pad="2"/>
-<wire x1="-1.55" y1="6.5" x2="-1.55" y2="2.5" width="0.6096" layer="1"/>
-<wire x1="-1.55" y1="2.5" x2="-1.6" y2="2.45" width="0.6096" layer="1"/>
-<wire x1="-1.5" y1="8.15" x2="-1.5" y2="6.55" width="0.6096" layer="1"/>
-<wire x1="-1.5" y1="6.55" x2="-1.55" y2="6.5" width="0.6096" layer="1"/>
+<wire x1="-1.6" y1="4.55" x2="0" y2="4.55" width="0.6096" layer="1"/>
+<wire x1="-1.6" y1="2.45" x2="-1.6" y2="4.55" width="0.6096" layer="1"/>
 </signal>
 <signal name="N$2">
 <contactref element="U$7" pad="1"/>
 <contactref element="R2" pad="1"/>
-<wire x1="1.6" y1="8.15" x2="1.6" y2="2.45" width="0.6096" layer="1"/>
+<wire x1="1.6" y1="4.55" x2="1.6" y2="2.45" width="0.6096" layer="1"/>
 </signal>
 <signal name="ADRI">
-<via x="-0.1" y="4.6" extent="1-16" drill="0.8" diameter="1.4224"/>
+<via x="4" y="2.7" extent="1-16" drill="0.8" diameter="1.4224"/>
 <contactref element="U$7" pad="2"/>
-<wire x1="0" y1="2.45" x2="0" y2="4.5" width="0.6096" layer="1"/>
-<wire x1="0" y1="4.5" x2="-0.1" y2="4.6" width="0.6096" layer="1"/>
+<wire x1="0" y1="2.45" x2="0" y2="1.5" width="0.6096" layer="1"/>
+<wire x1="0" y1="1.5" x2="0.4" y2="1.1" width="0.6096" layer="1"/>
+<wire x1="0.4" y1="1.1" x2="2.4" y2="1.1" width="0.6096" layer="1"/>
+<wire x1="2.4" y1="1.1" x2="4" y2="2.7" width="0.6096" layer="1"/>
 </signal>
 </signals>
 <errors>
@@ -922,12 +914,26 @@ design rules under a new name.</description>
 <approved hash="4,16,6276a8c373b13fee"/>
 <approved hash="4,16,2458d3f35fbbf777"/>
 <approved hash="4,16,d03c81d935905921"/>
+<approved hash="6,1,fdf61f83e8a41c48"/>
+<approved hash="6,1,46a4e2959eb96598"/>
+<approved hash="6,1,6676fa92a23574de"/>
+<approved hash="6,1,8a31753bcd50cd5d"/>
+<approved hash="6,1,958e1e6c3f1ed2f4"/>
+<approved hash="6,1,c174841ecec44e78"/>
+<approved hash="6,1,c17fd399f33887d6"/>
+<approved hash="6,1,e34be09beea3ed73"/>
+<approved hash="6,1,83e6fb190cab6cbb"/>
+<approved hash="6,1,db5ddb50d945d948"/>
+<approved hash="6,1,b56fb5d8f6c8f674"/>
+<approved hash="6,1,669d81988d09f982"/>
+<approved hash="6,1,21e02efbe1c6eecc"/>
+<approved hash="6,1,7f818693cacaa055"/>
 <approved hash="18,29,53da48b848b753d5"/>
 <approved hash="18,29,a9b9b2dbb2d4a9b6"/>
-<approved hash="18,29,7c2d78b078b07c2d"/>
 <approved hash="18,29,864e82d382d3864e"/>
-<approved hash="18,29,b649ad2bad24b646"/>
+<approved hash="18,29,7c2d78b078b07c2d"/>
 <approved hash="18,29,4c2a574857474c25"/>
+<approved hash="18,29,b649ad2bad24b646"/>
 <approved hash="4,1,d9c92cb9e9afb9e9"/>
 <approved hash="4,1,926c0b846c6003cf"/>
 <approved hash="4,1,e0e3a84a88aa0338"/>
@@ -963,20 +969,6 @@ design rules under a new name.</description>
 <approved hash="4,1,53890aecbd71dab7"/>
 <approved hash="4,1,7658f213b94bd2e6"/>
 <approved hash="4,1,119cdeff76d5d154"/>
-<approved hash="6,1,fdf61f83e8a41c48"/>
-<approved hash="6,1,46a4e2959eb96598"/>
-<approved hash="6,1,669d81988d09f982"/>
-<approved hash="6,1,21e02efbe1c6eecc"/>
-<approved hash="6,1,7f818693cacaa055"/>
-<approved hash="6,1,6676fa92a23574de"/>
-<approved hash="6,1,8a31753bcd50cd5d"/>
-<approved hash="6,1,958e1e6c3f1ed2f4"/>
-<approved hash="6,1,c174841ecec44e78"/>
-<approved hash="6,1,c17fd399f33887d6"/>
-<approved hash="6,1,db5ddb50d945d948"/>
-<approved hash="6,1,e34be09beea3ed73"/>
-<approved hash="6,1,b56fb5d8f6c8f674"/>
-<approved hash="6,1,83e6fb190cab6cbb"/>
 <approved hash="5,1,02ebedaff9cc18d1"/>
 <approved hash="5,1,f7f6512cc93d093c"/>
 <approved hash="5,1,de6dff9681e83100"/>
