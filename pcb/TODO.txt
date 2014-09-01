@@ -1,7 +1,14 @@
 BlinkyTile
 
+RevG:
+-Consider static protection for inputs
+
+RevF:
+-Bring components closer to LED, to tighten up routing
+
 RevE:
--Panelize
+x-Add microvias to help top/bottom conduction when slot plating is of poor quality
+x-Panelize
 
 RevD:
 x-Use WS2822S LED instead of WS2821+separate LED
