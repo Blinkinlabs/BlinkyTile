@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -36,8 +36,8 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
 <layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
 <layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
@@ -52,7 +52,7 @@
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
@@ -163,6 +163,133 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <pad name="GNDVIA6" x="12.9" y="1" drill="0.3" thermals="no"/>
 <pad name="GNDVIA5" x="12" y="1" drill="0.3" thermals="no"/>
 </package>
+<package name="D_EDGE_SLOT_MOD">
+<wire x1="-15.45" y1="0" x2="15.45" y2="0" width="0.127" layer="51"/>
+<smd name="P$3" x="0" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$2" x="-6" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$1" x="-12" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$4" x="6" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$5" x="12" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<wire x1="-13.75" y1="0" x2="-13.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-13.45" y1="-0.3" x2="-10.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-10.55" y1="-0.3" x2="-10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.25" y1="0" x2="-10.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.55" y1="0.3" x2="-13.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-13.45" y1="0.3" x2="-13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.55" y1="0.3" x2="-7.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-7.45" y1="0.3" x2="-7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.75" y1="0" x2="-7.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.45" y1="-0.3" x2="-4.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-4.55" y1="-0.3" x2="-4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.25" y1="0" x2="-4.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="1.45" y1="0.3" x2="-1.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-1.45" y1="0.3" x2="-1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.75" y1="0" x2="-1.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.45" y1="-0.3" x2="1.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="1.45" y1="-0.3" x2="1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="1.75" y1="0" x2="1.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.75" y1="0" x2="7.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.45" y1="0.3" x2="4.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="4.55" y1="0.3" x2="4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="4.25" y1="0" x2="4.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="4.55" y1="-0.3" x2="7.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="7.45" y1="-0.3" x2="7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="10.25" y1="0" x2="10.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="10.55" y1="-0.3" x2="13.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="13.45" y1="-0.3" x2="13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="13.75" y1="0" x2="13.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="13.45" y1="0.3" x2="10.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="10.55" y1="0.3" x2="10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<smd name="P$6" x="-12" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$7" x="-6" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$8" x="0" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$9" x="6" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$10" x="12" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<pad name="GNDVIA1" x="-12.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA3" x="-11.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA1" x="-6.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA3" x="-5.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="SIGVIA1" x="-0.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="SIGVIA3" x="0.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA4" x="5.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA6" x="6.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA4" x="11.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA6" x="12.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<polygon width="0.127" layer="29">
+<vertex x="-14.07" y="0"/>
+<vertex x="-14.07" y="0.17" curve="-90"/>
+<vertex x="-12.87" y="1.37"/>
+<vertex x="-11.16" y="1.37" curve="-90"/>
+<vertex x="-9.96" y="0.17"/>
+<vertex x="-9.96" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="9.93" y="0"/>
+<vertex x="9.93" y="0.17" curve="-90"/>
+<vertex x="11.13" y="1.37"/>
+<vertex x="12.84" y="1.37" curve="-90"/>
+<vertex x="14.04" y="0.17"/>
+<vertex x="14.04" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="-8.07" y="1.37"/>
+<vertex x="-3.96" y="1.37"/>
+<vertex x="-3.96" y="0"/>
+<vertex x="-8.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="-1.27" y="1.37"/>
+<vertex x="1.34" y="1.37"/>
+<vertex x="2.04" y="0"/>
+<vertex x="-2.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="9.93" y="0"/>
+<vertex x="9.93" y="0.17" curve="-90"/>
+<vertex x="11.13" y="1.37"/>
+<vertex x="12.84" y="1.37" curve="-90"/>
+<vertex x="14.04" y="0.17"/>
+<vertex x="14.04" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-14.07" y="0"/>
+<vertex x="-14.07" y="0.17" curve="-90"/>
+<vertex x="-12.87" y="1.37"/>
+<vertex x="-11.16" y="1.37" curve="-90"/>
+<vertex x="-9.96" y="0.17"/>
+<vertex x="-9.96" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-8.07" y="1.37"/>
+<vertex x="-3.96" y="1.37"/>
+<vertex x="-3.96" y="0"/>
+<vertex x="-8.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="3.93" y="1.37"/>
+<vertex x="8.04" y="1.37"/>
+<vertex x="8.04" y="0"/>
+<vertex x="3.93" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-1.27" y="1.37"/>
+<vertex x="1.34" y="1.37"/>
+<vertex x="2.04" y="0"/>
+<vertex x="-2.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="3.93" y="1.37"/>
+<vertex x="8.04" y="1.37"/>
+<vertex x="8.04" y="0"/>
+<vertex x="3.93" y="0"/>
+</polygon>
+</package>
+<package name="MOUSE_BITE">
+<wire x1="0" y1="1.5" x2="0" y2="0" width="0.254" layer="20"/>
+<wire x1="1.5" y1="1.5" x2="1.5" y2="0" width="0.254" layer="20"/>
+<hole x="0.4" y="0.15" drill="0.4"/>
+<hole x="1.1" y="0.15" drill="0.4"/>
+</package>
 </packages>
 <symbols>
 <symbol name="WS2821A">
@@ -184,6 +311,35 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <pin name="5V" x="0" y="-2.54" length="middle"/>
 <pin name="GND" x="0" y="-5.08" length="middle"/>
 <wire x1="5.08" y1="2.54" x2="5.08" y2="-7.62" width="0.254" layer="94"/>
+</symbol>
+<symbol name="MOUSE_BITE">
+<wire x1="-2.54" y1="2.54" x2="-2.54" y2="0" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="0" y2="2.54" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="2.54" y2="0" width="0.254" layer="94"/>
+<wire x1="2.54" y1="0" x2="2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="7.62" x2="2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="2.54" y1="7.62" x2="2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="-2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="5.08" x2="-2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="12.7" x2="-7.62" y2="11.43" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="11.43" x2="-5.08" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="5.08" x2="-10.16" y2="2.54" width="0.254" layer="94"/>
+<wire x1="5.08" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="5.08" y1="10.16" x2="7.62" y2="11.43" width="0.254" layer="94"/>
+<wire x1="7.62" y1="11.43" x2="10.16" y2="12.7" width="0.254" layer="94"/>
+<wire x1="5.08" y1="5.08" x2="10.16" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="12.7" x2="-10.16" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="10.16" x2="-8.89" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-8.89" y1="10.16" x2="-7.62" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="10.16" x2="-7.62" y2="11.43" width="0.254" layer="94"/>
+<wire x1="10.16" y1="12.7" x2="10.16" y2="10.16" width="0.254" layer="94"/>
+<wire x1="8.89" y1="10.16" x2="7.62" y2="10.16" width="0.254" layer="94"/>
+<wire x1="7.62" y1="10.16" x2="7.62" y2="11.43" width="0.254" layer="94"/>
+<wire x1="-8.89" y1="10.16" x2="-8.89" y2="11.43" width="0.254" layer="94"/>
+<wire x1="10.16" y1="10.16" x2="8.89" y2="10.16" width="0.254" layer="94"/>
+<wire x1="8.89" y1="10.16" x2="8.89" y2="11.43" width="0.254" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -230,6 +386,28 @@ Source: http://www.rohm.com/products/databook/motor/pdf/bd623x_series-e.pdf</des
 <connect gate="G$1" pin="DATA" pad="P$3 P$8 SIGVIA1 SIGVIA2 SIGVIA3"/>
 <connect gate="G$1" pin="GND" pad="GNDVIA1 GNDVIA2 GNDVIA3 GNDVIA4 GNDVIA5 GNDVIA6 P$1 P$5 P$6 P$10"/>
 </connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="MOD" package="D_EDGE_SLOT_MOD">
+<connects>
+<connect gate="G$1" pin="5V" pad="P$2 P$4 P$7 P$9 PWRVIA1 PWRVIA3 PWRVIA4 PWRVIA6"/>
+<connect gate="G$1" pin="DATA" pad="P$3 P$8 SIGVIA1 SIGVIA3"/>
+<connect gate="G$1" pin="GND" pad="GNDVIA1 GNDVIA3 GNDVIA4 GNDVIA6 P$1 P$5 P$6 P$10"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="MOUSE_BITE">
+<gates>
+<gate name="G$1" symbol="MOUSE_BITE" x="0" y="-5.08"/>
+</gates>
+<devices>
+<device name="" package="MOUSE_BITE">
 <technologies>
 <technology name=""/>
 </technologies>
