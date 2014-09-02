@@ -328,6 +328,127 @@ We've spent an enormous amount of time creating and checking these footprints an
 <pad name="P$5" x="12" y="-0.75" drill="2.8" diameter="4.5" thermals="no"/>
 <wire x1="-15.45" y1="0" x2="15.45" y2="0" width="0.127" layer="51"/>
 </package>
+<package name="D_EDGE_SLOT_MOD">
+<wire x1="-15.45" y1="0" x2="15.45" y2="0" width="0.127" layer="51"/>
+<smd name="P$3" x="0" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$2" x="-6" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$1" x="-12" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$4" x="6" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<smd name="P$5" x="12" y="0.73" dx="4.4" dy="1.5" layer="1" roundness="20" stop="no" thermals="no" cream="no"/>
+<wire x1="-13.75" y1="0" x2="-13.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-13.45" y1="-0.3" x2="-10.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-10.55" y1="-0.3" x2="-10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.25" y1="0" x2="-10.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-10.55" y1="0.3" x2="-13.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-13.45" y1="0.3" x2="-13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.55" y1="0.3" x2="-7.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-7.45" y1="0.3" x2="-7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.75" y1="0" x2="-7.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-7.45" y1="-0.3" x2="-4.55" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="-4.55" y1="-0.3" x2="-4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-4.25" y1="0" x2="-4.55" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="1.45" y1="0.3" x2="-1.45" y2="0.3" width="0.127" layer="46"/>
+<wire x1="-1.45" y1="0.3" x2="-1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.75" y1="0" x2="-1.45" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="-1.45" y1="-0.3" x2="1.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="1.45" y1="-0.3" x2="1.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="1.75" y1="0" x2="1.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.75" y1="0" x2="7.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="7.45" y1="0.3" x2="4.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="4.55" y1="0.3" x2="4.25" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="4.25" y1="0" x2="4.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="4.55" y1="-0.3" x2="7.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="7.45" y1="-0.3" x2="7.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="10.25" y1="0" x2="10.55" y2="-0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="10.55" y1="-0.3" x2="13.45" y2="-0.3" width="0.127" layer="46"/>
+<wire x1="13.45" y1="-0.3" x2="13.75" y2="0" width="0.127" layer="46" curve="90"/>
+<wire x1="13.75" y1="0" x2="13.45" y2="0.3" width="0.127" layer="46" curve="90"/>
+<wire x1="13.45" y1="0.3" x2="10.55" y2="0.3" width="0.127" layer="46"/>
+<wire x1="10.55" y1="0.3" x2="10.25" y2="0" width="0.127" layer="46" curve="90"/>
+<smd name="P$6" x="-12" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$7" x="-6" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$8" x="0" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$9" x="6" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<smd name="P$10" x="12" y="0.73" dx="4.4" dy="1.5" layer="16" roundness="20" rot="R180" stop="no" thermals="no" cream="no"/>
+<pad name="GNDVIA1" x="-12.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA3" x="-11.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA1" x="-6.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA3" x="-5.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="SIGVIA1" x="-0.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="SIGVIA3" x="0.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA4" x="5.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="PWRVIA6" x="6.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA4" x="11.1" y="1" drill="0.3" stop="no" thermals="no"/>
+<pad name="GNDVIA6" x="12.9" y="1" drill="0.3" stop="no" thermals="no"/>
+<polygon width="0.127" layer="29">
+<vertex x="-14.07" y="0"/>
+<vertex x="-14.07" y="0.37" curve="-90"/>
+<vertex x="-13.07" y="1.37"/>
+<vertex x="-10.96" y="1.37" curve="-90"/>
+<vertex x="-9.96" y="0.37"/>
+<vertex x="-9.96" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="9.93" y="0"/>
+<vertex x="9.93" y="0.37" curve="-90"/>
+<vertex x="10.93" y="1.37"/>
+<vertex x="13.04" y="1.37" curve="-90"/>
+<vertex x="14.04" y="0.37"/>
+<vertex x="14.04" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="-7.37" y="1.37"/>
+<vertex x="-4.56" y="1.37"/>
+<vertex x="-3.96" y="0"/>
+<vertex x="-8.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="-2.07" y="1.37"/>
+<vertex x="2.04" y="1.37"/>
+<vertex x="2.04" y="0"/>
+<vertex x="-2.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="9.93" y="0"/>
+<vertex x="9.93" y="0.37" curve="-90"/>
+<vertex x="10.93" y="1.37"/>
+<vertex x="13.04" y="1.37" curve="-90"/>
+<vertex x="14.04" y="0.37"/>
+<vertex x="14.04" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-14.07" y="0"/>
+<vertex x="-14.07" y="0.37" curve="-90"/>
+<vertex x="-13.07" y="1.37"/>
+<vertex x="-10.96" y="1.37" curve="-90"/>
+<vertex x="-9.96" y="0.37"/>
+<vertex x="-9.96" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-7.37" y="1.37"/>
+<vertex x="-4.56" y="1.37"/>
+<vertex x="-3.96" y="0"/>
+<vertex x="-8.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="4.63" y="1.37"/>
+<vertex x="7.44" y="1.37"/>
+<vertex x="8.04" y="0"/>
+<vertex x="3.93" y="0"/>
+</polygon>
+<polygon width="0.127" layer="30">
+<vertex x="-2.07" y="1.37"/>
+<vertex x="2.04" y="1.37"/>
+<vertex x="2.04" y="0"/>
+<vertex x="-2.07" y="0"/>
+</polygon>
+<polygon width="0.127" layer="29">
+<vertex x="4.63" y="1.37"/>
+<vertex x="7.44" y="1.37"/>
+<vertex x="8.04" y="0"/>
+<vertex x="3.93" y="0"/>
+</polygon>
+</package>
 </packages>
 <symbols>
 <symbol name="D_EDGE">
@@ -358,6 +479,16 @@ We've spent an enormous amount of time creating and checking these footprints an
 <connect gate="G$1" pin="5V" pad="P$2 P$4 P$7 P$9 PWRVIA1 PWRVIA2 PWRVIA3 PWRVIA4 PWRVIA5 PWRVIA6"/>
 <connect gate="G$1" pin="DATA" pad="P$3 P$8 SIGVIA1 SIGVIA2 SIGVIA3"/>
 <connect gate="G$1" pin="GND" pad="GNDVIA1 GNDVIA2 GNDVIA3 GNDVIA4 GNDVIA5 GNDVIA6 P$1 P$5 P$6 P$10"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="MOD" package="D_EDGE_SLOT_MOD">
+<connects>
+<connect gate="G$1" pin="5V" pad="P$2 P$4 P$7 P$9 PWRVIA1 PWRVIA3 PWRVIA4 PWRVIA6"/>
+<connect gate="G$1" pin="DATA" pad="P$3 P$8 SIGVIA1 SIGVIA3"/>
+<connect gate="G$1" pin="GND" pad="GNDVIA1 GNDVIA3 GNDVIA4 GNDVIA6 P$1 P$5 P$6 P$10"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -4685,13 +4816,13 @@ type 0309, grid 2.5 mm</description>
 <part name="R1" library="adafruit" deviceset="R-US_" device="R0603" value="75"/>
 <part name="R2" library="adafruit" deviceset="R-US_" device="R0603" value="10k"/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
-<part name="U$2" library="dodocohedreled" deviceset="D_EDGE" device="SLOT"/>
+<part name="U$2" library="dodocohedreled" deviceset="D_EDGE" device="MOD" value="D_EDGEMOD"/>
 <part name="SUPPLY3" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="GND2" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
-<part name="U$3" library="dodocohedreled" deviceset="D_EDGE" device="SLOT"/>
-<part name="U$4" library="dodocohedreled" deviceset="D_EDGE" device="SLOT"/>
-<part name="U$5" library="dodocohedreled" deviceset="D_EDGE" device="SLOT"/>
-<part name="U$6" library="dodocohedreled" deviceset="D_EDGE" device="SLOT"/>
+<part name="U$3" library="dodocohedreled" deviceset="D_EDGE" device="MOD" value="D_EDGEMOD"/>
+<part name="U$4" library="dodocohedreled" deviceset="D_EDGE" device="MOD" value="D_EDGEMOD"/>
+<part name="U$5" library="dodocohedreled" deviceset="D_EDGE" device="MOD" value="D_EDGEMOD"/>
+<part name="U$6" library="dodocohedreled" deviceset="D_EDGE" device="MOD" value="D_EDGEMOD"/>
 <part name="U$7" library="blinkinlabs" deviceset="WS2822S_LED" device=""/>
 </parts>
 <sheets>
