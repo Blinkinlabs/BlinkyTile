@@ -2,8 +2,8 @@
 #define COMMAND_SEND_DATA          's'    // Send the address data
 #define COMMAND_PROGRAM_ADDRESSES  'p'    // Send the address data
 
-#define MAX_OUTPUTS 14
-#define OUTPUT_COUNT 6
+#define MAX_OUTPUTS 16
+#define OUTPUT_COUNT 14
 
 //// Programmer pins
 //const int csPin      = 10;
