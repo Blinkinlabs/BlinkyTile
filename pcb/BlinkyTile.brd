@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -54,7 +54,7 @@
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="yes"/>
@@ -175,6 +175,8 @@
 <wire x1="3.458484375" y1="20.0384" x2="18.0081875" y2="9.47854375" width="0.254" layer="20"/>
 <wire x1="18.0081875" y1="9.47854375" x2="17.841228125" y2="8.42234375" width="0.254" layer="20" curve="-126.022777"/>
 <text x="0" y="14" size="3.5" layer="25" rot="R90" align="center">##</text>
+<dimension x1="0" y1="26.3" x2="0" y2="-21.2" x3="-33" y3="2.55" textsize="1.778" layer="47"/>
+<dimension x1="-25" y1="8.12" x2="25" y2="8" x3="0.055096875" y3="31.016665625" textsize="1.778" layer="47"/>
 </plain>
 <libraries>
 <library name="blinkinlabs">
