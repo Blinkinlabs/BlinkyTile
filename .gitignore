@@ -1,2 +1,6 @@
 *.DS_Store
 *.[bls]#[0-9]
+*.o
+*.d
+*.swp
+*.dfu

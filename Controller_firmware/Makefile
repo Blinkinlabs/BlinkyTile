@@ -33,12 +33,15 @@ C_FILES = \
 CPP_FILES = \
 	main.cpp \
 	fc_usb.cpp \
-        matrix.cpp \
         winbondflash.cpp \
         spi4teensy3.cpp \
-        animation.cpp \
-        defaultanimation.cpp \
-        protocol.cpp
+        protocol.cpp \
+	blinkytile.cpp \
+	dmx.cpp
+
+#        defaultanimation.cpp \
+#        matrix.cpp \
+#        animation.cpp \
 
 # Headers
 INCLUDES = -I.

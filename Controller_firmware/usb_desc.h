@@ -79,9 +79,9 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 #define USB_FADECANDY
   #define MANUFACTURER_NAME         {'B','l','i','n','k','i','n','l','a','b','s'}
   #define MANUFACTURER_NAME_LEN     11
-  #define PRODUCT_NAME              {'B','l','i','n','k','y','S','t','i','c','k'}
+  #define PRODUCT_NAME              {'B','l','i','n','k','y','m','a','k','e','r'}
   #define PRODUCT_NAME_LEN          11
-  #define DFU_NAME                  {'B','l','i','n','k','y','S','t','i','c','k',' ','B','o','o','t','l','o','a','d','e','r'}
+  #define DFU_NAME                  {'B','l','i','n','k','y','M','a','k','e','r',' ','B','o','o','t','l','o','a','d','e','r'}
   #define DFU_NAME_LEN              22
   #define EP0_SIZE                  64
   #define NUM_ENDPOINTS             1

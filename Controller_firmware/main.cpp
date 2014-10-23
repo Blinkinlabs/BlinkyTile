@@ -29,11 +29,13 @@
 #include "HardwareSerial.h"
 #include "arm_math.h"
 
-#include "matrix.h"
+//#include "matrix.h"
+//#include "animation.h"
+//#include "defaultanimation.h"
+#include "blinkytile.h"
 #include "winbondflash.h"
-#include "animation.h"
-#include "defaultanimation.h"
 #include "protocol.h"
+#include "dmx.h"
 
 // USB data buffers
 static fcBuffers buffers;
@@ -43,12 +45,11 @@ fcLinearLUT fcBuffers::lutCurrent;
 winbondFlashSPI flash;
 
 // Animations class
-Animations animations;
+// Animations animations;
 
 // Serial programming receiver
 Protocol serialReceiver;
 
-#define FLASH_CS_PIN      17       // Port B, 1
 
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
@@ -79,7 +80,7 @@ extern "C" int usb_rx_handler(usb_packet_t *packet)
 
 void setupWatchdog() {
     // Change the watchdog timeout because the SPI access is too slow.
-    const uint32_t watchdog_timeout = F_BUS / 1;  // 1000ms
+    const uint32_t watchdog_timeout = F_BUS / 2;  // 500ms
 
     WDOG_UNLOCK = WDOG_UNLOCK_SEQ1;
     WDOG_UNLOCK = WDOG_UNLOCK_SEQ2;
@@ -98,11 +99,11 @@ void handleData(uint16_t dataSize, uint8_t* data) {
         case 0x00:  // Display some data on the LEDs
         {
     
-            if(dataSize != 1 + LED_ROWS*LED_COLS) {
+            if(dataSize != 1 + LED_COUNT) {
                 return;
             }
-            memcpy(getPixels(), &data[1], LED_ROWS*LED_COLS);
-            show();
+            //memcpy(getPixels(), &data[1], LED_COUNT);
+            //show();
         }
         case 0x01:  // Clear the flash
         {
@@ -150,59 +151,45 @@ extern "C" int main()
 {
     setupWatchdog();
 
-    srand(22);
- 
-    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
+    initBoard();
 
-    animations.begin(flash);
+    dmxSetup();
+    enableOutputPower();
 
-    // If the flash was not set up with an animation, burn one to it.
-    if(!animations.isInitialized()) {
-        makeDefaultAnimation(flash);
-        animations.begin(flash);
+    for(int i = 0; i < LED_COUNT; i++) {
+        dmxWritePixel(i, 0,0,255);
     }
+    dmxWritePixel(5, 0,255,0);
+ 
+//    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
 
-    matrixSetup();
-
-
-    setBrightness(1);
 
     serial_begin(BAUD2DIV(115200));
     serialReceiver.reset();
 
-    uint32_t animation = 0;    
-
-    uint32_t frame = 0;                             // current frame to display
-    uint32_t nextTime = millis() + animations.getAnimation(animation)->speed; // time to display next frame
-    bool playback = true;                           // if true, play back from flash
 
     // Application main loop
     while (usb_dfu_state == DFU_appIDLE) {
         watchdog_refresh();
-        
-        if(playback && millis() > nextTime) {
-            animations.getAnimation(animation)->getFrame(frame, getPixels());
-            show();
+       
+        static int state = 0;
+        setStatusLed((state/1000)%256);
 
-            frame++;
-            if(frame >= animations.getAnimation(animation)->frameCount) {
-                frame = 0;
-#if 1
-                // increment through
-                animation++;
-                if(animation >= animations.getAnimationCount()) {
-                    animation = 0;
-                }
-#else
-                animation = floor(animations.getAnimationCount()*rand());
-#endif
+        if(state%3000 == 1) {
+            static uint8_t bright = 0;
+
+            for(int i = 0; i < LED_COUNT; i++) {
+                dmxWritePixel(i, 0,0,bright);
             }
+            bright++;
 
-            nextTime += animations.getAnimation(animation)->speed;
+            dmxShow();
         }
 
+        state++;
+ 
+
         if(serial_available() > 0) {
-            playback = false;
 
             if(serialReceiver.parseByte(serial_getchar())) {
 
