@@ -147,6 +147,26 @@ void handleData(uint16_t dataSize, uint8_t* data) {
     }
 }
 
+void color_loop() {  
+  static int j = 0;
+  static int f = 0;
+  static int k = 0;
+  
+  for (uint16_t i = 0; i < LED_COUNT; i+=1) {
+    dmxWritePixel(i+1,
+      128*(1+sin(i/30.0 + j/1.3       )),
+      128*(1+sin(i/10.0 + f/2.9)),
+      128*(1+sin(i/25.0 + k/5.6))
+//      128*(1+sin(i/10.0 + f/9.0  + 2.1)),
+//      128*(1+sin(i/30.0 + k/14.0 + 4.2))
+    );
+  }
+  
+  j = j + 1;
+  f = f + 1;
+  k = k + 2;
+}
+
 extern "C" int main()
 {
     setupWatchdog();
@@ -156,11 +176,6 @@ extern "C" int main()
     dmxSetup();
     enableOutputPower();
 
-    for(int i = 0; i < LED_COUNT; i++) {
-        dmxWritePixel(i, 0,0,255);
-    }
-    dmxWritePixel(5, 0,255,0);
- 
 //    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
 
 
@@ -175,13 +190,9 @@ extern "C" int main()
         static int state = 0;
         setStatusLed((state/1000)%256);
 
-        if(state%3000 == 1) {
-            static uint8_t bright = 0;
-
-            for(int i = 0; i < LED_COUNT; i++) {
-                dmxWritePixel(i, 0,0,bright);
-            }
-            bright++;
+        // Play a pattern
+        if(state%2000 == 1) {
+            color_loop();
 
             dmxShow();
         }

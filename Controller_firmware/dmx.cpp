@@ -3,10 +3,21 @@
 #include "dmx.h"
 #include "blinkytile.h"
 
+#define FAST_DMX
 
-#define BIT_LENGTH                 (4)
-#define BREAK_LENGTH              (95)    //(88)
-#define MAB_LENGTH                (12)    //(8)
+#ifdef FAST_DMX
+
+#define BIT_LENGTH               (2)		// This isn't exact, but is much faster!
+#define BREAK_LENGTH             (88)
+#define MAB_LENGTH               (8)
+
+#else
+
+#define BIT_LENGTH               (4)
+#define BREAK_LENGTH             (88)
+#define MAB_LENGTH               (8)
+
+#endif
 
 #define PREFIX_BREAK_TIME        (BREAK_LENGTH)
 #define PREFIX_MAB_TIME          (PREFIX_BREAK_TIME + MAB_LENGTH)
