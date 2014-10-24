@@ -37,7 +37,8 @@ CPP_FILES = \
         spi4teensy3.cpp \
         protocol.cpp \
 	blinkytile.cpp \
-	dmx.cpp
+	dmx.cpp \
+	patterns.cpp
 
 #        defaultanimation.cpp \
 #        matrix.cpp \

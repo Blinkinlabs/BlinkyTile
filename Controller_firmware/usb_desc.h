@@ -77,23 +77,23 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 */
 
 #define USB_FADECANDY
-  #define MANUFACTURER_NAME         {'B','l','i','n','k','i','n','l','a','b','s'}
-  #define MANUFACTURER_NAME_LEN     11
-  #define PRODUCT_NAME              {'B','l','i','n','k','y','m','a','k','e','r'}
-  #define PRODUCT_NAME_LEN          11
-  #define DFU_NAME                  {'B','l','i','n','k','y','M','a','k','e','r',' ','B','o','o','t','l','o','a','d','e','r'}
-  #define DFU_NAME_LEN              22
-  #define EP0_SIZE                  64
-  #define NUM_ENDPOINTS             1
-  #define NUM_INTERFACE             2
-  #define FC_INTERFACE              0
-  #define FC_OUT_ENDPOINT           1
-  #define FC_OUT_SIZE               64
-  #define DFU_INTERFACE             1
-  #define DFU_DETACH_TIMEOUT        10000     // 10 seconds
-  #define DFU_TRANSFER_SIZE         1024      // Flash sector size
-  #define CONFIG_DESC_SIZE          (9+9+7+9+9)
-  #define ENDPOINT1_CONFIG          ENDPOINT_RECEIVE_ONLY
+#define MANUFACTURER_NAME         {'B','l','i','n','k','i','n','l','a','b','s'}
+#define MANUFACTURER_NAME_LEN     11
+#define PRODUCT_NAME              {'B','l','i','n','k','y','m','a','k','e','r'}
+#define PRODUCT_NAME_LEN          11
+#define DFU_NAME                  {'B','l','i','n','k','y','M','a','k','e','r',' ','B','o','o','t','l','o','a','d','e','r'}
+#define DFU_NAME_LEN              22
+#define EP0_SIZE                  64
+#define NUM_ENDPOINTS             1
+#define NUM_INTERFACE             2
+#define FC_INTERFACE              0
+#define FC_OUT_ENDPOINT           1
+#define FC_OUT_SIZE               64
+#define DFU_INTERFACE             1
+#define DFU_DETACH_TIMEOUT        10000     // 10 seconds
+#define DFU_TRANSFER_SIZE         1024      // Flash sector size
+#define CONFIG_DESC_SIZE          (9+9+7+9+9)
+#define ENDPOINT1_CONFIG          ENDPOINT_RECEIVE_ONLY
 
 // Microsoft Compatible ID Feature Descriptor
 #define MSFT_VENDOR_CODE    '~'     // Arbitrary, but should be printable ASCII
