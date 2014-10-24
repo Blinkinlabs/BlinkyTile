@@ -11,7 +11,7 @@ OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
 
 # Bootloader to include in whole-chip .hex image
-FCBOOT_IMAGE = fc-boot-v101.hex
+FCBOOT_IMAGE = ../bootloader/blinky-boot.hex
 
 #######################################################
 

@@ -28,19 +28,40 @@
 
 extern uint32_t boot_token;
 static __attribute__ ((section(".appvectors"))) uint32_t appVectors[64];
-const uint32_t led_bit = 1 << 5;
+
+#define REV_A
+
+#ifdef REV_A
+
+const uint32_t led_bit = 1 << 5;    // LED is on Port C5
+
+const uint32_t button_1_bit = 1 << 7;  // Button 1 on C7
+const uint32_t button_2_bit = 1 << 6;  // Button 2 on C6
+
+#else
+
+#warning Board revision not recognized- LED disabled
+
+#endif
 
 static void led_init()
 {
+
+#ifdef REV_A
     // Set the status LED on PC5, as an indication that we're in bootloading mode.
-    PORTC_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
-    GPIOC_PDDR = led_bit;
-    GPIOC_PDOR = led_bit;
+    // TODO: Test me!
+    PORTD_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
+    GPIOD_PDDR = led_bit;
+    GPIOD_PDOR = led_bit;
+#endif
+
 }
 
 static void led_toggle()
 {
-    GPIOC_PTOR = led_bit;
+#ifdef REV_A
+    GPIOD_PTOR = led_bit;
+#endif
 }
 
 static bool test_boot_token()
@@ -99,6 +120,29 @@ static bool test_banner_echo()
     return matched == bannerLength;
 }
 
+static bool test_user_buttons() {
+    /*
+     * At startup we test to see if both user buttons are pressed down. If they are,
+     * we enter DFU mode no matter what. This is intended to be a recovery mechanism
+     * for a misbehaving application that prevents DFU mode.
+     */
+
+#ifdef REV_A
+    // Read the two status pins.
+    // TODO: Test me!
+    PORTD_PCR6 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
+    PORTD_PCR7 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
+
+    GPIOD_PDDR = ~button_1_bit & ~button_2_bit;
+    uint32_t status = GPIOD_PDIR & (button_1_bit | button_2_bit);
+
+    return status != 0;
+
+#else
+    return false;
+#endif
+}
+
 static void app_launch()
 {
     // Relocate IVT to application flash
@@ -122,7 +166,8 @@ static void app_launch()
 
 int main()
 {
-    if (test_banner_echo() || test_app_missing() || test_boot_token()) {
+//    if (test_banner_echo() || test_app_missing() || test_boot_token()) {
+    if (test_user_buttons() || test_app_missing() || test_boot_token()) {
         unsigned i, j;
 
         // We're doing DFU mode!
