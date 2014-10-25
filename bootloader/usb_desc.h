@@ -42,8 +42,8 @@
 #define DEVICE_VER                0x0100	// BCD device version
 #define MANUFACTURER_NAME         {'B','l','i','n','k','i','n','l','a','b','s'}
 #define MANUFACTURER_NAME_LEN     11
-#define PRODUCT_NAME              {'B','l','i','n','k','y','m','a','k','e','r'}
-#define PRODUCT_NAME_LEN          11
+#define PRODUCT_NAME                  {'B','l','i','n','k','y','M','a','k','e','r',' ','B','o','o','t','l','o','a','d','e','r'}
+#define PRODUCT_NAME_LEN              22
 #define EP0_SIZE                  64
 #define NUM_INTERFACE             1
 #define CONFIG_DESC_SIZE          (9+9+9)
