@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include "fc_usb.h"
-#include "fc_defs.h"
+//#include "fc_defs.h"
 #include "HardwareSerial.h"
 #include "arm_math.h"
 
@@ -37,6 +37,7 @@
 #include "protocol.h"
 #include "dmx.h"
 #include "patterns.h"
+#include "buttons.h"
 
 // USB data buffers
 static fcBuffers buffers;
@@ -51,6 +52,8 @@ winbondFlashSPI flash;
 // Serial programming receiver
 Protocol serialReceiver;
 
+// Button inputs
+Buttons userButtons;
 
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
@@ -156,6 +159,8 @@ extern "C" int main()
 
     initBoard();
 
+    userButtons.setup();
+
     dmxSetup();
     enableOutputPower();
 
@@ -170,18 +175,49 @@ extern "C" int main()
     while (usb_dfu_state == DFU_appIDLE) {
         watchdog_refresh();
        
+        // TODO: put this in an ISR? Make the buttons do pin change interrupts?
+        userButtons.buttonTask();
+
         static int state = 0;
-        setStatusLed((state/1000)%256);
+        #define PATTERN_COUNT 3
+        static int pattern = 0;
+
+        #define BRIGHTNESS_COUNT 5
+        static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
+        static int brightnessStep = 5;
+
+        //setStatusLed((state/300)%256);
 
         // Play a pattern
         if(state%2000 == 1) {
-            color_loop();
-//            white_loop();
+            switch(pattern) {
+                case 0:
+                    color_loop();
+                    break;
+                case 1:
+                    count_up_loop();
+                    break;
+                case 2:
+                    white_loop();
+                    break;
+            }
 
             dmxShow();
         }
 
         state++;
+
+        if(userButtons.isPressed()) {
+            uint8_t button = userButtons.getPressed();
+    
+            if(button == BUTTON_A) {
+                pattern = (pattern + 1) % PATTERN_COUNT;
+            }
+            else if(button == BUTTON_B) {
+                brightnessStep = (brightnessStep + 1) % BRIGHTNESS_COUNT;
+                dmxSetBrightness(brightnessLevels[brightnessStep]);
+            }
+        }
  
 
         if(serial_available() > 0) {

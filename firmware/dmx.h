@@ -35,5 +35,8 @@ void dmxWritePixel(int pixel, int r, int g, int b);
 // Emit the DMX signal
 extern void dmxShow();
 
+// Change the world brightness
+extern void dmxSetBrightness(uint8_t newBrightness);
+
 
 #endif

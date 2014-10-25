@@ -16,7 +16,7 @@ FCBOOT_IMAGE = ../bootloader/blinky-boot.hex
 #######################################################
 
 # The name of your project (used to name the compiled .dfu file)
-TARGET = fc-firmware
+TARGET = blinky-firmware
 
 # Temporary .hex file for application image only, without bootloader
 APP_HEX = app-image.hex
@@ -33,12 +33,13 @@ C_FILES = \
 CPP_FILES = \
 	main.cpp \
 	fc_usb.cpp \
-        winbondflash.cpp \
-        spi4teensy3.cpp \
-        protocol.cpp \
+	winbondflash.cpp \
+	spi4teensy3.cpp \
+	protocol.cpp \
 	blinkytile.cpp \
 	dmx.cpp \
-	patterns.cpp
+	patterns.cpp \
+	buttons.cpp
 
 #        defaultanimation.cpp \
 #        matrix.cpp \

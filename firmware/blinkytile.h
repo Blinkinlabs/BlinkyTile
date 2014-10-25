@@ -24,12 +24,16 @@
 #ifndef BLINKYTILE_H
 #define BLINKYTILE_H
 
-#define LED_COUNT 170        // Number of LEDs we are controlling
+#define LED_COUNT 12        // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL    3
 
 #define REV_A
 
 #ifdef REV_A
+
+#define BUTTON_COUNT     2 // Two input buttons
+#define BUTTON_A 		 0 // First button
+#define BUTTON_B 		 1 // First button
 
 #define BUTTON_A_PIN      5 // Button A: Port D7
 #define BUTTON_B_PIN     21 // Button B: Port D6

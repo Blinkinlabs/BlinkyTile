@@ -26,7 +26,7 @@
 #define FRAME_STOP_BITS_TIME     (FRAME_START_BIT_TIME + 8*BIT_LENGTH + 2*BIT_LENGTH)
 
 uint8_t dataArray[1 + LED_COUNT*BYTES_PER_PIXEL];    // Storage for DMX output (0 is the start frame)
-
+uint8_t brightness;
 
 static volatile uint8_t *dmxPort;
 static uint8_t dmxBit = 0;
@@ -62,13 +62,19 @@ void dmxSetup() {
     dataArray[0] = 0;    // Start bit!
 
     digitalWrite(DATA_OUT_PIN, HIGH);
+
+    brightness = 255;
+}
+
+void dmxSetBrightness(uint8_t newBrightness) {
+  brightness = newBrightness;
 }
 
 void dmxWritePixel(int pixel, int r, int g, int b) {
 
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 1] = b;
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 2] = g;
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 3] = r;
+  dataArray[(pixel-1)*BYTES_PER_PIXEL + 1] = b*brightness/255;
+  dataArray[(pixel-1)*BYTES_PER_PIXEL + 2] = g*brightness/255;
+  dataArray[(pixel-1)*BYTES_PER_PIXEL + 3] = r*brightness/255;
 }
 
 // Send a DMX frame with new data
