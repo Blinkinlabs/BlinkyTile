@@ -178,7 +178,7 @@ extern "C" int main()
     serial_begin(BAUD2DIV(115200));
 //    serialReceiver.reset();
 
-    uint32_t animation = 0;    
+    uint32_t animation = 0;
 
     uint32_t frame = 0;                             // current frame to display
     uint32_t nextTime = millis() + animations.getAnimation(animation)->speed; // time to display next frame

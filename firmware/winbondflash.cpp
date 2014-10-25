@@ -63,12 +63,12 @@ uint16_t winbondFlashClass::readSR()
   uint8_t r1,r2;
   select();
   send(R_SR1);
-  r1 = receive(0xff);
+  r1 = receive(0xff, true);
   deselect();
   deselect();//some delay
   select();
   send(R_SR2);
-  r2 = receive(0xff);
+  r2 = receive(0xff, true);
   deselect();
   return (((uint16_t)r2)<<8)|r1;
 }
@@ -80,7 +80,7 @@ uint8_t winbondFlashClass::readManufacturer()
   send(R_JEDEC_ID);
   c = receive(0x00);
   receive(0x00);
-  receive(0x00);
+  receive(0x00, true);
   deselect();
   return c;
 }
@@ -99,7 +99,7 @@ uint64_t winbondFlashClass::readUniqueID()
   //for little endian machine only
   for(int i=7;i>=0;i--)
   {
-    arr[i] = receive(0x00);
+    arr[i] = receive(0x00, i==0);
   }
   deselect();
   return uid;
@@ -112,7 +112,7 @@ uint16_t winbondFlashClass::readPartID()
   send(R_JEDEC_ID);
   send(0x00);
   a = receive(0x00);
-  b = receive(0x00);
+  b = receive(0x00, true);
   deselect();
   return (a<<8)|b;
 }
@@ -126,7 +126,7 @@ bool winbondFlashClass::checkPartNo(partNumber _partno)
   send(R_JEDEC_ID);
   manuf = receive(0x00);
   id = receive(0x00) << 8;
-  id |= receive(0x00);
+  id |= receive(0x00, true);
   deselect();
 
 //  Serial.print("MANUF=0x");
@@ -182,7 +182,7 @@ bool winbondFlashClass::busy()
   uint8_t r1;
   select();
   send(R_SR1);
-  r1 = receive(0xff);
+  r1 = receive(0xff, true);
   deselect();
   if(r1 & SR1_BUSY_MASK)
     return true;
@@ -192,7 +192,7 @@ bool winbondFlashClass::busy()
 void winbondFlashClass::setWriteEnable(bool cmd)
 {
   select();
-  send( cmd ? W_EN : W_DE );
+  send( cmd ? W_EN : W_DE, true);
   deselect();
 }
 
@@ -247,7 +247,7 @@ uint16_t winbondFlashClass::blocks()
 bool winbondFlashClass::begin(partNumber _partno)
 {
   select();
-  send(RELEASE);
+  send(RELEASE, true);
   deselect();
   delayMicroseconds(5);//>3us
 //  Serial.println("Chip Released");
@@ -261,7 +261,7 @@ bool winbondFlashClass::begin(partNumber _partno)
 void winbondFlashClass::end()
 {
   select();
-  send(PDWN);
+  send(PDWN, true);
   deselect();
   delayMicroseconds(5);//>3us
 }
@@ -278,7 +278,7 @@ uint16_t winbondFlashClass::read (uint32_t addr,uint8_t *buf,uint16_t n)
   send(addr);
   for(uint16_t i=0;i<n;i++)
   {
-    buf[i] = receive(0x00);
+    buf[i] = receive(0x00, i==n-1);
   }
   deselect();
   
@@ -294,7 +294,7 @@ void winbondFlashClass::writePage(uint32_t addr_start,uint8_t *buf)
   send(0x00);
   uint8_t i=0;
   do {
-    send(buf[i]);
+    send(buf[i], i==255);
     i++;
   }while(i!=0);
   deselect();
@@ -306,7 +306,7 @@ void winbondFlashClass::eraseSector(uint32_t addr_start)
   send(SECTOR_E);
   send(addr_start>>16);
   send(addr_start>>8);
-  send(addr_start);
+  send(addr_start, true);
   deselect();
 }
 
@@ -316,7 +316,7 @@ void winbondFlashClass::erase32kBlock(uint32_t addr_start)
   send(BLK_E_32K);
   send(addr_start>>16);
   send(addr_start>>8);
-  send(addr_start);
+  send(addr_start, true);
   deselect();
 }
 
@@ -326,28 +326,28 @@ void winbondFlashClass::erase64kBlock(uint32_t addr_start)
   send(BLK_E_64K);
   send(addr_start>>16);
   send(addr_start>>8);
-  send(addr_start);
+  send(addr_start, true);
   deselect();
 }
 
 void winbondFlashClass::eraseAll()
 {
   select();
-  send(CHIP_ERASE);
+  send(CHIP_ERASE, true);
   deselect();
 }
 
 void winbondFlashClass::eraseSuspend()
 {
   select();
-  send(E_SUSPEND);
+  send(E_SUSPEND, true);
   deselect();
 }
 
 void winbondFlashClass::eraseResume()
 {
   select();
-  send(E_RESUME);
+  send(E_RESUME, true);
   deselect();
 }
 

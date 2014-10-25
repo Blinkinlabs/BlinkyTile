@@ -88,6 +88,8 @@ namespace spi4teensy3 {
         uint32_t ctar0;
         uint32_t ctar1;
 
+        uint8_t pcs = 1 << 4;    // Port change register to use
+
         void updatectars() {
                 // This function is only used internally.
                 uint32_t mcr = SPI0_MCR;
@@ -111,11 +113,13 @@ namespace spi4teensy3 {
                 CORE_PIN12_CONFIG = PORT_PCR_MUX(2);
                 CORE_PIN13_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2);
 
+                CORE_PIN15_CONFIG = PORT_PCR_MUX(2);  // SPO0_PCS4
+
                 // SPI_CTAR_DBR, SPI_CTAR_BR(0), SPI_CTAR_BR(1)
                 ctar0 = SPI_CTAR_DBR;
                 ctar1 = ctar0;
-                ctar0 |= SPI_CTAR_FMSZ(7);
-                ctar1 |= SPI_CTAR_FMSZ(15);
+                ctar0 |= SPI_CTAR_FMSZ(7) | SPI_CTAR_PCSSCK(0x3) | SPI_CTAR_CSSCK(0x1) |SPI_CTAR_PASC(0x3) | SPI_CTAR_ASC(0x1);
+                ctar1 |= SPI_CTAR_FMSZ(15) | SPI_CTAR_PCSSCK(0x3) | SPI_CTAR_CSSCK(0x1) |SPI_CTAR_PASC(0x3) | SPI_CTAR_ASC(0x1);
                 SPI0_MCR = SPI_MCR_MSTR | SPI_MCR_PCSIS(0x1F);
                 SPI0_MCR |= SPI_MCR_CLR_RXF | SPI_MCR_CLR_TXF;
                 updatectars();
@@ -173,8 +177,8 @@ namespace spi4teensy3 {
                                 // default 1/2 speed, this is the maximum.
                                 break;
                 }
-                ctar0 = ctar | SPI_CTAR_FMSZ(7);
-                ctar1 = ctar | SPI_CTAR_FMSZ(15);
+                ctar0 = ctar | SPI_CTAR_FMSZ(7) | SPI_CTAR_PCSSCK(0x3) | SPI_CTAR_CSSCK(0x1) |SPI_CTAR_PASC(0x3) | SPI_CTAR_ASC(0x1);
+                ctar1 = ctar | SPI_CTAR_FMSZ(15) | SPI_CTAR_PCSSCK(0x3) | SPI_CTAR_CSSCK(0x1) |SPI_CTAR_PASC(0x3) | SPI_CTAR_ASC(0x1);
                 updatectars();
         }
 
@@ -197,11 +201,14 @@ namespace spi4teensy3 {
          *
          * @param b byte to send over SPI
          */
-        void send(uint8_t b) {
+        void send(uint8_t b, bool deselect) {
                 // clear any data in RX/TX FIFOs, and be certain we are in master mode.
+                uint32_t continuous = 0;
+                if(!deselect) {continuous = SPI_PUSHR_CONT;}
+
                 SPI0_MCR = SPI_MCR_MSTR | SPI_MCR_CLR_RXF | SPI_MCR_CLR_TXF | SPI_MCR_PCSIS(0x1F);
                 SPI0_SR = SPI_SR_TCF;
-                SPI0_PUSHR = SPI_PUSHR_CONT | b;
+                SPI0_PUSHR = continuous | SPI_PUSHR_PCS(pcs) | b;
                 while(!(SPI0_SR & SPI_SR_TCF));
                 // While technically needed, we reset anyway.
                 // Not reading SPI saves a few clock cycles over many transfers.
@@ -232,14 +239,19 @@ namespace spi4teensy3 {
                 for(i = 0; i < nf; i++) {
                         uint16_t w = (*buf++) << 8;
                         w |= *buf++;
-                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | w;
+                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | w;
                 }
                 // write data to TX FIFO
                 while(buf < limit) {
                         uint16_t w = *buf++ << 8;
                         w |= *buf++;
                         while(!(SPI0_SR & SPI_SR_RXCTR));
-                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | w;
+
+                        // uint32_t continuous = SPI_PUSHR_CONT;
+                        // if(buf == limit - 1 && deselect) {continuous = 0;}
+                        // SPI0_PUSHR = continuous | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | w;
+
+                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | w;
                         SPI0_POPR;
                 }
                 // wait for data to be sent
@@ -253,11 +265,14 @@ namespace spi4teensy3 {
         /**
          * @return byte from SPI
          */
-        uint8_t receive() {
+        uint8_t receive(bool deselect) {
+                uint32_t continuous = 0;
+                if(!deselect) {continuous = SPI_PUSHR_CONT;}
+
                 // clear any data in RX/TX FIFOs, and be certain we are in master mode.
                 SPI0_MCR = SPI_MCR_MSTR | SPI_MCR_CLR_RXF | SPI_MCR_CLR_TXF | SPI_MCR_PCSIS(0x1F);
                 SPI0_SR = SPI_SR_TCF;
-                SPI0_PUSHR = SPI_PUSHR_CONT | 0xFF;
+                SPI0_PUSHR = continuous | SPI_PUSHR_PCS(pcs) | 0xFF;
                 while(!(SPI0_SR & SPI_SR_TCF));
                 return SPI0_POPR;
         }
@@ -282,12 +297,17 @@ namespace spi4teensy3 {
                 // initial number of words to push into TX FIFO
                 int nf = n / 2 < 3 ? n / 2 : 3;
                 for(i = 0; i < nf; i++) {
-                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | 0XFFFF;
+                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | 0XFFFF;
                 }
                 uint8_t* limit = buf + n - 2 * nf;
                 while(buf < limit) {
                         while(!(SPI0_SR & SPI_SR_RXCTR));
-                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | 0XFFFF;
+
+                        // uint32_t continuous = SPI_PUSHR_CONT;
+                        // if(buf == limit - 1 && deselect) {continuous = 0;}
+                        // SPI0_PUSHR = continuous | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | 0XFFFF;
+
+                        SPI0_PUSHR = SPI_PUSHR_CONT | SPI_PUSHR_CTAS(1) | SPI_PUSHR_PCS(pcs) | 0XFFFF;
                         uint16_t w = SPI0_POPR;
                         *buf++ = w >> 8;
                         *buf++ = w & 0XFF;

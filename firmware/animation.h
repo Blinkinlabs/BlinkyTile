@@ -46,7 +46,7 @@ class Animation {
 // Number of uint32_t entries per animation in the animation table
 #define ANIMATIONS_TABLE_ENTRY_SIZE 3
 
-#define ANIMATIONS_MAGIC_NUMBER 0x12345678
+#define ANIMATIONS_MAGIC_NUMBER 0x12345679
 
 // Animations table is an array of uint32_t integers, and looks like this:
 // Note that entries are 4 bytes each.

@@ -73,8 +73,8 @@ private:
 
 protected:
   virtual void select() = 0;
-  virtual void send(uint8_t x) = 0;
-  virtual uint8_t receive(uint8_t x) = 0;
+  virtual void send(uint8_t x, bool deselect = false) = 0;
+  virtual uint8_t receive(uint8_t x, bool deselect = false) = 0;
   virtual void deselect() = 0;
   
 };
@@ -86,12 +86,12 @@ private:
     digitalWrite(nss,LOW);
   }
 
-  inline void send(uint8_t x) {
-    spi4teensy3::send(x);
+  inline void send(uint8_t x, bool deselect = false) {
+    spi4teensy3::send(x, deselect);
   }
 
-  inline uint8_t receive(uint8_t x) {
-    return spi4teensy3::receive();
+  inline uint8_t receive(uint8_t x, bool deselect = false) {
+    return spi4teensy3::receive(deselect);
   }
 
   inline void deselect() {
