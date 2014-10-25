@@ -8,7 +8,7 @@ void initBoard() {
     pinMode(STATUS_LED_PIN, OUTPUT);
     pinMode(POWER_ENABLE_PIN, OUTPUT);
 
-    pinMode(FLASH_CS_PIN, OUTPUT);
+//    pinMode(FLASH_CS_PIN, OUTPUT);
     pinMode(ADDRESS_P_PIN, OUTPUT);
     pinMode(DATA_OUT_PIN, OUTPUT);
 

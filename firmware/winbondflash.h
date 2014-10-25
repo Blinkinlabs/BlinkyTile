@@ -81,9 +81,9 @@ protected:
 
 class winbondFlashSPI: public winbondFlashClass {
 private:
-  uint8_t nss;
+//  uint8_t nss;
   inline void select() {
-    digitalWrite(nss,LOW);
+//    digitalWrite(nss,LOW);
   }
 
   inline void send(uint8_t x, bool deselect = false) {
@@ -95,11 +95,12 @@ private:
   }
 
   inline void deselect() {
-    digitalWrite(nss,HIGH);
+//    digitalWrite(nss,HIGH);
   }
 
 public:
-  bool begin(partNumber _partno = autoDetect,uint8_t _nss = SS);
+//bool begin(partNumber _partno = autoDetect,uint8_t _nss = SS);
+  bool begin(partNumber _partno = autoDetect);
   void end();
 };
 

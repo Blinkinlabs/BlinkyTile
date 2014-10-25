@@ -164,7 +164,8 @@ extern "C" int main()
     dmxSetup();
     enableOutputPower();
 
-    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
+    //flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
+    flash.begin(winbondFlashClass::autoDetect);
 
     animations.begin(flash);
 

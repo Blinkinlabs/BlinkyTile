@@ -351,13 +351,14 @@ void winbondFlashClass::eraseResume()
   deselect();
 }
 
-bool winbondFlashSPI::begin(partNumber _partno, uint8_t _nss)
+//bool winbondFlashSPI::begin(partNumber _partno, uint8_t _nss)
+bool winbondFlashSPI::begin(partNumber _partno)
 {
-  nss = _nss;
+//  nss = _nss;
 
   spi4teensy3::init(7);
 
-  pinMode(nss, OUTPUT);
+//  pinMode(nss, OUTPUT);
   deselect();
 
   return winbondFlashClass::begin(_partno);
