@@ -1,6 +1,7 @@
 #include "defaultanimation.h"
 #include "animation.h"
-#include "matrix.h"
+#include "winbondflash.h"
+#include "blinkytile.h"
 
 // Make a default animation, and write it to flash
 void makeDefaultAnimation(winbondFlashSPI& flash) {
@@ -17,7 +18,7 @@ void makeDefaultAnimation(winbondFlashSPI& flash) {
     sampleTable[0] = ANIMATIONS_MAGIC_NUMBER;       // magic number
     sampleTable[1] = 1;                             // number of animations in table
     sampleTable[2] = SAMPLE_ANIMATION_FRAMES;       // frames in animation 1
-    sampleTable[3] = 1000;                           // speed of animation 1
+    sampleTable[3] = 600;                           // speed of animation 1
     sampleTable[4] = SAMPLE_ANIMATION_ADDRESS;      // flash address of animation 1
    
     flash.setWriteEnable(true); 
@@ -27,29 +28,30 @@ void makeDefaultAnimation(winbondFlashSPI& flash) {
 
     uint8_t sampleAnimation[256];
 
-    for(uint8_t frame = 0; frame < SAMPLE_ANIMATION_FRAMES; frame++) {
-        for(uint8_t row = 0; row < LED_ROWS; row++) {
-            for(uint8_t col = 0; col < LED_COLS; col++) {
-                uint8_t value = 0;
-                switch(frame) {
-                    case 0:
-                        value = 255;
-                        break;
-                    case 1:
-                        value = 0;
-                        break;
-                    case 2:
-                        value = ((row+col)%2==1?255:0);
-                        break;
-                    case 3:
-                        value = ((row+col)%2==1?0:255);
-                        break;
-                    case 4:
-                        value = 20;
-                        break;
-                }
-                sampleAnimation[frame*LED_ROWS*LED_COLS + row*LED_COLS + col] = value;
+    for(int frame = 0; frame < SAMPLE_ANIMATION_FRAMES; frame++) {
+        for(int pixel = 0; pixel < LED_COUNT; pixel++) {
+            uint8_t value = 0;
+
+            switch(frame) {
+                case 0:
+                    value = 255;
+                    break;
+                case 1:
+                    value = 128;
+                    break;
+                case 2:
+                    value = 64;
+                    break;
+                case 3:
+                    value = 32;
+                    break;
+                case 4:
+                    value = 16;
+                    break;
             }
+            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 0] = value;  // b
+            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 1] = 0;      // g
+            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 2] = 0;      // r
         }
     }
 

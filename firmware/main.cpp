@@ -30,9 +30,9 @@
 #include "arm_math.h"
 
 //#include "matrix.h"
-//#include "animation.h"
-//#include "defaultanimation.h"
 #include "blinkytile.h"
+#include "animation.h"
+#include "defaultanimation.h"
 #include "winbondflash.h"
 #include "protocol.h"
 #include "dmx.h"
@@ -47,7 +47,7 @@ fcLinearLUT fcBuffers::lutCurrent;
 winbondFlashSPI flash;
 
 // Animations class
-// Animations animations;
+Animations animations;
 
 // Serial programming receiver
 Protocol serialReceiver;
@@ -164,12 +164,24 @@ extern "C" int main()
     dmxSetup();
     enableOutputPower();
 
-//    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
+    flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
+
+    animations.begin(flash);
+
+    // If the flash was not set up with an animation, burn one to it.
+    if(!animations.isInitialized()) {
+        makeDefaultAnimation(flash);
+        animations.begin(flash);
+    }
 
 
     serial_begin(BAUD2DIV(115200));
 //    serialReceiver.reset();
 
+    uint32_t animation = 0;    
+
+    uint32_t frame = 0;                             // current frame to display
+    uint32_t nextTime = millis() + animations.getAnimation(animation)->speed; // time to display next frame
 
     // Application main loop
     while (usb_dfu_state == DFU_appIDLE) {
@@ -179,26 +191,48 @@ extern "C" int main()
         userButtons.buttonTask();
 
         static int state = 0;
-        #define PATTERN_COUNT 3
+        #define PATTERN_COUNT 5
         static int pattern = 0;
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
         static int brightnessStep = 5;
 
-        //setStatusLed((state/300)%256);
-
         // Play a pattern
         if(state%2000 == 1) {
             switch(pattern) {
                 case 0:
+                    // Built-in animations
+                    if(millis() > nextTime) {
+                        animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
+                        dmxShow();
+
+                        frame++;
+                        if(frame >= animations.getAnimation(animation)->frameCount) {
+                            frame = 0;
+
+                            // increment through
+                            animation++;
+                            if(animation >= animations.getAnimationCount()) {
+                                animation = 0;
+                            }
+                       }
+
+                       nextTime += animations.getAnimation(animation)->speed;
+                    }
+                    break;
+
+                case 1:
                     color_loop();
                     break;
-                case 1:
+                case 2:
                     count_up_loop();
                     break;
-                case 2:
+                case 3:
                     white_loop();
+                    break;
+                case 4:
+                    green_loop();
                     break;
             }
 

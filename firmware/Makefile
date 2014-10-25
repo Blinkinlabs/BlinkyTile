@@ -39,11 +39,10 @@ CPP_FILES = \
 	blinkytile.cpp \
 	dmx.cpp \
 	patterns.cpp \
-	buttons.cpp
-
-#        defaultanimation.cpp \
+	buttons.cpp \
+        animation.cpp \
+        defaultanimation.cpp
 #        matrix.cpp \
-#        animation.cpp \
 
 # Headers
 INCLUDES = -I.

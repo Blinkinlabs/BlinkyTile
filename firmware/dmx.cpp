@@ -70,8 +70,7 @@ void dmxSetBrightness(uint8_t newBrightness) {
   brightness = newBrightness;
 }
 
-void dmxWritePixel(int pixel, int r, int g, int b) {
-
+void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
   dataArray[(pixel-1)*BYTES_PER_PIXEL + 1] = b*brightness/255;
   dataArray[(pixel-1)*BYTES_PER_PIXEL + 2] = g*brightness/255;
   dataArray[(pixel-1)*BYTES_PER_PIXEL + 3] = r*brightness/255;
@@ -123,4 +122,8 @@ void dmxShow() {
   // We're done - MTBP is high, same as the stop bit.
   
 //  interrupts();
+}
+
+uint8_t* dmxGetPixels() {
+  return &dataArray[1]; // Return first pixel in the array
 }

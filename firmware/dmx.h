@@ -29,14 +29,24 @@
 // Initialize the DMX engine
 extern void dmxSetup();
 
-// Write a color to the specified pixel
-void dmxWritePixel(int pixel, int r, int g, int b);
+// Change the system brightness
+// @param brightness Display brightness scale, from 0 (off) to 255 (fully on)
+extern void dmxSetBrightness(uint8_t newBrightness);
+
+// Update a single pixel in the array
+// @param pixel int Pixel address
+// @param r uint8_t New red value for the pixel (0 - 255)
+// @param g uint8_t New red value for the pixel (0 - 255)
+// @param b uint8_t New red value for the pixel (0 - 255)
+extern void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b);
+
 
 // Emit the DMX signal
 extern void dmxShow();
 
-// Change the world brightness
-extern void dmxSetBrightness(uint8_t newBrightness);
-
+// Get the display pixel buffer
+// @return Pointer to the pixel display buffer, a uint8_t array of size
+// LED_ROWS*LED_COLS
+extern uint8_t* dmxGetPixels();
 
 #endif

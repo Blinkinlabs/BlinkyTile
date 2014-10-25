@@ -26,6 +26,7 @@
 
 extern void color_loop();
 extern void white_loop();
+extern void green_loop();
 extern void count_up_loop();
 extern void serial_loop();
 
