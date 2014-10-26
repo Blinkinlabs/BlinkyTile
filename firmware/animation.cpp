@@ -23,12 +23,13 @@
 
 #include "animation.h"
 #include "winbondflash.h"
-#include "matrix.h"
+//#include "matrix.h"
+ #include "blinkytile.h"
 
 void Animation::getFrame(uint32_t frame, uint8_t* buffer) {
-    flash->read(startingAddress + frame*LED_ROWS*LED_COLS,
+    flash->read(startingAddress + frame*LED_COUNT*BYTES_PER_PIXEL,
                 buffer,
-                LED_ROWS*LED_COLS
+                LED_COUNT*BYTES_PER_PIXEL
         );
 }
 

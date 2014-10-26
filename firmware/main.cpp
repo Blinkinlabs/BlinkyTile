@@ -1,7 +1,9 @@
 /*
- * Fadecandy Firmware
- * 
- * Copyright (c) 2013 Micah Elizabeth Scott
+ * Blinky Controller
+ *
+* Copyright (c) 2014 Matt Mets
+ *
+ * based on Fadecandy Firmware, Copyright (c) 2013 Micah Elizabeth Scott
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -203,7 +205,7 @@ extern "C" int main()
         if(state%2000 == 1) {
             switch(pattern) {
                 case 0:
-                    // Built-in animations
+                    // Flash-based
                     if(millis() > nextTime) {
                         animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
                         dmxShow();
