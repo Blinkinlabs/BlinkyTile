@@ -10025,8 +10025,6 @@ Mates with: 87759, 87762, 87758, 87760</description>
 <part name="R5" library="adafruit" deviceset="R-US_" device="R0402" value="1k"/>
 <part name="SV1" library="dodocohedreled" deviceset="4-PIN_DUPONT" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
-<part name="C7" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
-<part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="C8" library="adafruit" deviceset="C-US" device="C0805K" value="10uF"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 </parts>
@@ -10144,8 +10142,6 @@ pin besides the ones on Port C</text>
 <instance part="P+5" gate="1" x="322.58" y="144.78" smashed="yes">
 <attribute name="VALUE" x="320.04" y="146.05" size="1.778" layer="96"/>
 </instance>
-<instance part="C7" gate="G$1" x="63.5" y="213.36"/>
-<instance part="GND6" gate="1" x="63.5" y="203.2"/>
 <instance part="C8" gate="G$1" x="78.74" y="213.36"/>
 <instance part="GND11" gate="1" x="78.74" y="203.2"/>
 </instances>
@@ -10249,11 +10245,6 @@ pin besides the ones on Port C</text>
 <junction x="91.44" y="170.18"/>
 </segment>
 <segment>
-<pinref part="C7" gate="G$1" pin="2"/>
-<pinref part="GND6" gate="1" pin="GND"/>
-<wire x1="63.5" y1="208.28" x2="63.5" y2="205.74" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C8" gate="G$1" pin="2"/>
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="78.74" y1="208.28" x2="78.74" y2="205.74" width="0.1524" layer="91"/>
@@ -10314,14 +10305,10 @@ pin besides the ones on Port C</text>
 <wire x1="78.74" y1="223.52" x2="78.74" y2="218.44" width="0.1524" layer="91"/>
 <junction x="78.74" y="218.44"/>
 <pinref part="C3" gate="G$1" pin="1"/>
-<wire x1="71.12" y1="218.44" x2="63.5" y2="218.44" width="0.1524" layer="91"/>
-<wire x1="63.5" y1="218.44" x2="60.96" y2="218.44" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="218.44" x2="60.96" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="218.44" x2="71.12" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="218.44" x2="71.12" y2="218.44" width="0.1524" layer="91"/>
 <junction x="71.12" y="218.44"/>
-<pinref part="C7" gate="G$1" pin="1"/>
-<wire x1="63.5" y1="215.9" x2="63.5" y2="218.44" width="0.1524" layer="91"/>
-<junction x="63.5" y="218.44"/>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="78.74" y1="215.9" x2="78.74" y2="218.44" width="0.1524" layer="91"/>
 </segment>
