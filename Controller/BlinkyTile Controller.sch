@@ -6000,6 +6000,13 @@ Source: http://www.osram.convergy.de/</description>
 <rectangle x1="-1.4" y1="-1.4" x2="-0.6" y2="-0.6" layer="31"/>
 <rectangle x1="-0.4" y1="-1.4" x2="0.4" y2="-0.6" layer="31"/>
 <rectangle x1="-0.4" y1="-0.4" x2="0.4" y2="0.4" layer="31"/>
+<polygon width="0.127" layer="29">
+<vertex x="-1.3" y="1.8"/>
+<vertex x="1.8" y="1.8"/>
+<vertex x="1.8" y="-1.8"/>
+<vertex x="-1.8" y="-1.8"/>
+<vertex x="-1.8" y="1.3"/>
+</polygon>
 </package>
 </packages>
 <symbols>
@@ -6033,7 +6040,7 @@ Source: http://www.osram.convergy.de/</description>
 <pin name="1" x="-2.54" y="0" visible="off" length="point" direction="pas" swaplevel="1"/>
 <pin name="P$1" x="0" y="-5.08" length="short" rot="R90"/>
 <wire x1="-1.905" y1="-2.54" x2="1.905" y2="-2.54" width="0.254" layer="94"/>
-<text x="-2.54" y="-3.81" size="1.27" layer="95" align="center">GND</text>
+<text x="-2.54" y="-3.81" size="1.27" layer="95" distance="90" align="center">GND</text>
 </symbol>
 <symbol name="MK20D--VFM5">
 <pin name="VDD" x="-5.08" y="22.86" length="middle"/>
