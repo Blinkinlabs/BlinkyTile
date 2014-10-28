@@ -10022,11 +10022,11 @@ Mates with: 87759, 87762, 87758, 87760</description>
 <part name="U1" library="blinkinlabs" deviceset="MK20D--VFM5" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="C6" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
-<part name="R5" library="adafruit" deviceset="R-US_" device="R0402" value="1k"/>
+<part name="R5" library="adafruit" deviceset="R-US_" device="R0402" value="10k"/>
 <part name="SV1" library="dodocohedreled" deviceset="4-PIN_DUPONT" device=""/>
-<part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="C8" library="adafruit" deviceset="C-US" device="C0805K" value="10uF"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
+<part name="3V4" library="supply1" deviceset="+3V3" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -10139,11 +10139,11 @@ pin besides the ones on Port C</text>
 <instance part="C6" gate="G$1" x="53.34" y="215.9"/>
 <instance part="R5" gate="G$1" x="322.58" y="134.62" rot="R90"/>
 <instance part="SV1" gate="1" x="373.38" y="101.6" rot="R180"/>
-<instance part="P+5" gate="1" x="322.58" y="144.78" smashed="yes">
-<attribute name="VALUE" x="320.04" y="146.05" size="1.778" layer="96"/>
-</instance>
 <instance part="C8" gate="G$1" x="78.74" y="213.36"/>
 <instance part="GND11" gate="1" x="78.74" y="203.2"/>
+<instance part="3V4" gate="G$1" x="322.58" y="144.78" smashed="yes">
+<attribute name="VALUE" x="320.04" y="146.05" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -10332,11 +10332,6 @@ pin besides the ones on Port C</text>
 <pinref part="U3" gate="G$2" pin="VCC"/>
 <wire x1="284.48" y1="142.24" x2="284.48" y2="139.7" width="0.1524" layer="91"/>
 </segment>
-<segment>
-<pinref part="R5" gate="G$1" pin="2"/>
-<wire x1="322.58" y1="142.24" x2="322.58" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="P+5" gate="1" pin="+5V"/>
-</segment>
 </net>
 <net name="+3V3" class="0">
 <segment>
@@ -10401,6 +10396,11 @@ pin besides the ones on Port C</text>
 <pinref part="CON2" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="137.16" x2="27.94" y2="137.16" width="0.1524" layer="91"/>
 <label x="27.94" y="137.16" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="R5" gate="G$1" pin="2"/>
+<pinref part="3V4" gate="G$1" pin="+3V3"/>
+<wire x1="322.58" y1="142.24" x2="322.58" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="TCLK" class="0">
@@ -10502,10 +10502,10 @@ pin besides the ones on Port C</text>
 <net name="STATUS" class="0">
 <segment>
 <pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="187.96" y1="170.18" x2="187.96" y2="160.02" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="PTD7"/>
-<wire x1="147.32" y1="160.02" x2="187.96" y2="160.02" width="0.1524" layer="91"/>
-<label x="154.94" y="160.02" size="1.778" layer="95"/>
+<wire x1="187.96" y1="170.18" x2="187.96" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="PTD6"/>
+<wire x1="147.32" y1="162.56" x2="187.96" y2="162.56" width="0.1524" layer="91"/>
+<label x="154.94" y="162.56" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -10544,9 +10544,9 @@ pin besides the ones on Port C</text>
 <label x="241.3" y="205.74" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="PTD6"/>
-<wire x1="147.32" y1="162.56" x2="165.1" y2="162.56" width="0.1524" layer="91"/>
-<label x="154.94" y="162.56" size="1.778" layer="95"/>
+<pinref part="U1" gate="G$1" pin="PTD7"/>
+<wire x1="147.32" y1="160.02" x2="165.1" y2="160.02" width="0.1524" layer="91"/>
+<label x="154.94" y="160.02" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SW2" class="0">
@@ -10685,6 +10685,14 @@ pin besides the ones on Port C</text>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,1,276.86,139.7,U4G$2,VCC,+5V,,,"/>
+<approved hash="104,1,269.24,139.7,U5G$2,VCC,+5V,,,"/>
+<approved hash="104,1,284.48,139.7,U3G$2,VCC,+5V,,,"/>
+<approved hash="113,1,194.206,131.976,FRAME1,,,,,"/>
+<approved hash="113,1,356.644,121.92,T1,,,,,"/>
+<approved hash="113,1,368.342,101.405,SV1,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>
