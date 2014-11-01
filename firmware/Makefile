@@ -42,7 +42,6 @@ CPP_FILES = \
 	buttons.cpp \
         animation.cpp \
         defaultanimation.cpp
-#        matrix.cpp \
 
 # Headers
 INCLUDES = -I.

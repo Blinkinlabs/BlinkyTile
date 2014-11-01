@@ -219,9 +219,14 @@ extern "C" int main()
                             if(animation >= animations.getAnimationCount()) {
                                 animation = 0;
                             }
-                       }
+                        }
 
-                       nextTime += animations.getAnimation(animation)->speed;
+                        nextTime += animations.getAnimation(animation)->speed;
+
+                        // If we've gotten too far ahead of ourselves, reset the animation count
+                        if(millis() > nextTime) {
+                            nextTime = millis() + animations.getAnimation(animation)->speed;
+                        }
                     }
                     break;
 
