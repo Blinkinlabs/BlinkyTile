@@ -88,7 +88,8 @@ namespace spi4teensy3 {
         uint32_t ctar0;
         uint32_t ctar1;
 
-        uint8_t pcs = 1 << 4;    // Port change register to use
+        //uint8_t pcs = 1 << 4;    // Port change register to use (REV_A)
+        uint8_t pcs = 1 << 2;    // Port change register to use (REV_B)
 
         void updatectars() {
                 // This function is only used internally.
@@ -113,7 +114,8 @@ namespace spi4teensy3 {
                 CORE_PIN12_CONFIG = PORT_PCR_MUX(2);
                 CORE_PIN13_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2);
 
-                CORE_PIN15_CONFIG = PORT_PCR_MUX(2);  // SPO0_PCS4
+                //CORE_PIN15_CONFIG = PORT_PCR_MUX(2);  // SPO0_PCS4 (REV_A)
+                CORE_PIN23_CONFIG = PORT_PCR_MUX(2);  // SPO0_PCS2 (REV_B)
 
                 // SPI_CTAR_DBR, SPI_CTAR_BR(0), SPI_CTAR_BR(1)
                 ctar0 = SPI_CTAR_DBR;

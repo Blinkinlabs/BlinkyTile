@@ -166,16 +166,15 @@ extern "C" int main()
     dmxSetup();
     enableOutputPower();
 
-    //flash.begin(winbondFlashClass::autoDetect, FLASH_CS_PIN);
-    flash.begin(winbondFlashClass::autoDetect);
+   flash.begin(winbondFlashClass::autoDetect);
 
-    animations.begin(flash);
+   animations.begin(flash);
 
-    // If the flash was not set up with an animation, burn one to it.
-    if(!animations.isInitialized()) {
-        makeDefaultAnimation(flash);
-        animations.begin(flash);
-    }
+   // If the flash was not set up with an animation, burn one to it.
+   if(!animations.isInitialized()) {
+       makeDefaultAnimation(flash);
+       animations.begin(flash);
+   }
 
 
     serial_begin(BAUD2DIV(115200));
@@ -195,7 +194,7 @@ extern "C" int main()
 
         static int state = 0;
         #define PATTERN_COUNT 5
-        static int pattern = 0;
+        static int pattern = 1;
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
