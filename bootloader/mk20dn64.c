@@ -1,8 +1,5 @@
-/*
- * Initialization code for an FC-Boot application.
+/* Fadecandy Bootloader
  * Copyright (c) 2013 Micah Elizabeth Scott
- *
- * Originally based on:
  *
  * Teensyduino Core Library
  * http://www.pjrc.com/teensy/
@@ -36,39 +33,27 @@
 
 #include "mk20dn64.h"
 
-typedef void (*initFunc_t)(void);
 
-extern unsigned long _stext;
-extern unsigned long _etext;
-extern unsigned long _sdata;
-extern unsigned long _edata;
+extern unsigned long _eflash;
+extern unsigned long _sdtext;
+extern unsigned long _edtext;
 extern unsigned long _sbss;
 extern unsigned long _ebss;
 extern unsigned long _estack;
-//extern unsigned long _flexram_begin;
-//extern unsigned long _flexram_end;
-extern initFunc_t __init_array_start;
-extern initFunc_t __init_array_end;
 
 extern int main (void);
 void ResetHandler(void);
 void _init_Teensyduino_internal_(void);
-
+void __libc_init_array(void);
 
 void fault_isr(void)
 {
-        while (1); // die
+    while (1); // die
 }
 
 void unused_isr(void)
 {
-        while (1); // die
-}
-
-extern volatile uint32_t systick_millis_count;
-void systick_default_isr(void)
-{
-    systick_millis_count++;
+    while (1); // die
 }
 
 void nmi_isr(void)      __attribute__ ((weak, alias("unused_isr")));
@@ -79,7 +64,7 @@ void usage_fault_isr(void)  __attribute__ ((weak, alias("unused_isr")));
 void svcall_isr(void)       __attribute__ ((weak, alias("unused_isr")));
 void debugmonitor_isr(void) __attribute__ ((weak, alias("unused_isr")));
 void pendablesrvreq_isr(void)   __attribute__ ((weak, alias("unused_isr")));
-void systick_isr(void)      __attribute__ ((weak, alias("systick_default_isr")));
+void systick_isr(void)      __attribute__ ((weak, alias("unused_isr")));
 
 void dma_ch0_isr(void)      __attribute__ ((weak, alias("unused_isr")));
 void dma_ch1_isr(void)      __attribute__ ((weak, alias("unused_isr")));
@@ -127,9 +112,9 @@ void portd_isr(void)        __attribute__ ((weak, alias("unused_isr")));
 void porte_isr(void)        __attribute__ ((weak, alias("unused_isr")));
 void software_isr(void)     __attribute__ ((weak, alias("unused_isr")));
 
+// Relocated IVT in RAM
+static uint32_t ramVectors[64] __attribute__ ((aligned (1024)));
 
-// TODO: create AVR-stype ISR() macro, with default linkage to undefined handler
-//
 __attribute__ ((section(".vectors"), used))
 void (* const gVectors[])(void) =
 {
@@ -197,62 +182,124 @@ void (* const gVectors[])(void) =
     software_isr,                   // 61 Software interrupt
 };
 
-//static unsigned ftfl_busy()
-//{
-//    // Is the flash memory controller busy?
-//    return 0 == (FTFL_FSTAT_CCIF & FTFL_FSTAT);
-//}
+__attribute__ ((section(".flashconfig"), used))
+const uint8_t flashconfigbytes[16] =
+{
+    // Backdoor comparison key (disabled)
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 
-//static void ftfl_busy_wait()
-//{
-//    // Wait for the flash memory controller to finish any pending operation.
-//    while (ftfl_busy());
-//}
+    /*
+     * Program flash protection (FPROT)
+     *
+     * First 4K region is protected from erasure by any means other than mass-erase over JTAG.
+     * This protects our bootloader from being modified except via hardware that could also replace it.
+     *
+     * OpenOCD doesn't give you an easy way to execute mass-erase currently. I'm lazy, I do this by patching
+     * dap_syssec_kinetis_mdmap() in arm_adi_v5.c to always mass-erase, and I run that version of openocd
+     * when necessary :(
+     */
+    0xfe, 0xff, 0xff, 0xff,
 
-//static void ftfl_launch_command()
-//{
-//    // Begin a flash memory controller command
-//    FTFL_FSTAT = FTFL_FSTAT_ACCERR | FTFL_FSTAT_FPVIOL | FTFL_FSTAT_RDCOLERR;
-//    FTFL_FSTAT = FTFL_FSTAT_CCIF;
-//}
+    0xfe,       // Data flash protection (FDPROT)
+    0xff,       // EEPROM protection (FEPROT)
+    0xff,       // Flash nonvolatile option byte (FOPT)
+    0x40        // Flash security byte (FSEC)
+};
 
-//static void ftfl_set_flexram_function(uint8_t control_code)
-//{
-//    // Issue a Set FlexRAM Function command. Busy-waits until the command is done.
-//    
-//    ftfl_busy_wait();
-//    FTFL_FCCOB0 = 0x81;
-//    FTFL_FCCOB1 = control_code;
-//    ftfl_launch_command();
-//    ftfl_busy_wait();
-//}
-
+__attribute__ ((section(".startup")))
 void ResetHandler(void)
 {
-    // Init data RAM
-    uint32_t *src = &_etext;
-    uint32_t *dest = &_sdata;
-    while (dest < &_edata) *dest++ = *src++;
-    dest = &_sbss;
-    while (dest < &_ebss) *dest++ = 0;
+    /*
+     * Enable watchdog timer. Allow settings to be changed later, in case the
+     * application firmware wants to adjust its settings or disable it.
+     *
+     * Originally I tried using the 1 kHz low-power oscillator here, but that seemed to
+     * run into an issue where refreshes weren't taking effect. It seems similar to
+     * this problem on the Freescale forums, which didn't really have a satisfactory
+     * solution:
+     *
+     *  https://community.freescale.com/thread/309519
+     *
+     * As a workaround, I'm using the "alternate" system clock.
+     */
+    {
+        const uint32_t watchdog_timeout = F_BUS / 100;  // 10ms
 
-    // initialize the SysTick counter
-    SYST_RVR = (F_CPU / 1000) - 1;
-    SYST_CSR = SYST_CSR_CLKSOURCE | SYST_CSR_TICKINT | SYST_CSR_ENABLE;
+        WDOG_UNLOCK = WDOG_UNLOCK_SEQ1;
+        WDOG_UNLOCK = WDOG_UNLOCK_SEQ2;
+        asm volatile ("nop");
+        asm volatile ("nop");
+        WDOG_STCTRLH = WDOG_STCTRLH_ALLOWUPDATE | WDOG_STCTRLH_WDOGEN |
+            WDOG_STCTRLH_WAITEN | WDOG_STCTRLH_STOPEN | WDOG_STCTRLH_CLKSRC;
+        WDOG_PRESC = 0;
+        WDOG_TOVALH = watchdog_timeout >> 16;
+        WDOG_TOVALL = watchdog_timeout;
+    }
 
-    // Use FlexRAM as normal RAM, and zero it
-//    ftfl_set_flexram_function(0xFF);
-//    dest = &_flexram_begin;
-//    while (dest < &_flexram_end) *dest++ = 0;
+    // enable clocks to always-used peripherals
+    SIM_SCGC5 = 0x00043F82;     // clocks active to all GPIO
+    SIM_SCGC6 = SIM_SCGC6_RTC | SIM_SCGC6_FTM0 | SIM_SCGC6_FTM1 | SIM_SCGC6_ADC0 | SIM_SCGC6_FTFL;
+
+    // release I/O pins hold, if we woke up from VLLS mode
+    if (PMC_REGSC & PMC_REGSC_ACKISO) PMC_REGSC |= PMC_REGSC_ACKISO;
+
+    // start in FEI mode
+    // enable capacitors for crystal
+    OSC0_CR = OSC_SC8P | OSC_SC2P;
+    // enable osc, 8-32 MHz range, low power mode
+    MCG_C2 = MCG_C2_RANGE0(2) | MCG_C2_EREFS;
+    // switch to crystal as clock source, FLL input = 16 MHz / 512
+    MCG_C1 =  MCG_C1_CLKS(2) | MCG_C1_FRDIV(4);
+    // wait for crystal oscillator to begin
+    while ((MCG_S & MCG_S_OSCINIT0) == 0) ;
+    // wait for FLL to use oscillator
+    while ((MCG_S & MCG_S_IREFST) != 0) ;
+    // wait for MCGOUT to use oscillator
+    while ((MCG_S & MCG_S_CLKST_MASK) != MCG_S_CLKST(2)) ;
+    // now we're in FBE mode
+    // config PLL input for 16 MHz Crystal / 4 = 4 MHz
+    MCG_C5 = MCG_C5_PRDIV0(3);
+    // config PLL for 96 MHz output
+    MCG_C6 = MCG_C6_PLLS | MCG_C6_VDIV0(0);
+
+    // Copy things while we're waiting on the PLL
+    {
+        // Relocate data and text to RAM
+        uint32_t *src = &_eflash;
+        uint32_t *dest = &_sdtext;
+        while (dest < &_edtext) *dest++ = *src++;
+
+        // Clear BSS
+        dest = &_sbss;
+        while (dest < &_ebss) *dest++ = 0;
+
+        // Copy IVT to RAM
+        src = (uint32_t*) &gVectors[0];
+        dest = &ramVectors[0];
+        while (dest <= &ramVectors[63]) *dest++ = *src++;
+
+        // Switch to ram IVT
+        SCB_VTOR = (uint32_t) &ramVectors[0];
+    }
+
+    // wait for PLL to start using xtal as its input
+    while (!(MCG_S & MCG_S_PLLST)) ;
+    // wait for PLL to lock
+    while (!(MCG_S & MCG_S_LOCK0)) ;
+    // now we're in PBE mode
+
+    // config divisors: 48 MHz core, 48 MHz bus, 24 MHz flash
+    SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(1) | SIM_CLKDIV1_OUTDIV2(1) |  SIM_CLKDIV1_OUTDIV4(3);
+    // switch to PLL as clock source, FLL input = 16 MHz / 512
+    MCG_C1 = MCG_C1_CLKS(0) | MCG_C1_FRDIV(4);
+    // wait for PLL clock to be used
+    while ((MCG_S & MCG_S_CLKST_MASK) != MCG_S_CLKST(3)) ;
+    // now we're in PEE mode
+    // configure USB for 48 MHz clock
+    SIM_CLKDIV2 = SIM_CLKDIV2_USBDIV(1); // USB = 96 MHz PLL / 2
+    // USB uses PLL clock, trace is CPU clock, CLKOUT=OSCERCLK0
+    SIM_SOPT2 = SIM_SOPT2_USBSRC | SIM_SOPT2_PLLFLLSEL | SIM_SOPT2_TRACECLKSEL | SIM_SOPT2_CLKOUTSEL(6);
 
     __enable_irq();
-    _init_Teensyduino_internal_();
-
-    initFunc_t *p = &__init_array_start;
-    for (; p != &__init_array_end; p++)
-        p[0]();
-
     main();
-    while (1) ;
 }
-

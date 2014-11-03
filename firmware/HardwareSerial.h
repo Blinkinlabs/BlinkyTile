@@ -31,7 +31,7 @@
 #ifndef HardwareSerial_h
 #define HardwareSerial_h
 
-#include "mk20dx128.h"
+#include "mk20dn64.h"
 #include <inttypes.h>
 
 // uncomment to enable 9 bit formats

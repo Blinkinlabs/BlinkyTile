@@ -22,7 +22,8 @@
  */
 
 #include <stdbool.h>
-#include "mk20dx128.h"
+//#include "mk20dx128.h"
+#include "mk20dn64.h"
 #include "usb_dev.h"
 #include "dfu.h"
 
@@ -39,7 +40,8 @@ static dfu_status_t dfu_status = OK;
 static unsigned dfu_poll_timeout = 1;
 
 // Programming buffer in MK20DX128 FlexRAM, where the flash controller can quickly access it.
-static __attribute__ ((section(".flexram"))) uint8_t dfu_buffer[DFU_TRANSFER_SIZE];
+//static __attribute__ ((section(".flexram"))) uint8_t dfu_buffer[DFU_TRANSFER_SIZE];
+static uint8_t dfu_buffer[DFU_TRANSFER_SIZE];
 
 static void *memcpy(void *dst, const void *src, size_t cnt) {
     uint8_t *dst8 = dst;
@@ -109,7 +111,7 @@ static uint32_t address_for_block(unsigned blockNum)
 void dfu_init()
 {
     // Use FlexRAM (dfu_buffer) as normal RAM.
-    ftfl_set_flexram_function(0xFF);
+//    ftfl_set_flexram_function(0xFF);
 }
 
 uint8_t dfu_getstate()

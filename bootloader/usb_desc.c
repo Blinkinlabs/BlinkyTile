@@ -29,7 +29,8 @@
  */
 
 #include "usb_desc.h"
-#include "mk20dx128.h"
+//#include "mk20dx128.h"
+#include "mk20dn64.h"
 
 // USB Descriptors are binary data which the USB host reads to
 // automatically detect a USB device's capabilities.  The format

@@ -29,7 +29,7 @@
  */
 
 #include "usb_desc.h"
-#include "mk20dx128.h"
+#include "mk20dn64.h"
 
 // USB Descriptors are binary data which the USB host reads to
 // automatically detect a USB device's capabilities.  The format
@@ -216,7 +216,8 @@ const uint8_t usb_microsoft_extprop[] = {
 };
 
 // 32-digit hex string, corresponding to the MK20DX128's built-in unique 128-bit ID.
-static FLEXRAM_DATA struct {
+//static FLEXRAM_DATA struct {
+static struct {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint16_t wString[16];

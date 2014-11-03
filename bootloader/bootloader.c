@@ -24,19 +24,25 @@
 #include <stdbool.h>
 #include "usb_dev.h"
 #include "serial.h"
-#include "mk20dx128.h"
+//#include "mk20dx128.h"
+#include "mk20dn64.h"
 
 extern uint32_t boot_token;
 static __attribute__ ((section(".appvectors"))) uint32_t appVectors[64];
 
-#define REV_A
+#define REV_B
 
-#ifdef REV_A
+#if defined(REV_A)
 
-const uint32_t led_bit = 1 << 5;    // LED is on Port D5
-
+const uint32_t led_bit =      1 << 5;  // LED is on Port D5
 const uint32_t button_1_bit = 1 << 7;  // Button 1 on D7
 const uint32_t button_2_bit = 1 << 6;  // Button 2 on D6
+
+#elif defined(REV_B)
+
+const uint32_t led_bit =      1 << 6;  // LED is on Port D6
+const uint32_t button_1_bit = 1 << 7;  // Button 1 on D7
+const uint32_t button_2_bit = 1 << 5;  // Button 2 on D3
 
 #else
 
@@ -47,19 +53,24 @@ const uint32_t button_2_bit = 1 << 6;  // Button 2 on D6
 static void led_init()
 {
 
-#ifdef REV_A
-    // Set the status LED on PC5, as an indication that we're in bootloading mode.
-    // TODO: Test me!
+#if defined(REV_A)
+    // Set the status LED on PD5, as an indication that we're in bootloading mode.
     PORTD_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
-    GPIOD_PDDR = led_bit;
-    GPIOD_PDOR = led_bit;
+    GPIOD_PDDR |= led_bit;
+    GPIOD_PDOR |= led_bit;
+
+#elif defined(REV_B)
+// Set the status LED on PD6, as an indication that we're in bootloading mode.
+    PORTD_PCR6 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
+    GPIOD_PDDR |= led_bit;
+    GPIOD_PDOR |= led_bit;
 #endif
 
 }
 
 static void led_toggle()
 {
-#ifdef REV_A
+#if defined(REV_A) || defined(REV_B)
     GPIOD_PTOR = led_bit;
 #endif
 }
@@ -127,9 +138,8 @@ static bool test_user_buttons() {
      * for a misbehaving application that prevents DFU mode.
      */
 
-#ifdef REV_A
+#if defined(REV_A) || defined(REV_B)
     // Read the two status pins.
-    // TODO: Test me!
     PORTD_PCR6 = PORT_PCR_MUX(1) | PORT_PCR_PS | PORT_PCR_PE | PORT_PCR_SRE;
     PORTD_PCR7 = PORT_PCR_MUX(1) | PORT_PCR_PS | PORT_PCR_PE | PORT_PCR_SRE;
 
