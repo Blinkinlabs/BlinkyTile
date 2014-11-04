@@ -6018,6 +6018,40 @@ Source: http://www.osram.convergy.de/</description>
 <pad name="P$3" x="1.27" y="0" drill="1" diameter="1.9304"/>
 <pad name="P$4" x="3.81" y="0" drill="1" diameter="1.9304"/>
 </package>
+<package name="SOIC8-150">
+<circle x="-3.5" y="-2.5" radius="0.35" width="0.3" layer="21"/>
+<wire x1="-2.54" y1="1.905" x2="2.54" y2="1.905" width="0.127" layer="21"/>
+<wire x1="2.54" y1="1.905" x2="2.54" y2="-1.905" width="0.127" layer="21"/>
+<wire x1="2.54" y1="-1.905" x2="-2.54" y2="-1.905" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="-1.905" x2="-2.54" y2="1.905" width="0.127" layer="21"/>
+<smd name="1" x="-1.875" y="-2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="2" x="-0.605" y="-2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="3" x="0.665" y="-2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="4" x="1.935" y="-2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="5" x="1.935" y="2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="6" x="0.665" y="2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="7" x="-0.605" y="2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<smd name="8" x="-1.875" y="2.6" dx="2.2" dy="0.6" layer="1" rot="R90"/>
+<text x="4" y="-2" size="1.27" layer="25" font="vector" ratio="20" rot="R90">&gt;NAME</text>
+<text x="-3" y="-1.5" size="1.27" layer="27" font="vector" ratio="20" rot="R90">&gt;VALUE</text>
+</package>
+<package name="SOIC8-208">
+<circle x="-3.5" y="-2.5" radius="0.35" width="0.3" layer="21"/>
+<wire x1="-2.54" y1="2.54" x2="2.54" y2="2.54" width="0.127" layer="21"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="-2.54" width="0.127" layer="21"/>
+<wire x1="2.54" y1="-2.54" x2="-2.54" y2="-2.54" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="-2.54" x2="-2.54" y2="2.54" width="0.127" layer="21"/>
+<smd name="1" x="-1.875" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="2" x="-0.605" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="3" x="0.665" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="4" x="1.935" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="5" x="1.935" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="6" x="0.665" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="7" x="-0.605" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<smd name="8" x="-1.875" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
+<text x="4" y="-2" size="1.27" layer="25" font="vector" ratio="20" rot="R90">&gt;NAME</text>
+<text x="-3" y="-1.5" size="1.27" layer="27" font="vector" ratio="20" rot="R90">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="USB_MICRO">
@@ -6121,6 +6155,22 @@ Source: http://www.osram.convergy.de/</description>
 <pin name="4" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
 <text x="-1.27" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
 <text x="-1.27" y="5.842" size="1.778" layer="95">&gt;NAME</text>
+</symbol>
+<symbol name="W25Q80BV">
+<wire x1="-10.16" y1="-5.08" x2="10.16" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-5.08" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-5.08" width="0.254" layer="94"/>
+<pin name="!CS" x="-15.24" y="5.08" length="middle"/>
+<pin name="!HOLD" x="15.24" y="2.54" length="middle" rot="R180"/>
+<pin name="!WP" x="-15.24" y="0" length="middle"/>
+<pin name="CLK" x="15.24" y="0" length="middle" rot="R180"/>
+<pin name="DI" x="15.24" y="-2.54" length="middle" rot="R180"/>
+<pin name="DO" x="-15.24" y="2.54" length="middle"/>
+<pin name="GND" x="-15.24" y="-2.54" length="middle"/>
+<pin name="VCC" x="15.24" y="5.08" length="middle" rot="R180"/>
+<text x="-10.16" y="10.16" size="1.778" layer="95">&gt;NAME</text>
+<text x="-10.16" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -6277,53 +6327,27 @@ Source: http://www.osram.convergy.de/</description>
 </device>
 </devices>
 </deviceset>
-</devicesets>
-</library>
-<library name="Blinkin_Labs">
-<packages>
-<package name="SOIC8">
-<wire x1="-2.54" y1="2.54" x2="2.54" y2="2.54" width="0.127" layer="21"/>
-<wire x1="2.54" y1="2.54" x2="2.54" y2="-2.54" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-2.54" x2="-2.54" y2="-2.54" width="0.127" layer="21"/>
-<wire x1="-2.54" y1="-2.54" x2="-2.54" y2="2.54" width="0.127" layer="21"/>
-<circle x="-3.5" y="-2.5" radius="0.35" width="0.3" layer="21"/>
-<smd name="1" x="-1.875" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="2" x="-0.605" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="3" x="0.665" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="4" x="1.935" y="-3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="8" x="-1.875" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="7" x="-0.605" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="6" x="0.665" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<smd name="5" x="1.935" y="3.39" dx="1.27" dy="0.6" layer="1" rot="R90"/>
-<text x="4" y="-2" size="1.27" layer="25" font="vector" ratio="20" rot="R90">&gt;NAME</text>
-<text x="-3" y="-1.5" size="1.27" layer="27" font="vector" ratio="20" rot="R90">&gt;VALUE</text>
-</package>
-</packages>
-<symbols>
-<symbol name="W25Q80BV">
-<wire x1="-10.16" y1="-5.08" x2="10.16" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-5.08" x2="10.16" y2="7.62" width="0.254" layer="94"/>
-<wire x1="10.16" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-5.08" width="0.254" layer="94"/>
-<pin name="!CS" x="-15.24" y="5.08" length="middle"/>
-<pin name="DO" x="-15.24" y="2.54" length="middle"/>
-<pin name="!WP" x="-15.24" y="0" length="middle"/>
-<pin name="GND" x="-15.24" y="-2.54" length="middle"/>
-<pin name="DI" x="15.24" y="-2.54" length="middle" rot="R180"/>
-<pin name="CLK" x="15.24" y="0" length="middle" rot="R180"/>
-<pin name="!HOLD" x="15.24" y="2.54" length="middle" rot="R180"/>
-<pin name="VCC" x="15.24" y="5.08" length="middle" rot="R180"/>
-<text x="-10.16" y="10.16" size="1.778" layer="95">&gt;NAME</text>
-<text x="-10.16" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
-</symbol>
-</symbols>
-<devicesets>
 <deviceset name="W25Q80BV">
 <gates>
 <gate name="G$1" symbol="W25Q80BV" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="SOIC8">
+<device name="208" package="SOIC8-208">
+<connects>
+<connect gate="G$1" pin="!CS" pad="1"/>
+<connect gate="G$1" pin="!HOLD" pad="7"/>
+<connect gate="G$1" pin="!WP" pad="3"/>
+<connect gate="G$1" pin="CLK" pad="6"/>
+<connect gate="G$1" pin="DI" pad="5"/>
+<connect gate="G$1" pin="DO" pad="2"/>
+<connect gate="G$1" pin="GND" pad="4"/>
+<connect gate="G$1" pin="VCC" pad="8"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="150" package="SOIC8-150">
 <connects>
 <connect gate="G$1" pin="!CS" pad="1"/>
 <connect gate="G$1" pin="!HOLD" pad="7"/>
@@ -10234,7 +10258,7 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="GND10" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="C5" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
-<part name="U2" library="Blinkin_Labs" deviceset="W25Q80BV" device=""/>
+<part name="U2" library="blinkinlabs" deviceset="W25Q80BV" device="150"/>
 <part name="FRAME1" library="frames" deviceset="DINA3_L" device=""/>
 <part name="C1" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
 <part name="R4" library="adafruit" deviceset="R-US_" device="R0402" value="330"/>
@@ -10341,7 +10365,7 @@ pin besides the ones on Port C</text>
 <attribute name="VALUE" x="22.86" y="229.87" size="1.778" layer="96"/>
 </instance>
 <instance part="L1" gate="G$1" x="53.34" y="195.58" rot="R90"/>
-<instance part="GND2" gate="1" x="261.62" y="190.5"/>
+<instance part="GND2" gate="1" x="266.7" y="220.98"/>
 <instance part="U4" gate="G$1" x="337.82" y="104.14" smashed="yes">
 <attribute name="NAME" x="339.09" y="107.315" size="1.778" layer="95"/>
 <attribute name="VALUE" x="328.93" y="96.52" size="1.778" layer="96"/>
@@ -10387,7 +10411,7 @@ pin besides the ones on Port C</text>
 <instance part="JP1" gate="G$1" x="45.72" y="132.08"/>
 <instance part="JP3" gate="G$1" x="180.34" y="190.5" rot="R180"/>
 <instance part="U$1" gate="G$1" x="236.22" y="200.66"/>
-<instance part="U$2" gate="G$1" x="259.08" y="200.66" rot="MR180"/>
+<instance part="U$2" gate="G$1" x="264.16" y="231.14" rot="MR180"/>
 </instances>
 <busses>
 </busses>
@@ -10480,12 +10504,12 @@ pin besides the ones on Port C</text>
 <segment>
 <pinref part="GND2" gate="1" pin="GND"/>
 <pinref part="U$2" gate="G$1" pin="S"/>
-<wire x1="261.62" y1="195.58" x2="261.62" y2="193.04" width="0.1524" layer="91"/>
+<wire x1="266.7" y1="226.06" x2="266.7" y2="223.52" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="SHIELD"/>
-<wire x1="256.54" y1="205.74" x2="254" y2="205.74" width="0.1524" layer="91"/>
-<wire x1="254" y1="205.74" x2="254" y2="193.04" width="0.1524" layer="91"/>
-<wire x1="254" y1="193.04" x2="261.62" y2="193.04" width="0.1524" layer="91"/>
-<junction x="261.62" y="193.04"/>
+<wire x1="261.62" y1="236.22" x2="259.08" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="236.22" x2="259.08" y2="223.52" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="223.52" x2="266.7" y2="223.52" width="0.1524" layer="91"/>
+<junction x="266.7" y="223.52"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="P"/>
@@ -10795,9 +10819,9 @@ pin besides the ones on Port C</text>
 </net>
 <net name="SW2" class="0">
 <segment>
-<label x="264.16" y="205.74" size="1.778" layer="95"/>
+<label x="269.24" y="236.22" size="1.778" layer="95"/>
 <pinref part="U$2" gate="G$1" pin="P"/>
-<wire x1="261.62" y1="205.74" x2="271.78" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="266.7" y1="236.22" x2="276.86" y2="236.22" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="PTD5"/>
