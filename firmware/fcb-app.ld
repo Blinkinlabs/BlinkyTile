@@ -40,12 +40,21 @@ MEMORY
 }
 */
 
-/* For 64k variant */
+/* For 64k variant, 2kb flexram */
+/*
 MEMORY
 {
     FLASH (rx) : ORIGIN = 0x00001000, LENGTH = 60K
     RAM  (rwx) : ORIGIN = 0x1FFFE000, LENGTH = 16K
     FLEXRAM (rwx) : ORIGIN = 0x14000000, LENGTH = 2K
+}
+*/
+
+/* For 64k variant, no flexram */
+MEMORY
+{
+    FLASH (rx) : ORIGIN = 0x00001000, LENGTH = 60K
+    RAM  (rwx) : ORIGIN = 0x1FFFE000, LENGTH = 16K
 }
 
 SECTIONS

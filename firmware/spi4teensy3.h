@@ -7,7 +7,7 @@
 
 #ifndef SPI4TEENSY3_H
 #define SPI4TEENSY3_H
-#include <mk20dx128.h> // same header for Teensy 3.0 & 3.1
+#include <mk20dn64.h> // same header for Teensy 3.0 & 3.1
 #include <core_pins.h>
 #include <sys/types.h>
 

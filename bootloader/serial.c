@@ -28,7 +28,8 @@
  * SOFTWARE.
  */
 
-#include "mk20dx128.h"
+//#include "mk20dx128.h"
+#include "mk20dn64.h"
 #include "serial.h"
 
 // UART0 and UART1 are clocked by F_CPU, UART2 is clocked by F_BUS

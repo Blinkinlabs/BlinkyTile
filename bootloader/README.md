@@ -22,6 +22,7 @@ When entering the application firmware, the system clocks will already be config
 The bootloader normally transfers control to the application early in boot, before setting up the USB controller. It will skip this step and run the DFU implementation if any of the following conditions are true:
 
 * A banner ("FC-Boot\n") printed to the hardware UART at 9600 baud is echoed back within one character-period. (Manual entry by shorting TX and RX)
+* Both user buttons are pressed during power on (Manual recovery)
 * A 32-bit entry token (0x74624346, or 'FCbt') is found at 0x2000_1FFC. (Programmatic entry)
 * The application ResetVector does not reside within application flash. (No application is installed)
 
@@ -44,7 +45,7 @@ No external hardware is required for the bootloader to operate. The following pi
 File Format
 -----------
 
-The DFU file consists of raw 1 kilobyte blocks to be programmed into flash starting at address 0x0000_1000. The file may contain up to 127 blocks. No additional headers or checksums are included. On disk, the standard DFU suffix and CRC are used. During transit, the standard USB CRC is used.
+The DFU file consists of raw 1 kilobyte blocks to be programmed into flash starting at address 0x0000_1000. The file may contain up to 63 blocks. No additional headers or checksums are included. On disk, the standard DFU suffix and CRC are used. During transit, the standard USB CRC is used.
 
 Contact
 -------

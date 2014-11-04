@@ -31,7 +31,8 @@
 #ifndef HardwareSerial_h
 #define HardwareSerial_h
 
-#include "mk20dx128.h"
+//#include "mk20dx128.h"
+#include "mk20dn64.h"
 #include <inttypes.h>
 
 #define BAUD2DIV(baud)  (((F_CPU * 2) + ((baud) >> 1)) / (baud))

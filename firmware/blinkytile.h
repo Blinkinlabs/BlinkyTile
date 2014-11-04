@@ -27,7 +27,7 @@
 #define LED_COUNT 12        // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL    3
 
-#define REV_A
+#define REV_B
 
 #ifdef REV_A
 
@@ -45,7 +45,17 @@
 
 #elif defined REV_B
 
-// TODO: RevB pinout
+#define BUTTON_COUNT      2 // Two input buttons
+#define BUTTON_A 		  0 // First button
+#define BUTTON_B 		  1 // First button
+
+#define BUTTON_A_PIN      5 // Button A: Port D7
+#define BUTTON_B_PIN     20 // Button B: Port D5
+#define STATUS_LED_PIN   21 // Status LED: Port D6
+#define POWER_ENABLE_PIN  6 // Output power enable resistor: Port D4
+#define ADDRESS_P_PIN     9 // Address program pin: Port C3
+#define DATA_OUT_PIN     10 // Data output pin: Port C4
+
 
 #endif
 
