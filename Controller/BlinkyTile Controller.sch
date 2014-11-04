@@ -64,6 +64,7 @@
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
 <layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
+<layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -5944,6 +5945,79 @@ Source: http://www.osram.convergy.de/</description>
 <circle x="0" y="0" radius="1.905" width="0.127" layer="51"/>
 <circle x="0" y="0" radius="1.27" width="0.127" layer="51"/>
 </package>
+<package name="DUPONT-4P">
+<wire x1="-6.096" y1="1.27" x2="-6.35" y2="1.524" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="1.524" x2="-6.35" y2="12.446" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="12.446" x2="-6.096" y2="12.7" width="0.127" layer="21"/>
+<wire x1="-6.096" y1="12.7" x2="-3.81" y2="12.7" width="0.127" layer="21"/>
+<wire x1="-3.81" y1="12.7" x2="3.81" y2="12.7" width="0.127" layer="21"/>
+<wire x1="3.81" y1="12.7" x2="6.096" y2="12.7" width="0.127" layer="21"/>
+<wire x1="6.096" y1="12.7" x2="6.35" y2="12.446" width="0.127" layer="21"/>
+<wire x1="6.35" y1="12.446" x2="6.35" y2="1.524" width="0.127" layer="21"/>
+<wire x1="6.35" y1="1.524" x2="6.096" y2="1.27" width="0.127" layer="21"/>
+<wire x1="6.096" y1="1.27" x2="5.715" y2="1.27" width="0.127" layer="21"/>
+<wire x1="5.715" y1="1.27" x2="-5.715" y2="1.27" width="0.127" layer="21"/>
+<wire x1="-5.715" y1="1.27" x2="-6.096" y2="1.27" width="0.127" layer="21"/>
+<wire x1="5.461" y1="0" x2="-5.461" y2="0" width="0.127" layer="21"/>
+<wire x1="-5.461" y1="0" x2="-5.715" y2="0.254" width="0.127" layer="21"/>
+<wire x1="-5.715" y1="0.254" x2="-5.715" y2="1.27" width="0.127" layer="21"/>
+<wire x1="5.715" y1="1.27" x2="5.715" y2="0.254" width="0.127" layer="21"/>
+<wire x1="5.715" y1="0.254" x2="5.461" y2="0" width="0.127" layer="21"/>
+<wire x1="-3.81" y1="12.7" x2="-3.81" y2="8.509" width="0.127" layer="21"/>
+<wire x1="-3.81" y1="8.509" x2="-3.556" y2="8.255" width="0.127" layer="21" curve="90"/>
+<wire x1="-3.556" y1="8.255" x2="-2.54" y2="8.255" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="8.255" x2="-1.27" y2="8.255" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="8.255" x2="1.27" y2="8.255" width="0.127" layer="21"/>
+<wire x1="1.27" y1="8.255" x2="2.54" y2="8.255" width="0.127" layer="21"/>
+<wire x1="2.54" y1="8.255" x2="3.556" y2="8.255" width="0.127" layer="21"/>
+<wire x1="3.556" y1="8.255" x2="3.81" y2="8.509" width="0.127" layer="21" curve="90"/>
+<wire x1="3.81" y1="8.509" x2="3.81" y2="12.7" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="8.255" x2="-1.27" y2="4.064" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="4.064" x2="-1.016" y2="3.81" width="0.127" layer="21" curve="90"/>
+<wire x1="-1.016" y1="3.81" x2="1.016" y2="3.81" width="0.127" layer="21"/>
+<wire x1="1.016" y1="3.81" x2="1.27" y2="4.064" width="0.127" layer="21" curve="90"/>
+<wire x1="1.27" y1="4.064" x2="1.27" y2="8.255" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="8.255" x2="-2.54" y2="8.89" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="8.89" x2="-1.27" y2="10.16" width="0.127" layer="21" curve="-90"/>
+<wire x1="-1.27" y1="10.16" x2="1.27" y2="10.16" width="0.127" layer="21"/>
+<wire x1="1.27" y1="10.16" x2="2.54" y2="8.89" width="0.127" layer="21" curve="-90"/>
+<wire x1="2.54" y1="8.89" x2="2.54" y2="8.255" width="0.127" layer="21"/>
+<wire x1="-5.715" y1="12.065" x2="-4.445" y2="12.065" width="0.127" layer="21"/>
+<wire x1="-4.445" y1="12.065" x2="-5.08" y2="10.795" width="0.127" layer="21"/>
+<wire x1="-5.08" y1="10.795" x2="-5.715" y2="12.065" width="0.127" layer="21"/>
+<pad name="P$1" x="-3.81" y="0" drill="0.9" diameter="1.778"/>
+<pad name="P$2" x="-1.27" y="0" drill="0.9" diameter="1.778"/>
+<pad name="P$3" x="1.27" y="0" drill="0.9" diameter="1.778"/>
+<pad name="P$4" x="3.81" y="0" drill="0.9" diameter="1.778"/>
+</package>
+<package name="4-PIN_DUPONT">
+<wire x1="-8" y1="16" x2="-8" y2="1" width="0.127" layer="21"/>
+<wire x1="-8" y1="1" x2="-7.5" y2="1" width="0.127" layer="21"/>
+<wire x1="-7.5" y1="1" x2="7.5" y2="1" width="0.127" layer="21"/>
+<wire x1="7.5" y1="1" x2="8" y2="1" width="0.127" layer="21"/>
+<wire x1="8" y1="1" x2="8" y2="16" width="0.127" layer="21"/>
+<wire x1="8" y1="16" x2="3.75" y2="16" width="0.127" layer="21"/>
+<wire x1="3.75" y1="16" x2="-3.75" y2="16" width="0.127" layer="21"/>
+<wire x1="-3.75" y1="16" x2="-8" y2="16" width="0.127" layer="21"/>
+<wire x1="-3.75" y1="16" x2="-3.75" y2="12" width="0.127" layer="21"/>
+<wire x1="-3.75" y1="12" x2="-2" y2="12" width="0.127" layer="21"/>
+<wire x1="-2" y1="12" x2="2" y2="12" width="0.127" layer="21"/>
+<wire x1="2" y1="12" x2="3.75" y2="12" width="0.127" layer="21"/>
+<wire x1="3.75" y1="12" x2="3.75" y2="16" width="0.127" layer="21"/>
+<wire x1="-2" y1="12" x2="-2" y2="3.75" width="0.127" layer="21"/>
+<wire x1="-2" y1="3.75" x2="2" y2="3.75" width="0.127" layer="21"/>
+<wire x1="2" y1="3.75" x2="2" y2="12" width="0.127" layer="21"/>
+<wire x1="-7.5" y1="0" x2="7.5" y2="0" width="0.127" layer="21"/>
+<wire x1="7.5" y1="0" x2="7.5" y2="1" width="0.127" layer="21"/>
+<wire x1="-7.5" y1="0" x2="-7.5" y2="1" width="0.127" layer="21"/>
+<wire x1="-6.6675" y1="15.24" x2="-5.715" y2="12.7" width="0.127" layer="21"/>
+<wire x1="-5.715" y1="12.7" x2="-4.7625" y2="15.24" width="0.127" layer="21"/>
+<wire x1="-4.7625" y1="15.24" x2="-6.6675" y2="15.24" width="0.127" layer="21"/>
+<pad name="P$1" x="-3.81" y="0" drill="1" diameter="1.9304" shape="square"/>
+<pad name="P$2" x="-1.27" y="0" drill="1" diameter="1.9304"/>
+<pad name="P$3" x="1.27" y="0" drill="1" diameter="1.9304"/>
+<pad name="P$4" x="3.81" y="0" drill="1" diameter="1.9304"/>
+</package>
 </packages>
 <symbols>
 <symbol name="USB_MICRO">
@@ -6031,6 +6105,22 @@ Source: http://www.osram.convergy.de/</description>
 <text x="-3.81" y="-2.54" size="1.778" layer="95" rot="R90">&gt;NAME</text>
 <text x="-1.27" y="3.175" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
 <pin name="SHIELD" x="-2.54" y="-5.08" visible="pad" length="middle" direction="pas" rot="R90"/>
+</symbol>
+<symbol name="4-PIN_DUPONT">
+<wire x1="3.81" y1="-7.62" x2="-1.27" y2="-7.62" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="0" x2="2.54" y2="0" width="0.6096" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="2.54" y2="-2.54" width="0.6096" layer="94"/>
+<wire x1="1.27" y1="-5.08" x2="2.54" y2="-5.08" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="5.08" x2="-1.27" y2="-7.62" width="0.4064" layer="94"/>
+<wire x1="3.81" y1="-7.62" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="-1.27" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
+<pin name="1" x="7.62" y="-5.08" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="2" x="7.62" y="-2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="3" x="7.62" y="0" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="4" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<text x="-1.27" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
+<text x="-1.27" y="5.842" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -6150,6 +6240,36 @@ Source: http://www.osram.convergy.de/</description>
 <connect gate="G$1" pin="P" pad="1 2"/>
 <connect gate="G$1" pin="S" pad="3 4"/>
 <connect gate="G$1" pin="SHIELD" pad="5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="4-PIN_DUPONT" prefix="SV" uservalue="yes">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
+<gates>
+<gate name="1" symbol="4-PIN_DUPONT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="BIG" package="4-PIN_DUPONT">
+<connects>
+<connect gate="1" pin="1" pad="P$1"/>
+<connect gate="1" pin="2" pad="P$2"/>
+<connect gate="1" pin="3" pad="P$3"/>
+<connect gate="1" pin="4" pad="P$4"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="" package="DUPONT-4P">
+<connects>
+<connect gate="1" pin="1" pad="P$1"/>
+<connect gate="1" pin="2" pad="P$2"/>
+<connect gate="1" pin="3" pad="P$3"/>
+<connect gate="1" pin="4" pad="P$4"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -9313,56 +9433,6 @@ Source: http://www.semiconductors.philips.com/acrobat_download/datasheets/74HC_H
 </deviceset>
 </devicesets>
 </library>
-<library name="solpad">
-<description>&lt;b&gt;Solder Pads/Test Points&lt;/b&gt;&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="SE11">
-<description>&lt;b&gt;SOLDER PAD&lt;/b&gt;&lt;p&gt;
-drill 1.1 mm</description>
-<wire x1="-1.397" y1="0.508" x2="-1.397" y2="-0.508" width="0.1524" layer="21"/>
-<wire x1="0.508" y1="-1.397" x2="1.397" y2="-0.508" width="0.1524" layer="21"/>
-<wire x1="0.508" y1="1.397" x2="1.397" y2="0.508" width="0.1524" layer="21"/>
-<wire x1="1.397" y1="0.508" x2="1.397" y2="-0.508" width="0.1524" layer="21"/>
-<wire x1="-1.397" y1="0.508" x2="-0.508" y2="1.397" width="0.1524" layer="21"/>
-<wire x1="-0.508" y1="1.397" x2="0.508" y2="1.397" width="0.1524" layer="21"/>
-<wire x1="-0.508" y1="-1.397" x2="-1.397" y2="-0.508" width="0.1524" layer="21"/>
-<wire x1="0.508" y1="-1.397" x2="-0.508" y2="-1.397" width="0.1524" layer="21"/>
-<circle x="0" y="0" radius="0.762" width="0.1524" layer="51"/>
-<circle x="0" y="0" radius="0.381" width="0.254" layer="51"/>
-<pad name="MP" x="0" y="0" drill="1.1176" diameter="2.159" shape="octagon"/>
-<text x="-1.27" y="1.651" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="0" y="0.381" size="0.0254" layer="27">&gt;VALUE</text>
-</package>
-</packages>
-<symbols>
-<symbol name="LSP">
-<wire x1="-1.016" y1="2.032" x2="1.016" y2="0" width="0.254" layer="94"/>
-<wire x1="-1.016" y1="0" x2="1.016" y2="2.032" width="0.254" layer="94"/>
-<circle x="0" y="1.016" radius="1.016" width="0.4064" layer="94"/>
-<text x="-1.27" y="2.921" size="1.778" layer="95">&gt;NAME</text>
-<pin name="MP" x="0" y="-2.54" visible="off" length="short" direction="pas" rot="R90"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="SE11" prefix="LSP">
-<description>&lt;b&gt;SOLDER PAD&lt;/b&gt;&lt;p&gt; RTM, drill 1,1mm, distributor Buerklin, 07F810</description>
-<gates>
-<gate name="1" symbol="LSP" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="SE11">
-<connects>
-<connect gate="1" pin="MP" pad="MP"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="zetex">
 <description>&lt;b&gt;Zetex Power MOS FETs, Bridges, Diodes&lt;/b&gt;&lt;p&gt;
 http://www.zetex.com&lt;p&gt;
@@ -9438,77 +9508,6 @@ http://www.zetex.com&lt;p&gt;
 <attribute name="OC_FARNELL" value="unknown" constant="no"/>
 <attribute name="OC_NEWARK" value="unknown" constant="no"/>
 </technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
-<library name="dodocohedreled">
-<packages>
-<package name="4-PIN_DUPONT">
-<pad name="P$1" x="-3.81" y="0" drill="1" diameter="1.9304" shape="square"/>
-<pad name="P$2" x="-1.27" y="0" drill="1" diameter="1.9304"/>
-<pad name="P$3" x="1.27" y="0" drill="1" diameter="1.9304"/>
-<pad name="P$4" x="3.81" y="0" drill="1" diameter="1.9304"/>
-<wire x1="-8" y1="16" x2="-8" y2="1" width="0.127" layer="21"/>
-<wire x1="-8" y1="1" x2="-7.5" y2="1" width="0.127" layer="21"/>
-<wire x1="-7.5" y1="1" x2="7.5" y2="1" width="0.127" layer="21"/>
-<wire x1="7.5" y1="1" x2="8" y2="1" width="0.127" layer="21"/>
-<wire x1="8" y1="1" x2="8" y2="16" width="0.127" layer="21"/>
-<wire x1="8" y1="16" x2="3.75" y2="16" width="0.127" layer="21"/>
-<wire x1="3.75" y1="16" x2="-3.75" y2="16" width="0.127" layer="21"/>
-<wire x1="-3.75" y1="16" x2="-8" y2="16" width="0.127" layer="21"/>
-<wire x1="-3.75" y1="16" x2="-3.75" y2="12" width="0.127" layer="21"/>
-<wire x1="-3.75" y1="12" x2="-2" y2="12" width="0.127" layer="21"/>
-<wire x1="-2" y1="12" x2="2" y2="12" width="0.127" layer="21"/>
-<wire x1="2" y1="12" x2="3.75" y2="12" width="0.127" layer="21"/>
-<wire x1="3.75" y1="12" x2="3.75" y2="16" width="0.127" layer="21"/>
-<wire x1="-2" y1="12" x2="-2" y2="3.75" width="0.127" layer="21"/>
-<wire x1="-2" y1="3.75" x2="2" y2="3.75" width="0.127" layer="21"/>
-<wire x1="2" y1="3.75" x2="2" y2="12" width="0.127" layer="21"/>
-<wire x1="-7.5" y1="0" x2="7.5" y2="0" width="0.127" layer="21"/>
-<wire x1="7.5" y1="0" x2="7.5" y2="1" width="0.127" layer="21"/>
-<wire x1="-7.5" y1="0" x2="-7.5" y2="1" width="0.127" layer="21"/>
-<wire x1="-6.6675" y1="15.24" x2="-5.715" y2="12.7" width="0.127" layer="21"/>
-<wire x1="-5.715" y1="12.7" x2="-4.7625" y2="15.24" width="0.127" layer="21"/>
-<wire x1="-4.7625" y1="15.24" x2="-6.6675" y2="15.24" width="0.127" layer="21"/>
-</package>
-</packages>
-<symbols>
-<symbol name="4-PIN_DUPONT">
-<wire x1="3.81" y1="-7.62" x2="-1.27" y2="-7.62" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="0" x2="2.54" y2="0" width="0.6096" layer="94"/>
-<wire x1="1.27" y1="-2.54" x2="2.54" y2="-2.54" width="0.6096" layer="94"/>
-<wire x1="1.27" y1="-5.08" x2="2.54" y2="-5.08" width="0.6096" layer="94"/>
-<wire x1="-1.27" y1="5.08" x2="-1.27" y2="-7.62" width="0.4064" layer="94"/>
-<wire x1="3.81" y1="-7.62" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-1.27" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
-<text x="-1.27" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
-<text x="-1.27" y="5.842" size="1.778" layer="95">&gt;NAME</text>
-<pin name="1" x="7.62" y="-5.08" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="2" x="7.62" y="-2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="3" x="7.62" y="0" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="4" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="4-PIN_DUPONT" prefix="SV" uservalue="yes">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<gates>
-<gate name="1" symbol="4-PIN_DUPONT" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="4-PIN_DUPONT">
-<connects>
-<connect gate="1" pin="1" pad="P$1"/>
-<connect gate="1" pin="2" pad="P$2"/>
-<connect gate="1" pin="3" pad="P$3"/>
-<connect gate="1" pin="4" pad="P$4"/>
-</connects>
-<technologies>
-<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -10257,7 +10256,6 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="U5" library="74xx-little-us" deviceset="74*1G17" device="DCK" technology="LVC"/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="TP2" library="solpad" deviceset="SE11" device="" value="ADDRESS"/>
 <part name="U3" library="74xx-little-us" deviceset="74*1G17" device="DCK" technology="LVC"/>
 <part name="T1" library="zetex" deviceset="PMOSSOT23" device=""/>
 <part name="P+4" library="supply1" deviceset="+5V" device=""/>
@@ -10266,7 +10264,7 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="C6" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
 <part name="R5" library="adafruit" deviceset="R-US_" device="R0402" value="10k"/>
-<part name="SV1" library="dodocohedreled" deviceset="4-PIN_DUPONT" device=""/>
+<part name="SV1" library="blinkinlabs" deviceset="4-PIN_DUPONT" device=""/>
 <part name="C8" library="adafruit" deviceset="C-US" device="C0805K" value="10uF"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="3V4" library="supply1" deviceset="+3V3" device=""/>
@@ -10366,7 +10364,6 @@ pin besides the ones on Port C</text>
 <attribute name="VALUE" x="266.7" y="146.05" size="1.778" layer="96"/>
 </instance>
 <instance part="GND5" gate="1" x="269.24" y="119.38"/>
-<instance part="TP2" gate="1" x="307.34" y="91.44" rot="MR0"/>
 <instance part="U3" gate="G$1" x="337.82" y="124.46" smashed="yes">
 <attribute name="NAME" x="339.09" y="127.635" size="1.778" layer="95"/>
 <attribute name="VALUE" x="339.09" y="119.38" size="1.778" layer="96"/>
@@ -10830,13 +10827,10 @@ pin besides the ones on Port C</text>
 <net name="N$4" class="0">
 <segment>
 <pinref part="U5" gate="G$1" pin="O"/>
-<pinref part="TP2" gate="1" pin="MP"/>
-<wire x1="307.34" y1="88.9" x2="297.18" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="SV1" gate="1" pin="3"/>
 <wire x1="365.76" y1="101.6" x2="345.44" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="345.44" y1="101.6" x2="345.44" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="345.44" y1="88.9" x2="307.34" y2="88.9" width="0.1524" layer="91"/>
-<junction x="307.34" y="88.9"/>
+<wire x1="345.44" y1="88.9" x2="297.18" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
