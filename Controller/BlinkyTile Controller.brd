@@ -1872,7 +1872,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="LED1" library="adafruit" package="CHIPLED_0805" value="STATUS" x="2.3" y="-8.6" smashed="yes">
 <attribute name="VALUE" x="4.84" y="-9.87" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="Q1" library="blinkinlabs" package="CRSYTAL_2520" value="CRYSTAL_4PAD2520" x="22.75" y="-4.25" smashed="yes" rot="R180"/>
+<element name="Q1" library="blinkinlabs" package="CRSYTAL_2520" value="16MHz" x="22.75" y="-4.25" smashed="yes" rot="R180"/>
 <element name="R1" library="adafruit" package="R0402" value="33" x="8.875" y="0.5" smashed="yes"/>
 <element name="R2" library="adafruit" package="R0402" value="33" x="8.875" y="1.75" smashed="yes"/>
 <element name="R4" library="adafruit" package="R0402" value="330" x="3.95" y="-8.6" smashed="yes" rot="R90"/>
@@ -1916,10 +1916,10 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="U6" library="blinkinlabs" package="R-PUSON-N6" value="TPD4S012" x="6.85" y="0" smashed="yes" rot="R270">
 <attribute name="VALUE" x="4.405" y="1.905" size="1.27" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="L3" library="blinkinlabs" package="0805" value="FB0805/NO-OUTLINE" x="3.75" y="6.5" smashed="yes" rot="R270">
+<element name="L3" library="blinkinlabs" package="0805" value="130ohm @100MHz" x="3.75" y="6.5" smashed="yes" rot="R270">
 <attribute name="VALUE" x="2.988" y="4.468" size="0.4064" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="L2" library="blinkinlabs" package="0805" value="FB0805/NO-OUTLINE" x="1.5" y="6.5" smashed="yes" rot="R90">
+<element name="L2" library="blinkinlabs" package="0805" value="130ohm @100MHz" x="1.5" y="6.5" smashed="yes" rot="R90">
 <attribute name="VALUE" x="2.262" y="8.532" size="0.4064" layer="27" ratio="10" rot="R90"/>
 </element>
 </elements>
