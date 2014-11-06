@@ -5899,15 +5899,15 @@ Source: http://www.osram.convergy.de/</description>
 <smd name="32" x="-1.75" y="2.775" dx="1.25" dy="0.275" layer="1" roundness="100" rot="R270"/>
 <text x="-3.9" y="4.55" size="1.27" layer="25">&gt;NAME</text>
 <text x="-3.9" y="-5.525" size="1.27" layer="27">&gt;VALUE</text>
-<pad name="PAD@9" x="-1" y="-1" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@6" x="0" y="0" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@5" x="-1" y="0" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@1" x="-1" y="1" drill="0.254" diameter="1.5" shape="octagon" stop="no" thermals="no"/>
-<pad name="PAD@2" x="0" y="1" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@3" x="1" y="0" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@10" x="0" y="-1" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@11" x="1" y="-1" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
-<pad name="PAD@4" x="1" y="1" drill="0.254" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@9" x="-1" y="-1" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@6" x="0" y="0" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@5" x="-1" y="0" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@1" x="-1" y="1" drill="0.3" diameter="1.5" shape="octagon" stop="no" thermals="no"/>
+<pad name="PAD@2" x="0" y="1" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@3" x="1" y="0" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@10" x="0" y="-1" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@11" x="1" y="-1" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
+<pad name="PAD@4" x="1" y="1" drill="0.3" diameter="1.5" shape="square" stop="no" thermals="no"/>
 <rectangle x1="0.6" y1="-1.4" x2="1.4" y2="-0.6" layer="31"/>
 <rectangle x1="0.6" y1="-0.4" x2="1.4" y2="0.4" layer="31"/>
 <rectangle x1="0.6" y1="0.6" x2="1.4" y2="1.4" layer="31"/>
