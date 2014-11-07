@@ -10383,7 +10383,7 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="GND10" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="C5" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
-<part name="U2" library="blinkinlabs" deviceset="W25Q--DV" device="SN(150)"/>
+<part name="U2" library="blinkinlabs" deviceset="W25Q--DV" device="SS(208)" value="W25Q--DVSS(208)"/>
 <part name="FRAME1" library="frames" deviceset="DINA3_L" device=""/>
 <part name="C1" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
 <part name="R4" library="adafruit" deviceset="R-US_" device="R0402" value="330"/>
