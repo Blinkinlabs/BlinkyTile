@@ -166,15 +166,18 @@ extern "C" int main()
     dmxSetup();
     enableOutputPower();
 
-   flash.begin(winbondFlashClass::autoDetect);
+    // If the flash initializes successfully, then load the animations table.
+    if(flash.begin(winbondFlashClass::autoDetect)) {
+        animations.begin(flash);
 
-   animations.begin(flash);
-
-   // If the flash was not set up with an animation, burn one to it.
-   if(!animations.isInitialized()) {
-       makeDefaultAnimation(flash);
-       animations.begin(flash);
-   }
+        // If the flash was not set up with an animation, burn one to it.
+        // TODO: There's a failure mode here where an undervoltage condition could cause
+        // this to wipe the flash.
+        if(!animations.isInitialized()) {
+            makeDefaultAnimation(flash);
+            animations.begin(flash);
+        }
+    }
 
 
     serial_begin(BAUD2DIV(115200));
@@ -204,6 +207,12 @@ extern "C" int main()
         if(state%2000 == 1) {
             switch(pattern) {
                 case 0:
+                    // If the flash wasn't initialized, then skip to the next built-in pattern.
+                    if(!animations.isInitialized()) {
+                        pattern++;
+                        break;
+                    }
+
                     // Flash-based
                     if(millis() > nextTime) {
                         animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());

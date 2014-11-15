@@ -11,7 +11,7 @@ void makeDefaultAnimation(winbondFlashSPI& flash) {
     flash.setWriteEnable(false);
 
     #define SAMPLE_ANIMATION_ADDRESS 0x00000100
-    #define SAMPLE_ANIMATION_FRAMES  6
+    #define SAMPLE_ANIMATION_FRAMES  5
 
     // Program a table!
     uint32_t sampleTable[64];

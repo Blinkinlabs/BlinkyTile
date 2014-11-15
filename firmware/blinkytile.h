@@ -27,24 +27,6 @@
 #define LED_COUNT 12        // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL    3
 
-#define REV_B
-
-#ifdef REV_A
-
-#define BUTTON_COUNT     2 // Two input buttons
-#define BUTTON_A 		 0 // First button
-#define BUTTON_B 		 1 // First button
-
-#define BUTTON_A_PIN      5 // Button A: Port D7
-#define BUTTON_B_PIN     21 // Button B: Port D6
-#define STATUS_LED_PIN   20 // Status LED: Port D5
-#define POWER_ENABLE_PIN  2 // Output power enable resistor: Port D0
-//#define FLASH_CS_PIN     17 // Flash chip select: Port B1
-#define ADDRESS_P_PIN     9 // Address program pin: Port C3
-#define DATA_OUT_PIN     10 // Data output pin: Port C4
-
-#elif defined REV_B
-
 #define BUTTON_COUNT      2 // Two input buttons
 #define BUTTON_A 		  0 // First button
 #define BUTTON_B 		  1 // First button
@@ -57,11 +39,8 @@
 #define DATA_OUT_PIN     10 // Data output pin: Port C4
 
 
-#endif
-
 // Initialize the board hardware (buttons, status led, LED control pins)
 extern void initBoard();
-
 
 // Set the brightness of the status LED
 // 0 = off, 255 = on
