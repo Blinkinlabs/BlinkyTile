@@ -1,5 +1,7 @@
 /*
  * Fadecandy DFU Bootloader
+ *
+ * Modified by Matt Mets to work with parts that do not contain flexram
  * 
  * Copyright (c) 2013 Micah Elizabeth Scott
  * 
@@ -30,49 +32,21 @@
 extern uint32_t boot_token;
 static __attribute__ ((section(".appvectors"))) uint32_t appVectors[64];
 
-#define REV_B
-
-#if defined(REV_A)
-
-const uint32_t led_bit =      1 << 5;  // LED is on Port D5
-const uint32_t button_1_bit = 1 << 7;  // Button 1 on D7
-const uint32_t button_2_bit = 1 << 6;  // Button 2 on D6
-
-#elif defined(REV_B)
-
 const uint32_t led_bit =      1 << 6;  // LED is on Port D6
 const uint32_t button_1_bit = 1 << 7;  // Button 1 on D7
 const uint32_t button_2_bit = 1 << 5;  // Button 2 on D3
 
-#else
-
-#warning Board revision not recognized- LED disabled
-
-#endif
-
 static void led_init()
 {
-
-#if defined(REV_A)
-    // Set the status LED on PD5, as an indication that we're in bootloading mode.
-    PORTD_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
-    GPIOD_PDDR |= led_bit;
-    GPIOD_PDOR |= led_bit;
-
-#elif defined(REV_B)
-// Set the status LED on PD6, as an indication that we're in bootloading mode.
+    // Set the status LED on PD6, as an indication that we're in bootloading mode.
     PORTD_PCR6 = PORT_PCR_MUX(1) | PORT_PCR_DSE | PORT_PCR_SRE;
     GPIOD_PDDR |= led_bit;
     GPIOD_PDOR |= led_bit;
-#endif
-
 }
 
 static void led_toggle()
 {
-#if defined(REV_A) || defined(REV_B)
     GPIOD_PTOR = led_bit;
-#endif
 }
 
 static bool test_boot_token()
@@ -97,40 +71,6 @@ static bool test_app_missing()
     return entry < 0x00001000 || entry >= 128 * 1024;
 }
 
-static bool test_banner_echo()
-{
-    /*
-     * At startup we print this banner out to the serial port.
-     * If we see it echo back to us, we enter bootloader mode no matter what.
-     * This is intended to be a foolproof way to enter recovery mode, even if other
-     * circuitry has been connected to the serial port.
-     */
-
-    static char banner[] = "FC-Boot";
-    const unsigned bannerLength = sizeof banner - 1;
-    unsigned matched = 0;
-
-    // Write banner
-    serial_begin(BAUD2DIV(9600));
-    serial_write(banner, sizeof banner - 1);
-
-    // Newline is not technically part of the banner, so we can do the RX check
-    // at a time when we're sure the other characters have arrived in the RX fifo.
-    serial_putchar('\n');
-    serial_flush();
-
-    while (matched < bannerLength) {
-        if (serial_available() && serial_getchar() == banner[matched]) {
-            matched++;
-        } else {
-            break;
-        }
-    }
-
-    serial_end();
-    return matched == bannerLength;
-}
-
 static bool test_user_buttons() {
     /*
      * At startup we test to see if both user buttons are pressed down. If they are,
@@ -138,7 +78,6 @@ static bool test_user_buttons() {
      * for a misbehaving application that prevents DFU mode.
      */
 
-#if defined(REV_A) || defined(REV_B)
     // Read the two status pins.
     PORTD_PCR6 = PORT_PCR_MUX(1) | PORT_PCR_PS | PORT_PCR_PE | PORT_PCR_SRE;
     PORTD_PCR7 = PORT_PCR_MUX(1) | PORT_PCR_PS | PORT_PCR_PE | PORT_PCR_SRE;
@@ -147,10 +86,6 @@ static bool test_user_buttons() {
     uint32_t status = GPIOD_PDIR & (button_1_bit | button_2_bit);
 
     return status == 0;
-
-#else
-    return false;
-#endif
 }
 
 static void app_launch()
