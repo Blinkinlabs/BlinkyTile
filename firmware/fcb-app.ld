@@ -83,11 +83,12 @@ SECTIONS
     } > FLASH
     _etext = .;
 
+/*
     .flexram (NOLOAD) : {
         . = ALIGN(4);
         *(.flexram*)
     } > FLEXRAM
-
+*/
     .usbdescriptortable (NOLOAD) : {
         /* . = ORIGIN(RAM); */
         . = ALIGN(512);
@@ -130,8 +131,10 @@ SECTIONS
     _estack = ORIGIN(RAM) + LENGTH(RAM) - 4;
     boot_token = _estack;
 
+/*
     _flexram_begin = ORIGIN(FLEXRAM);
     _flexram_end = ORIGIN(FLEXRAM) + LENGTH(FLEXRAM);
+*/
 }
 
 

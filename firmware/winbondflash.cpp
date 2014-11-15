@@ -60,7 +60,7 @@ static const winbondPnListType winbondPnList[] = {
 };
 
 static const winbondPnListType spansionPnList[] = {
-//    { winbondFlashClass::S25FL208K, 0x4014,1048576, 4096, 256, 16  },
+    { winbondFlashClass::S25FL208K, 0x4014,1048576, 4096, 256, 16  },
     { winbondFlashClass::S25FL216K, 0x4015,2097152, 8192, 512, 32  },
 };
     
