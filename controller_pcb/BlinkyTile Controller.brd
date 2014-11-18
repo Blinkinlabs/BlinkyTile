@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.000943" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.25" altunitdist="mm" altunit="mm"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.25" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -27,11 +27,11 @@
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
@@ -54,11 +54,11 @@
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
@@ -16277,24 +16277,23 @@ JST PH 2-pin thru-home side entry</description>
 <text x="0.486" y="-2.096" size="1.4224" layer="21" ratio="12">+</text>
 <text x="-1.429" y="-1.896" size="1.4224" layer="21" ratio="12">-</text>
 </package>
-<package name="SOD-323F">
-<wire x1="-0.85" y1="0.65" x2="0.85" y2="0.65" width="0.127" layer="21"/>
-<wire x1="0.85" y1="0.65" x2="0.85" y2="-0.65" width="0.127" layer="21"/>
-<wire x1="0.85" y1="-0.65" x2="-0.85" y2="-0.65" width="0.127" layer="21"/>
-<wire x1="-0.85" y1="-0.65" x2="-0.85" y2="0.65" width="0.127" layer="21"/>
-<wire x1="0.4" y1="0.6" x2="0.4" y2="-0.6" width="0.127" layer="21"/>
-<wire x1="0.4" y1="-0.6" x2="0.3" y2="-0.6" width="0.127" layer="21"/>
-<wire x1="0.3" y1="-0.6" x2="0.3" y2="0.6" width="0.127" layer="21"/>
-<wire x1="-0.9" y1="0.2" x2="-1.2" y2="0.2" width="0.127" layer="51"/>
-<wire x1="-1.2" y1="0.2" x2="-1.2" y2="-0.2" width="0.127" layer="51"/>
-<wire x1="-1.2" y1="-0.2" x2="-0.9" y2="-0.2" width="0.127" layer="51"/>
-<wire x1="0.9" y1="0.2" x2="1.2" y2="0.2" width="0.127" layer="51"/>
-<wire x1="1.2" y1="0.2" x2="1.2" y2="-0.2" width="0.127" layer="51"/>
-<wire x1="1.2" y1="-0.2" x2="0.9" y2="-0.2" width="0.127" layer="51"/>
-<smd name="A" x="-1" y="0" dx="1" dy="0.8" layer="1"/>
-<smd name="C" x="1" y="0" dx="1" dy="0.8" layer="1"/>
-<text x="-1.8" y="0.9" size="0.8128" layer="25" font="vector">&gt;NAME</text>
-<text x="-2.1" y="-1.7" size="0.8128" layer="27" font="vector">&gt;VALUE</text>
+<package name="SOD-123">
+<wire x1="-1" y1="0.7" x2="1" y2="0.7" width="0.1524" layer="51"/>
+<wire x1="1" y1="0.7" x2="1" y2="-0.7" width="0.1524" layer="51"/>
+<wire x1="1" y1="-0.7" x2="-1" y2="-0.7" width="0.1524" layer="51"/>
+<wire x1="-1" y1="-0.7" x2="-1" y2="0.7" width="0.1524" layer="51"/>
+<wire x1="-0.5" y1="0" x2="0.1" y2="0.4" width="0.1524" layer="51"/>
+<wire x1="0.1" y1="0.4" x2="0.1" y2="-0.4" width="0.1524" layer="51"/>
+<wire x1="0.1" y1="-0.4" x2="-0.5" y2="0" width="0.1524" layer="51"/>
+<wire x1="-1.778" y1="0.762" x2="1.778" y2="0.762" width="0.127" layer="21"/>
+<wire x1="1.778" y1="0.762" x2="1.778" y2="-0.762" width="0.127" layer="21"/>
+<wire x1="1.778" y1="-0.762" x2="-1.778" y2="-0.762" width="0.127" layer="21"/>
+<wire x1="-1.778" y1="-0.762" x2="-1.778" y2="0.762" width="0.127" layer="21"/>
+<smd name="C" x="-1.85" y="0" dx="1.2" dy="0.7" layer="1"/>
+<smd name="A" x="1.85" y="0" dx="1.2" dy="0.7" layer="1"/>
+<text x="-1.1" y="1" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.1" y="-1.284" size="0.4064" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.7" y1="-0.7" x2="-0.5" y2="0.7" layer="51"/>
 </package>
 </packages>
 </library>
@@ -17918,7 +17917,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="U4" library="74xx-little-us" package="SC70-5" value="74LVC1G17DCK" x="25" y="3.75" smashed="yes" rot="R270"/>
 <element name="U5" library="74xx-little-us" package="SC70-5" value="74LVC1G17DCK" x="25" y="1.25" smashed="yes" rot="R270"/>
 <element name="U3" library="74xx-little-us" package="SC70-5" value="74LVC1G17DCK" x="25" y="6.25" smashed="yes" rot="R270"/>
-<element name="T1" library="zetex" package="SOT-23" value="" x="26.8" y="9.35" smashed="yes">
+<element name="T1" library="zetex" package="SOT-23" value="SSM3J328R,LF" x="26.8" y="9.35" smashed="yes">
 <attribute name="OC_NEWARK" value="unknown" x="26.8" y="9.35" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="" x="26.8" y="9.35" size="1.778" layer="27" display="off"/>
 <attribute name="MF" value="" x="26.8" y="9.35" size="1.778" layer="27" display="off"/>
@@ -17929,10 +17928,10 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="C6" library="adafruit" package="C0402" value="100nF" x="17.2" y="-5.125" smashed="yes" rot="R270">
 <attribute name="VALUE" x="15.295" y="-4.49" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R5" library="adafruit" package="R0402" value="10k" x="24" y="8.5" smashed="yes" rot="R90">
+<element name="R5" library="adafruit" package="R0402" value="1k" x="24" y="8.5" smashed="yes" rot="R90">
 <attribute name="VALUE" x="26.032" y="7.865" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="SV1" library="blinkinlabs" package="DUPONT-4P" value="" x="28.246" y="0" smashed="yes" rot="R270">
+<element name="SV1" library="blinkinlabs" package="DUPONT-4P" value="LED_OUT" x="28.246" y="0" smashed="yes" rot="R270">
 <attribute name="VALUE" x="29.897" y="-0.635" size="1.27" layer="27" ratio="10" rot="R270"/>
 </element>
 <element name="C8" library="adafruit" package="C0805K" value="10uF" x="9.125" y="3.5" smashed="yes" rot="R180">
@@ -17944,10 +17943,10 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="JP3" library="SparkFun-Connectors" package="1X01" value="M01PTH" x="29.37" y="-10.25" smashed="yes">
 <attribute name="VALUE" x="28.1" y="-13.425" size="1.27" layer="27"/>
 </element>
-<element name="U$1" library="blinkinlabs" package="TD-07XB" value="BUTTON_MOMENTARY_GROUND" x="9.75" y="-8.25" smashed="yes">
+<element name="U$1" library="blinkinlabs" package="TD-07XB" value="BUTTON_1" x="9.75" y="-8.25" smashed="yes">
 <attribute name="VALUE" x="6.915" y="-13.425" size="1.27" layer="27"/>
 </element>
-<element name="U$2" library="blinkinlabs" package="TD-07XB" value="BUTTON_MOMENTARY_GROUND" x="9.75" y="8.25" smashed="yes">
+<element name="U$2" library="blinkinlabs" package="TD-07XB" value="BUTTON_2" x="9.75" y="8.25" smashed="yes">
 <attribute name="VALUE" x="6.915" y="3.075" size="1.27" layer="27"/>
 </element>
 <element name="U6" library="blinkinlabs" package="R-PUSON-N6" value="TPD4S012" x="6.85" y="0" smashed="yes" rot="R270">
@@ -17959,9 +17958,9 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="L2" library="blinkinlabs" package="0805" value="130ohm @100MHz" x="6.25" y="-3" smashed="yes" rot="R90">
 <attribute name="VALUE" x="7.012" y="-0.968" size="0.4064" layer="27" ratio="10" rot="R90"/>
 </element>
-<element name="CN1" library="adafruit" package="JST-PH-2-THM-RA" value="" x="3.5" y="9.25" smashed="yes" rot="R90"/>
-<element name="D1" library="adafruit" package="SOD-323F" value="" x="3" y="5.25" smashed="yes" rot="R180">
-<attribute name="VALUE" x="5.1" y="6.95" size="0.8128" layer="27" font="vector" rot="R180"/>
+<element name="CN1" library="adafruit" package="JST-PH-2-THM-RA" value="Battery" x="3.5" y="9.25" smashed="yes" rot="R90"/>
+<element name="D3" library="adafruit" package="SOD-123" value="RB161M-20" x="3" y="4.95" smashed="yes">
+<attribute name="VALUE" x="1.9" y="3.666" size="0.4064" layer="27"/>
 </element>
 </elements>
 <signals>
@@ -18186,11 +18185,12 @@ Modified from Laen's PCB Order Design Rules</description>
 <via x="2.05" y="11" extent="1-16" drill="0.3"/>
 <contactref element="CN1" pad="1"/>
 <wire x1="1.55" y1="8.75" x2="1.3" y2="9" width="0.8128" layer="1"/>
-<contactref element="D1" pad="C"/>
-<wire x1="2" y1="5.25" x2="2" y2="8.3" width="0.8128" layer="1"/>
 <wire x1="2" y1="8.3" x2="1.3" y2="9" width="0.8128" layer="1"/>
 <wire x1="12.9" y1="-1.85" x2="13.45" y2="-1.85" width="0.254" layer="1"/>
 <wire x1="13.45" y1="-1.85" x2="13.8" y2="-1.5" width="0.254" layer="1"/>
+<contactref element="D3" pad="C"/>
+<wire x1="1.15" y1="4.95" x2="1.15" y2="6.85" width="0.8128" layer="1"/>
+<wire x1="1.15" y1="6.85" x2="1" y2="7" width="0.8128" layer="1"/>
 </signal>
 <signal name="+3V3">
 <contactref element="R4" pad="2"/>
@@ -18395,7 +18395,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="6.75" y1="1.25" x2="6.75" y2="1.55" width="0.254" layer="1"/>
 <wire x1="6.75" y1="1.55" x2="6.25" y2="2.05" width="0.254" layer="1"/>
 </signal>
-<signal name="SW1">
+<signal name="BUTTON1">
 <via x="10" y="-1.25" extent="1-16" drill="0.3"/>
 <contactref element="U1" pad="32"/>
 <wire x1="16.5" y1="2.775" x2="16.5" y2="3.25" width="0.2032" layer="1"/>
@@ -18419,14 +18419,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="17.5" y1="2.775" x2="17.5" y2="3.996" width="0.2032" layer="1"/>
 <wire x1="17.5" y1="3.996" x2="16.996" y2="4.5" width="0.2032" layer="1"/>
 <wire x1="16.996" y1="4.5" x2="14.25" y2="4.5" width="0.2032" layer="1"/>
-<contactref element="U$2" pad="1"/>
-<contactref element="U$2" pad="2"/>
 <wire x1="14.25" y1="4.5" x2="13.65" y2="5.1" width="0.2032" layer="1"/>
-<wire x1="13.65" y1="6" x2="13.65" y2="5.1" width="0.2032" layer="1"/>
-<wire x1="13.65" y1="6" x2="13.25" y2="6" width="0.2032" layer="1"/>
-<wire x1="13.25" y1="6" x2="13" y2="6.25" width="0.2032" layer="1"/>
-<wire x1="13" y1="6.25" x2="6.1" y2="6.25" width="0.2032" layer="1"/>
-<wire x1="6.1" y1="6.25" x2="5.85" y2="6" width="0.2032" layer="1"/>
 </signal>
 <signal name="DATA_OUT">
 <contactref element="U4" pad="2"/>
@@ -18600,12 +18593,21 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="33.95" y1="8.75" x2="33.95" y2="6.45" width="0.8128" layer="1"/>
 </signal>
 <signal name="N$9">
-<contactref element="D1" pad="A"/>
 <contactref element="L3" pad="1"/>
-<wire x1="6.25" y1="3.95" x2="6.25" y2="4.25" width="0.8128" layer="1"/>
-<wire x1="6.25" y1="4.25" x2="5.75" y2="4.75" width="0.8128" layer="1"/>
-<wire x1="5.75" y1="4.75" x2="4.5" y2="4.75" width="0.8128" layer="1"/>
-<wire x1="4.5" y1="4.75" x2="4" y2="5.25" width="0.8128" layer="1"/>
+<contactref element="D3" pad="A"/>
+<wire x1="6.25" y1="3.95" x2="6.25" y2="4.5" width="0.8128" layer="1"/>
+<wire x1="6.25" y1="4.5" x2="6" y2="4.75" width="0.8128" layer="1"/>
+<wire x1="6" y1="4.75" x2="5.05" y2="4.75" width="0.8128" layer="1"/>
+<wire x1="5.05" y1="4.75" x2="4.85" y2="4.95" width="0.8128" layer="1"/>
+</signal>
+<signal name="BUTTON2">
+<contactref element="U$2" pad="1"/>
+<contactref element="U$2" pad="2"/>
+<wire x1="13.65" y1="6" x2="13" y2="6" width="0.2032" layer="1"/>
+<wire x1="13" y1="6" x2="13" y2="6.25" width="0.2032" layer="1"/>
+<wire x1="13" y1="6.25" x2="6.5" y2="6.25" width="0.2032" layer="1"/>
+<wire x1="6.5" y1="6.25" x2="6.5" y2="6" width="0.2032" layer="1"/>
+<wire x1="6.5" y1="6" x2="5.85" y2="6" width="0.2032" layer="1"/>
 </signal>
 </signals>
 <errors>
@@ -18632,6 +18634,11 @@ Modified from Laen's PCB Order Design Rules</description>
 <approved hash="6,1,e8aee41689df8867"/>
 <approved hash="6,1,430a4461e62e1c48"/>
 <approved hash="6,1,9e0a64e175ac73a7"/>
+<approved hash="19,1,96604b5eb3096847"/>
+<approved hash="19,1,ff6d8b6973430137"/>
+<approved hash="5,1,effb00e1aa96d591"/>
+<approved hash="5,1,bc7171b0d7ec3254"/>
+<approved hash="5,1,d67a1a50f8bf8d6d"/>
 <approved hash="5,1,55064dc824aa0127"/>
 <approved hash="5,1,aa06b2c424aa012b"/>
 <approved hash="5,1,7bba7471edaa011b"/>
