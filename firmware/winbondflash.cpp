@@ -28,7 +28,7 @@
 //#define HIGH_PERF_M     0xa3    //high performance mode
 //#define CONT_R_RST      0xff    //continuous read mode reset
 #define RELEASE         0xab    //release power down or HPM/Dev ID (deprecated)
-#define R_MANUF_ID      0x90    //read Manufacturer and Dev ID (deprecated)
+//#define R_MANUF_ID      0x90    //read Manufacturer and Dev ID (deprecated)
 //#define R_UNIQUE_ID     0x4b    //read unique ID (suggested)
 #define R_JEDEC_ID      0x9f    //read JEDEC ID = Manuf+ID (suggested)
 #define READ            0x03
@@ -171,6 +171,10 @@ bool winbondFlashClass::checkPartNo(partNumber _partno)
         }
     }
     else if(manuf == SPANSION_MANUF) {
+        
+        if(_partno == custom)
+            return true;
+
         if(_partno == autoDetect)
         {
             for(int i=0;i<sizeof(spansionPnList)/sizeof(spansionPnList[0]);i++)
@@ -381,6 +385,7 @@ bool winbondFlashSPI::begin(partNumber _partno)
 //  nss = _nss;
 
     spi4teensy3::init(7);
+    //spi4teensy3::init();
 
 //  pinMode(nss, OUTPUT);
     deselect();
