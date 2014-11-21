@@ -10864,6 +10864,7 @@ http://www.zetex.com&lt;p&gt;
 <sheets>
 <sheet>
 <plain>
+<text x="-20.32" y="-101.6" size="1.778" layer="97">TODO: Pull OE low, not high.</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="-7.62" y="-5.08"/>
