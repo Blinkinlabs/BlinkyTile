@@ -27,9 +27,10 @@
 #include <algorithm>
 #include <stdlib.h>
 #include "fc_usb.h"
+#include "arm_math.h"
 //#include "fc_defs.h"
 #include "HardwareSerial.h"
-#include "arm_math.h"
+#include "usb_serial.h"
 
 //#include "matrix.h"
 #include "blinkytile.h"
@@ -210,8 +211,10 @@ extern "C" int main()
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
         static int brightnessStep = 5;
 
+        static bool serial_mode = false;
+
         // Play a pattern
-        if(state%2000 == 1) {
+        if((state%2000 == 1) & (!serial_mode)) {
             switch(pattern) {
                 case 0:
                     // If the flash wasn't initialized, then skip to the next built-in pattern.
@@ -275,9 +278,9 @@ extern "C" int main()
                 dmxSetBrightness(brightnessLevels[brightnessStep]);
             }
         }
- 
 
-        if(serial_available() > 0) {
+        if(usb_serial_available() > 0) {
+            serial_mode = true;
             serial_loop();
 
 //            if(serialReceiver.parseByte(serial_getchar())) {
