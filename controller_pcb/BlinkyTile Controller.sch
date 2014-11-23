@@ -11412,13 +11412,6 @@ buttons.</text>
 <label x="195.58" y="160.02" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="SW2" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="PTD5"/>
-<wire x1="187.96" y1="165.1" x2="205.74" y2="165.1" width="0.1524" layer="91"/>
-<label x="195.58" y="165.1" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="DATA_OUT" class="0">
 <segment>
 <pinref part="U4" gate="G$1" pin="I"/>
@@ -11570,6 +11563,11 @@ buttons.</text>
 <label x="71.12" y="93.98" size="1.778" layer="95"/>
 <pinref part="SW2" gate="G$1" pin="P"/>
 <wire x1="68.58" y1="93.98" x2="78.74" y2="93.98" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="PTD5"/>
+<wire x1="187.96" y1="165.1" x2="205.74" y2="165.1" width="0.1524" layer="91"/>
+<label x="195.58" y="165.1" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
