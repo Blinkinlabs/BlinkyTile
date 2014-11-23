@@ -21,7 +21,7 @@ This board is a work-in-progress. This directory contains Teensyduino sketches w
 Hardware tidbits
 ----------------
 
-* JTAG port uses 10K pull-up resistors to Fadecandy's 3.3v rail on all signals.
+* JTAG port uses 10K pull-up resistors to target's' 3.3v rail on all signals.
 * Pogo pins are 2x Digi-Key part ED8178-16-ND
 * Big green button next to pogo-pins to initiate programming/test
 
@@ -32,30 +32,30 @@ Pin      | Description
 -------- | ----------------------------------
 Gnd      | Shared ground
 Vin      | +5V power for testjig itself
-0        | Teensy RX, Fadecandy TX
-1        | Teensy TX, Fadecandy RX
+0        | Teensy RX, target TX
+1        | Teensy TX, target RX
 2        | To ground via green button
-3        | Fadecandy TCLK (SWCLK)
-4        | Fadecandy TMS (SWDIO)
-5        | Fadecandy USB D- (white wire)
-6        | Fadecandy USB D+ (green wire)
-7        | Fadecandy USB shield ground
-8        | Fadecandy USB signal ground
+3        | target TCLK (SWCLK)
+4        | target TMS (SWDIO)
+5        | target USB D- (white wire)
+6        | target USB D+ (green wire)
+7        | target USB shield ground
+8        | target USB signal ground
 9        | (No connection)
 10       | PWM out for power supply control
-11       | DOUT of second WS2811 LED, via 3.3K current limiting resistor
-12       | (No connection)
+11       | PASS LED (to ground)
+12       | FAIL LED (to ground)
 13       | (Teensy built-in LED)
-14 (A0)  | Fadecandy output 0 (via resistor divider)
-15 (A1)  | Fadecandy output 1 (via resistor divider)
-16 (A2)  | Fadecandy output 2 (via resistor divider)
-17 (A3)  | Fadecandy output 3 (via resistor divider)
-18 (A4)  | Fadecandy output 4 (via resistor divider)
-19 (A5)  | Fadecandy output 5 (via resistor divider)
-20 (A6)  | Fadecandy output 6 (via resistor divider)
-21 (A7)  | Fadecandy output 7 (via resistor divider)
-22 (A8)  | Fadecandy 3.3v     (via resistor divider)
-23 (A9)  | Fadecandy VUSB     (via resistor divider)
+14 (A0)  | target output 0 (via resistor divider) PA4
+15 (A1)  | target output 1 (via resistor divider) PB0
+16 (A2)  | target output 2 (via resistor divider) PC1
+17 (A3)  | target output 3 (via resistor divider)
+18 (A4)  | target output 4 (via resistor divider)
+19 (A5)  | target output 5 (via resistor divider)
+20 (A6)  | target output 6 (via resistor divider) PB1
+21 (A7)  | target output 7 (via resistor divider)
+22 (A8)  | target 3.3v     (via resistor divider)
+23 (A9)  | target VUSB     (via resistor divider)
 
 All analog inputs connect via the same resistor divider:
 
