@@ -5,18 +5,16 @@
 
 #define SWITCH_PIN    9
 
-#define MAX_OUTPUTS  50     // Number of address outputs available
-#define OUTPUT_COUNT 16     // Number of address outputs enabled
 
-//// Programmer pins
-//const int csPin      = 10;
-//const int doutPin    = 11;
-//const int dinPin     = 12;
-//const int sckPin     = 13;
-
+#define OUTPUT_COUNT 14       // Number of address outputs enabled
+#define MAX_OUTPUTS  14*3     // Number of address outputs available
 
 // Data output pin
-const int dataPin    = 0;
+const int dataPin        = 0;
+const int powerEnablePin = 2;
+
+const int passLedPin     = 23;
+const int failLedPin     = 22;
 
 static volatile uint8_t *dmxPort;
 static uint8_t dmxBit = 0;
@@ -41,12 +39,10 @@ const int addressPins[MAX_OUTPUTS] = {
   5,       // 12
   4,       // 13
   3,       // 14
-  2,       // 15
-  1,       // 16
 };
 
 // Output addresses to program
-const int addresses[MAX_OUTPUTS] = {
+int addresses[MAX_OUTPUTS] = {
   1,
   2,
   3,
@@ -61,8 +57,6 @@ const int addresses[MAX_OUTPUTS] = {
   12,
   13,
   14,
-  15,
-  16
 };
 
 // Data table of bytes we need to send to program the addresses
@@ -71,6 +65,15 @@ const int addresses[MAX_OUTPUTS] = {
 #define PROGRAM_ADDRESS_FRAMES 1+3
 int addressProgrammingData[MAX_OUTPUTS][PROGRAM_ADDRESS_FRAMES];
 
+// Turn power to the LEDs on
+void enableLedPower() {
+  digitalWriteFast(powerEnablePin, LOW);
+}
+
+// Turn power to the LEDs off
+void disableLedPower() {
+  digitalWriteFast(powerEnablePin, HIGH);
+}
 
 void writePixel(int pixel, int r, int g, int b) {
   dataArray[0] = 0;    // Start bit!
@@ -162,6 +165,13 @@ void dmxSendByte(uint8_t value)
 // Send programming data
 void programAddresses() {
   
+  digitalWriteFast(passLedPin, LOW);
+  
+  delay(100);
+  disableLedPower();
+  delay(100);
+  enableLedPower();
+  
   // Pull data pin low
   digitalWriteFast(dataPin, LOW);
   
@@ -217,6 +227,16 @@ void programAddresses() {
   
   // And set the data pin low
   digitalWriteFast(dataPin, HIGH);
+  
+  // Toggle power to the LEDs
+  digitalWriteFast(failLedPin, LOW);
+  delay(2000);
+  disableLedPower();
+  delay(500);
+  enableLedPower();
+  
+  digitalWriteFast(passLedPin, HIGH);
+  digitalWriteFast(failLedPin, HIGH);
 }
 
 
@@ -268,6 +288,17 @@ void setup() {
   // Set the data pin high
   pinMode(dataPin, OUTPUT);
   digitalWriteFast(dataPin, HIGH);
+  
+  // Turn on LED power
+  pinMode(powerEnablePin, OUTPUT);
+  enableLedPower();
+  
+  // Turn on status LEDs
+  pinMode(passLedPin, OUTPUT);
+  digitalWriteFast(passLedPin, HIGH);
+  pinMode(failLedPin, OUTPUT);
+  digitalWriteFast(failLedPin, HIGH);
+
   
   // Set up port pointers for interrupt routine
   dmxPort = portOutputRegister(digitalPinToPort(dataPin));

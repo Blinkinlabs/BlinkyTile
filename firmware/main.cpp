@@ -27,9 +27,10 @@
 #include <algorithm>
 #include <stdlib.h>
 #include "fc_usb.h"
+#include "arm_math.h"
 //#include "fc_defs.h"
 #include "HardwareSerial.h"
-#include "arm_math.h"
+#include "usb_serial.h"
 
 //#include "matrix.h"
 #include "blinkytile.h"
@@ -42,8 +43,8 @@
 #include "buttons.h"
 
 // USB data buffers
-static fcBuffers buffers;
-fcLinearLUT fcBuffers::lutCurrent;
+// static fcBuffers buffers;
+// fcLinearLUT fcBuffers::lutCurrent;
 
 // Winbond flash stuff
 winbondFlashSPI flash;
@@ -59,6 +60,13 @@ Buttons userButtons;
 
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
+
+// TODO: Put me back in the USB interface!
+// DFU states
+#define DFU_appIDLE    0
+#define DFU_appDETACH  1
+volatile uint8_t usb_dfu_state = DFU_appIDLE;
+
 
 static void dfu_reboot()
 {
@@ -77,11 +85,11 @@ static void dfu_reboot()
     while (1);
 }
 
-extern "C" int usb_rx_handler(usb_packet_t *packet)
-{
-    // USB packet interrupt handler. Invoked by the ISR dispatch code in usb_dev.c
-    return buffers.handleUSB(packet);
-}
+// extern "C" int usb_rx_handler(usb_packet_t *packet)
+// {
+//     // USB packet interrupt handler. Invoked by the ISR dispatch code in usb_dev.c
+//     return buffers.handleUSB(packet);
+// }
 
 
 void setupWatchdog() {
@@ -203,8 +211,10 @@ extern "C" int main()
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
         static int brightnessStep = 5;
 
+        static bool serial_mode = false;
+
         // Play a pattern
-        if(state%2000 == 1) {
+        if((state%2000 == 1) & (!serial_mode)) {
             switch(pattern) {
                 case 0:
                     // If the flash wasn't initialized, then skip to the next built-in pattern.
@@ -268,9 +278,9 @@ extern "C" int main()
                 dmxSetBrightness(brightnessLevels[brightnessStep]);
             }
         }
- 
 
-        if(serial_available() > 0) {
+        if(usb_serial_available() > 0) {
+            serial_mode = true;
             serial_loop();
 
 //            if(serialReceiver.parseByte(serial_getchar())) {
