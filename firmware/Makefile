@@ -13,6 +13,9 @@ SIZE = arm-none-eabi-size
 # Bootloader to include in whole-chip .hex image
 FCBOOT_IMAGE = ../bootloader/blinky-boot.hex
 
+# Configuration options
+OPTIONS += -DF_CPU=48000000 -D__MK20DN64__ -DUSB_SERIAL
+
 #######################################################
 
 # The name of your project (used to name the compiled .dfu file)
@@ -28,11 +31,13 @@ C_FILES = \
 	usb_desc.c \
 	usb_dev.c \
 	usb_mem.c \
-	serial1.c
+	usb_serial.c \
+	serial1.c \
+	nonstd.c \
+	yield.c
 
 CPP_FILES = \
 	main.cpp \
-	fc_usb.cpp \
 	winbondflash.cpp \
 	spi4teensy3.cpp \
 	protocol.cpp \
@@ -42,6 +47,7 @@ CPP_FILES = \
 	buttons.cpp \
         animation.cpp \
         defaultanimation.cpp
+#	fc_usb.cpp \
 
 # Headers
 INCLUDES = -I.

@@ -42,8 +42,8 @@
 #include "buttons.h"
 
 // USB data buffers
-static fcBuffers buffers;
-fcLinearLUT fcBuffers::lutCurrent;
+// static fcBuffers buffers;
+// fcLinearLUT fcBuffers::lutCurrent;
 
 // Winbond flash stuff
 winbondFlashSPI flash;
@@ -59,6 +59,13 @@ Buttons userButtons;
 
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
+
+// TODO: Put me back in the USB interface!
+// DFU states
+#define DFU_appIDLE    0
+#define DFU_appDETACH  1
+volatile uint8_t usb_dfu_state = DFU_appIDLE;
+
 
 static void dfu_reboot()
 {
@@ -77,11 +84,11 @@ static void dfu_reboot()
     while (1);
 }
 
-extern "C" int usb_rx_handler(usb_packet_t *packet)
-{
-    // USB packet interrupt handler. Invoked by the ISR dispatch code in usb_dev.c
-    return buffers.handleUSB(packet);
-}
+// extern "C" int usb_rx_handler(usb_packet_t *packet)
+// {
+//     // USB packet interrupt handler. Invoked by the ISR dispatch code in usb_dev.c
+//     return buffers.handleUSB(packet);
+// }
 
 
 void setupWatchdog() {
