@@ -10782,7 +10782,7 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="U2" library="blinkinlabs" deviceset="W25Q--DV" device="SS(208)" value="W25Q--DVSS(208)"/>
 <part name="FRAME1" library="frames" deviceset="DINA3_L" device=""/>
 <part name="C1" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
-<part name="R4" library="adafruit" deviceset="R-US_" device="R0402" value="330"/>
+<part name="R4" library="adafruit" deviceset="R-US_" device="R0402" value="470"/>
 <part name="LED1" library="adafruit" deviceset="LED" device="CHIPLED_0805" value="STATUS"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
 <part name="3V3" library="supply1" deviceset="+3V3" device=""/>
@@ -10809,21 +10809,21 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="C6" library="adafruit" deviceset="C-US" device="C0402" value="100nF"/>
 <part name="R5" library="adafruit" deviceset="R-US_" device="R0402" value="1k"/>
-<part name="SV1" library="blinkinlabs" deviceset="4-PIN_DUPONT" device="" value="LED_OUT"/>
+<part name="CON3" library="blinkinlabs" deviceset="4-PIN_DUPONT" device="" value="LED_OUT"/>
 <part name="C8" library="adafruit" deviceset="C-US" device="C0805K" value="10uF"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="3V4" library="supply1" deviceset="+3V3" device=""/>
-<part name="JP1" library="SparkFun-Connectors" deviceset="M05X2" device="NO_SILK"/>
-<part name="JP3" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
-<part name="U$1" library="blinkinlabs" deviceset="BUTTON_MOMENTARY_GROUND" device="" value="BUTTON_1"/>
-<part name="U$2" library="blinkinlabs" deviceset="BUTTON_MOMENTARY_GROUND" device="" value="BUTTON_2"/>
+<part name="CON2" library="SparkFun-Connectors" deviceset="M05X2" device="NO_SILK"/>
+<part name="CON4" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
+<part name="SW1" library="blinkinlabs" deviceset="BUTTON_MOMENTARY_GROUND" device="" value="BUTTON_1"/>
+<part name="SW2" library="blinkinlabs" deviceset="BUTTON_MOMENTARY_GROUND" device="" value="BUTTON_2"/>
 <part name="U6" library="blinkinlabs" deviceset="TPD4S012" device=""/>
 <part name="L3" library="blinkinlabs" deviceset="FB" device="0805/NO-OUTLINE" value="130ohm @100MHz"/>
 <part name="L2" library="blinkinlabs" deviceset="FB" device="0805/NO-OUTLINE" value="130ohm @100MHz"/>
 <part name="CN1" library="adafruit" deviceset="JST_2PIN" device="-THM-RA" value="Battery"/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
-<part name="D3" library="adafruit" deviceset="DIODE" device="SOD-123" value="RB161M-20"/>
+<part name="D1" library="adafruit" deviceset="DIODE" device="SOD-123" value="RB161M-20"/>
 </parts>
 <sheets>
 <sheet>
@@ -10961,19 +10961,19 @@ buttons.</text>
 <instance part="GND8" gate="1" x="132.08" y="144.78"/>
 <instance part="C6" gate="G$1" x="93.98" y="215.9"/>
 <instance part="R5" gate="G$1" x="182.88" y="104.14" rot="R90"/>
-<instance part="SV1" gate="1" x="233.68" y="66.04" rot="R180"/>
+<instance part="CON3" gate="1" x="233.68" y="66.04" rot="R180"/>
 <instance part="C8" gate="G$1" x="116.84" y="213.36"/>
 <instance part="GND11" gate="1" x="116.84" y="203.2"/>
 <instance part="3V4" gate="G$1" x="182.88" y="114.3" smashed="yes">
 <attribute name="VALUE" x="180.34" y="115.57" size="1.778" layer="96"/>
 </instance>
-<instance part="JP1" gate="G$1" x="297.18" y="129.54"/>
-<instance part="JP3" gate="G$1" x="215.9" y="198.12" rot="R270"/>
-<instance part="U$1" gate="G$1" x="33.02" y="88.9" smashed="yes">
+<instance part="CON2" gate="G$1" x="297.18" y="129.54"/>
+<instance part="CON4" gate="G$1" x="215.9" y="198.12" rot="R270"/>
+<instance part="SW1" gate="G$1" x="33.02" y="88.9" smashed="yes">
 <attribute name="NAME" x="29.21" y="86.36" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="31.75" y="92.075" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="U$2" gate="G$1" x="66.04" y="88.9" smashed="yes" rot="MR180">
+<instance part="SW2" gate="G$1" x="66.04" y="88.9" smashed="yes" rot="MR180">
 <attribute name="NAME" x="62.23" y="91.44" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="64.77" y="85.725" size="1.778" layer="96" rot="MR270"/>
 </instance>
@@ -10985,7 +10985,7 @@ buttons.</text>
 <attribute name="VALUE" x="299.72" y="85.09" size="1.778" layer="96"/>
 </instance>
 <instance part="GND6" gate="1" x="302.26" y="66.04"/>
-<instance part="D3" gate="G$1" x="91.44" y="195.58"/>
+<instance part="D1" gate="G$1" x="91.44" y="195.58"/>
 </instances>
 <busses>
 </busses>
@@ -11041,7 +11041,7 @@ buttons.</text>
 <pinref part="GND3" gate="1" pin="GND"/>
 <wire x1="213.36" y1="60.96" x2="213.36" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="63.5" x2="226.06" y2="63.5" width="0.1524" layer="91"/>
-<pinref part="SV1" gate="1" pin="4"/>
+<pinref part="CON3" gate="1" pin="4"/>
 </segment>
 <segment>
 <pinref part="U4" gate="G$2" pin="GND"/>
@@ -11056,7 +11056,7 @@ buttons.</text>
 <segment>
 <wire x1="304.8" y1="134.62" x2="312.42" y2="134.62" width="0.1524" layer="91"/>
 <label x="307.34" y="134.62" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
+<pinref part="CON2" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="U3" gate="G$2" pin="GND"/>
@@ -11084,20 +11084,20 @@ buttons.</text>
 </segment>
 <segment>
 <pinref part="GND2" gate="1" pin="GND"/>
-<pinref part="U$2" gate="G$1" pin="S"/>
+<pinref part="SW2" gate="G$1" pin="S"/>
 <wire x1="68.58" y1="83.82" x2="68.58" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="U$2" gate="G$1" pin="SHIELD"/>
+<pinref part="SW2" gate="G$1" pin="SHIELD"/>
 <wire x1="63.5" y1="93.98" x2="60.96" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="93.98" x2="60.96" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="81.28" x2="68.58" y2="81.28" width="0.1524" layer="91"/>
 <junction x="68.58" y="81.28"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="P"/>
+<pinref part="SW1" gate="G$1" pin="P"/>
 <pinref part="GND12" gate="1" pin="GND"/>
 <wire x1="35.56" y1="83.82" x2="35.56" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="35.56" y1="81.28" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="SHIELD"/>
+<pinref part="SW1" gate="G$1" pin="SHIELD"/>
 <wire x1="30.48" y1="81.28" x2="30.48" y2="83.82" width="0.1524" layer="91"/>
 <junction x="35.56" y="81.28"/>
 </segment>
@@ -11166,7 +11166,7 @@ buttons.</text>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="116.84" y1="215.9" x2="116.84" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="195.58" x2="93.98" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="D3" gate="G$1" pin="C"/>
+<pinref part="D1" gate="G$1" pin="C"/>
 </segment>
 <segment>
 <pinref part="U4" gate="G$2" pin="VCC"/>
@@ -11257,7 +11257,7 @@ buttons.</text>
 <segment>
 <wire x1="289.56" y1="134.62" x2="279.4" y2="134.62" width="0.1524" layer="91"/>
 <label x="279.4" y="134.62" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="1"/>
+<pinref part="CON2" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
@@ -11269,7 +11269,7 @@ buttons.</text>
 <segment>
 <wire x1="289.56" y1="132.08" x2="279.4" y2="132.08" width="0.1524" layer="91"/>
 <label x="279.4" y="132.08" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="3"/>
+<pinref part="CON2" gate="G$1" pin="3"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="PTA0"/>
@@ -11286,7 +11286,7 @@ buttons.</text>
 <segment>
 <wire x1="304.8" y1="129.54" x2="312.42" y2="129.54" width="0.1524" layer="91"/>
 <label x="307.34" y="129.54" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="6"/>
+<pinref part="CON2" gate="G$1" pin="6"/>
 </segment>
 </net>
 <net name="RX" class="0">
@@ -11298,7 +11298,7 @@ buttons.</text>
 <segment>
 <wire x1="312.42" y1="132.08" x2="304.8" y2="132.08" width="0.1524" layer="91"/>
 <label x="307.34" y="132.08" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="4"/>
+<pinref part="CON2" gate="G$1" pin="4"/>
 </segment>
 </net>
 <net name="TX" class="0">
@@ -11310,7 +11310,7 @@ buttons.</text>
 <segment>
 <wire x1="289.56" y1="129.54" x2="279.4" y2="129.54" width="0.1524" layer="91"/>
 <label x="279.4" y="129.54" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="5"/>
+<pinref part="CON2" gate="G$1" pin="5"/>
 </segment>
 </net>
 <net name="FLASH_CS" class="0">
@@ -11386,7 +11386,7 @@ buttons.</text>
 <segment>
 <wire x1="304.8" y1="127" x2="312.42" y2="127" width="0.1524" layer="91"/>
 <label x="307.34" y="127" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="8"/>
+<pinref part="CON2" gate="G$1" pin="8"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -11404,7 +11404,7 @@ buttons.</text>
 <segment>
 <wire x1="35.56" y1="93.98" x2="45.72" y2="93.98" width="0.1524" layer="91"/>
 <label x="38.1" y="93.98" size="1.778" layer="95"/>
-<pinref part="U$1" gate="G$1" pin="S"/>
+<pinref part="SW1" gate="G$1" pin="S"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="PTD7"/>
@@ -11435,13 +11435,13 @@ buttons.</text>
 <segment>
 <pinref part="U4" gate="G$1" pin="O"/>
 <wire x1="208.28" y1="68.58" x2="226.06" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="SV1" gate="1" pin="2"/>
+<pinref part="CON3" gate="1" pin="2"/>
 </segment>
 </net>
 <net name="N$4" class="0">
 <segment>
 <pinref part="U5" gate="G$1" pin="O"/>
-<pinref part="SV1" gate="1" pin="3"/>
+<pinref part="CON3" gate="1" pin="3"/>
 <wire x1="226.06" y1="66.04" x2="208.28" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="208.28" y1="66.04" x2="208.28" y2="53.34" width="0.1524" layer="91"/>
 </segment>
@@ -11486,7 +11486,7 @@ buttons.</text>
 <pinref part="U1" gate="G$1" pin="PTC1"/>
 <wire x1="187.96" y1="190.5" x2="215.9" y2="190.5" width="0.1524" layer="91"/>
 <label x="195.58" y="190.5" size="1.778" layer="95"/>
-<pinref part="JP3" gate="G$1" pin="1"/>
+<pinref part="CON4" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="PA4" class="0">
@@ -11498,7 +11498,7 @@ buttons.</text>
 <segment>
 <wire x1="289.56" y1="127" x2="279.4" y2="127" width="0.1524" layer="91"/>
 <label x="279.4" y="127" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="7"/>
+<pinref part="CON2" gate="G$1" pin="7"/>
 </segment>
 </net>
 <net name="PB0" class="0">
@@ -11510,7 +11510,7 @@ buttons.</text>
 <segment>
 <wire x1="289.56" y1="124.46" x2="279.4" y2="124.46" width="0.1524" layer="91"/>
 <label x="279.4" y="124.46" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="9"/>
+<pinref part="CON2" gate="G$1" pin="9"/>
 </segment>
 </net>
 <net name="PB1" class="0">
@@ -11522,7 +11522,7 @@ buttons.</text>
 <segment>
 <wire x1="304.8" y1="124.46" x2="312.42" y2="124.46" width="0.1524" layer="91"/>
 <label x="307.34" y="124.46" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="10"/>
+<pinref part="CON2" gate="G$1" pin="10"/>
 </segment>
 </net>
 <net name="N$7" class="0">
@@ -11552,7 +11552,7 @@ buttons.</text>
 </net>
 <net name="N$8" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="1"/>
+<pinref part="CON3" gate="1" pin="1"/>
 <wire x1="226.06" y1="71.12" x2="220.98" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="71.12" x2="220.98" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="L1" gate="G$1" pin="2"/>
@@ -11562,13 +11562,13 @@ buttons.</text>
 <segment>
 <pinref part="L3" gate="G$1" pin="P$1"/>
 <wire x1="88.9" y1="195.58" x2="83.82" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="D3" gate="G$1" pin="A"/>
+<pinref part="D1" gate="G$1" pin="A"/>
 </segment>
 </net>
 <net name="BUTTON2" class="0">
 <segment>
 <label x="71.12" y="93.98" size="1.778" layer="95"/>
-<pinref part="U$2" gate="G$1" pin="P"/>
+<pinref part="SW2" gate="G$1" pin="P"/>
 <wire x1="68.58" y1="93.98" x2="78.74" y2="93.98" width="0.1524" layer="91"/>
 </segment>
 </net>
