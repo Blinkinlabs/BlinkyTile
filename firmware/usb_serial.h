@@ -31,7 +31,7 @@
 #ifndef USBserial_h_
 #define USBserial_h_
 
-#if defined(USB_SERIAL) || defined(USB_SERIAL_HID)
+#if defined(USB_SERIAL) || defined(USB_SERIAL_HID) || defined(USB_SERIAL_FC_DFU)
 
 #include <inttypes.h>
 

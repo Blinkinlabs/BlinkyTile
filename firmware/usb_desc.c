@@ -299,8 +299,6 @@ static uint8_t flightsim_report_desc[] = {
 };
 #endif
 
-
-
 // **************************************************************
 //   USB Configuration
 // **************************************************************
@@ -610,6 +608,49 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         FLIGHTSIM_RX_INTERVAL,			// bInterval
 #endif // FLIGHTSIM_INTERFACE
 
+#ifdef FC_INTERFACE
+        // interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
+        9,                                      // bLength
+        4,                                      // bDescriptorType
+        FC_INTERFACE,                           // bInterfaceNumber
+        0,                                      // bAlternateSetting
+        1,                                      // bNumEndpoints
+        0xff,                                   // bInterfaceClass (Vendor specific)
+        0x00,                                   // bInterfaceSubClass
+        0x00,                                   // bInterfaceProtocol
+        0,                                      // iInterface
+        // endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
+        7,                                      // bLength
+        5,                                      // bDescriptorType
+        FC_OUT_ENDPOINT,                        // bEndpointAddress
+        0x02,                                   // bmAttributes (0x02=bulk)
+        FC_OUT_SIZE, 0,                         // wMaxPacketSize
+        0,                                      // bInterval
+#endif // FC_INTERFACE
+
+#ifdef DFU_INTERFACE
+        // interface descriptor, DFU Mode (DFU spec Table 4.4)
+        9,                                      // bLength
+        4,                                      // bDescriptorType
+        DFU_INTERFACE,                          // bInterfaceNumber
+        0,                                      // bAlternateSetting
+        0,                                      // bNumEndpoints
+        0xFE,                                   // bInterfaceClass
+        0x01,                                   // bInterfaceSubClass
+        0x01,                                   // bInterfaceProtocol (Runtime)
+        4,                                      // iInterface  TODO is this ok?
+        // DFU Functional Descriptor (DFU spec TAble 4.2)
+        9,                                      // bLength
+        0x21,                                   // bDescriptorType
+        0x0D,                                   // bmAttributes
+        LSB(DFU_DETACH_TIMEOUT),                // wDetachTimeOut
+        MSB(DFU_DETACH_TIMEOUT),
+        LSB(DFU_TRANSFER_SIZE),                 // wTransferSize
+        MSB(DFU_TRANSFER_SIZE),
+        0x01,0x01,                              // bcdDFUVersion
+#endif // DFU_INTERFACE
+
+
 #ifdef SEREMU_INTERFACE
         // interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
         9,                                      // bLength
@@ -722,6 +763,11 @@ struct usb_string_descriptor_struct usb_string_serial_number_default = {
         3,
         {0,0,0,0,0,0,0,0,0,0}
 };
+static const struct usb_string_descriptor_struct usb_string_dfu_name = {
+    2 + DFU_NAME_LEN * 2,
+    3,
+    DFU_NAME
+};
 
 void usb_init_serialnumber(void)
 {
@@ -786,6 +832,8 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
         {0x0301, 0x0409, (const uint8_t *)&usb_string_manufacturer_name, 0},
         {0x0302, 0x0409, (const uint8_t *)&usb_string_product_name, 0},
         {0x0303, 0x0409, (const uint8_t *)&usb_string_serial_number, 0},
+        {0x0304, 0x0409, (const uint8_t *)&usb_string_dfu_name, 0},
+
         //{0x0301, 0x0409, (const uint8_t *)&string1, 0},
         //{0x0302, 0x0409, (const uint8_t *)&string2, 0},
         //{0x0303, 0x0409, (const uint8_t *)&string3, 0},

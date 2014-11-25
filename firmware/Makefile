@@ -14,7 +14,7 @@ SIZE = arm-none-eabi-size
 FCBOOT_IMAGE = ../bootloader/blinky-boot.hex
 
 # Configuration options
-OPTIONS += -DF_CPU=48000000 -D__MK20DN64__ -DUSB_SERIAL
+OPTIONS += -DF_CPU=48000000 -D__MK20DN64__ -DUSB_SERIAL_FC_DFU
 
 #######################################################
 
