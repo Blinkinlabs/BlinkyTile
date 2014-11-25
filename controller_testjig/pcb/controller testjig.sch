@@ -7588,6 +7588,9 @@ All other signals are measurement only</text>
 <text x="73.66" y="58.42" size="1.778" layer="91">Design Note:
 Cute hack to generate variable output voltage.
 Use a rail-to-rail opamp, &gt;30mA output.</text>
+<text x="-124.46" y="-162.56" size="1.778" layer="91">Changes to make:
+-connect target_ground and ground
+-swap USB A connector for USB B</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="-33.02" y="30.48"/>
