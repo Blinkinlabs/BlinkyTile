@@ -170,7 +170,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define EP0_SIZE		64
   #define NUM_ENDPOINTS		4       // 1=fadecandy,dfu 2,3,4=serial
   #define NUM_USB_BUFFERS	116     // TODO: FC uses 104, serial 12, we don't need this many?
-  #define NUM_INTERFACE		3       // 0=cdc_status, 1=cdc_data, 2=fadecandy, 3=dfu
+  #define NUM_INTERFACE		4       // 0=cdc_status, 1=cdc_data, 2=fadecandy, 3=dfu
   #define CDC_IAD_DESCRIPTOR	1
   #define CDC_STATUS_INTERFACE	0
   #define CDC_DATA_INTERFACE	1	// Serial
@@ -189,10 +189,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define DFU_DETACH_TIMEOUT    10000     // 10 seconds
   #define DFU_TRANSFER_SIZE     1024      // Flash sector size
 
-  #define FC_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9)           // TODO
-  #define DFU_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9)   // TODO
-
-  #define CONFIG_DESC_SIZE	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9+9+7 + 9+9+7) // TODO
+  #define CONFIG_DESC_SIZE	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+7 + 9+9)
   #define ENDPOINT1_CONFIG	ENDPOINT_RECEIVE_ONLY       // Fadecandy
   #define ENDPOINT2_CONFIG	ENDPOINT_TRANSIMIT_ONLY     // CDC ACM endpoint
   #define ENDPOINT3_CONFIG	ENDPOINT_RECEIVE_ONLY       // CDC RX endpoint

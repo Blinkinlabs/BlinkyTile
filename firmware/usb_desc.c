@@ -314,8 +314,8 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         NUM_INTERFACE,                          // bNumInterfaces
         1,                                      // bConfigurationValue
         0,                                      // iConfiguration
-        0xC0,                                   // bmAttributes
-        50,                                     // bMaxPower
+        0x80,                                   // bmAttributes
+        250,                                    // bMaxPower
 
 #ifdef CDC_IAD_DESCRIPTOR
         // interface association descriptor, USB ECN, Table 9-Z
@@ -326,7 +326,7 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         0x02,                                   // bFunctionClass
         0x02,                                   // bFunctionSubClass
         0x01,                                   // bFunctionProtocol
-        4,                                      // iFunction
+        5,                                      // iFunction
 #endif
 
 #ifdef CDC_DATA_INTERFACE
@@ -741,6 +741,8 @@ extern struct usb_string_descriptor_struct usb_string_product_name
         __attribute__ ((weak, alias("usb_string_product_name_default")));
 extern struct usb_string_descriptor_struct usb_string_serial_number
         __attribute__ ((weak, alias("usb_string_serial_number_default")));
+extern struct usb_string_descriptor_struct usb_string_dfu_name
+        __attribute__ ((weak, alias("usb_string_dfu_name_default")));
 
 struct usb_string_descriptor_struct string0 = {
         4,
@@ -763,11 +765,14 @@ struct usb_string_descriptor_struct usb_string_serial_number_default = {
         3,
         {0,0,0,0,0,0,0,0,0,0}
 };
-static const struct usb_string_descriptor_struct usb_string_dfu_name = {
-    2 + DFU_NAME_LEN * 2,
-    3,
-    DFU_NAME
+
+#ifdef DFU_INTERFACE
+struct usb_string_descriptor_struct usb_string_dfu_name_default = {
+        2 + DFU_NAME_LEN * 2,
+        3,
+        DFU_NAME
 };
+#endif
 
 void usb_init_serialnumber(void)
 {
@@ -832,11 +837,10 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
         {0x0301, 0x0409, (const uint8_t *)&usb_string_manufacturer_name, 0},
         {0x0302, 0x0409, (const uint8_t *)&usb_string_product_name, 0},
         {0x0303, 0x0409, (const uint8_t *)&usb_string_serial_number, 0},
+#ifdef DFU_INTERFACE
         {0x0304, 0x0409, (const uint8_t *)&usb_string_dfu_name, 0},
+#endif
 
-        //{0x0301, 0x0409, (const uint8_t *)&string1, 0},
-        //{0x0302, 0x0409, (const uint8_t *)&string2, 0},
-        //{0x0303, 0x0409, (const uint8_t *)&string3, 0},
 	{0, 0, NULL, 0}
 };
 

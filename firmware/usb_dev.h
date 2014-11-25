@@ -94,7 +94,14 @@ extern void usb_midi_flush_output(void);
 extern void usb_flightsim_flush_callback(void);
 #endif
 
+#ifdef DFU_INTERFACE
+extern volatile uint8_t usb_dfu_state;
 
+// DFU states
+#define DFU_appIDLE    0
+#define DFU_appDETACH  1
+
+#endif
 
 
 

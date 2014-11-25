@@ -61,13 +61,6 @@ Buttons userButtons;
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
 
-// TODO: Put me back in the USB interface!
-// DFU states
-#define DFU_appIDLE    0
-#define DFU_appDETACH  1
-volatile uint8_t usb_dfu_state = DFU_appIDLE;
-
-
 static void dfu_reboot()
 {
     // Reboot to the Fadecandy Bootloader
