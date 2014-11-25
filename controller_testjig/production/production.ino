@@ -19,6 +19,8 @@ ElectricalTest etest(target);
 void setup()
 {
     pinMode(ledPin, OUTPUT);
+    pinMode(ledPassPin, OUTPUT);
+    pinMode(ledFailPin, OUTPUT);
     pinMode(buttonPin, INPUT_PULLUP);
     analogReference(INTERNAL);
     Serial.begin(115200);
@@ -29,9 +31,9 @@ void waitForButton()
     // Wait for button press, with debounce
 
     Serial.println("");
-    Serial.println("--------------------------------------------");
-    Serial.println(" Fadecandy Test Jig : Press button to start");
-    Serial.println("--------------------------------------------");
+    Serial.println("----------------------------------------------");
+    Serial.println(" Blinkinlabs Test Jig : Press button to start");
+    Serial.println("----------------------------------------------");
     Serial.println("");
 
     while (digitalRead(buttonPin) == LOW);
@@ -57,13 +59,35 @@ void success()
     }
 }
 
+#define TEST_UNTESTED 0
+#define TEST_FAIL 1
+#define TEST_PASS 2
+int testState = TEST_UNTESTED;
+
+
 void loop()
 {
     // Keep target power supply off when we're not using it
     etest.powerOff();
-
+    
+    // Set the status LEDs
+    if(testState == TEST_FAIL) {
+      digitalWrite(ledPassPin, LOW);
+      digitalWrite(ledFailPin, HIGH);
+    }
+    else if(testState == TEST_PASS) {
+      digitalWrite(ledPassPin, HIGH);
+      digitalWrite(ledFailPin, LOW);
+    }
+    else {
+      digitalWrite(ledPassPin, HIGH);
+      digitalWrite(ledFailPin, HIGH);
+    }      
+      
     // Button press starts the test
     waitForButton();
+    
+    testState = TEST_FAIL;
 
     // Turn on the target power supply
     if (!etest.powerOn())
@@ -103,5 +127,6 @@ void loop()
     if (!remote.testFrameRate())
         return;
 
+    testState = TEST_PASS;
     success();
 }
