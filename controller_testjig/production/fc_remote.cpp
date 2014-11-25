@@ -26,6 +26,13 @@
 #include "testjig.h"
 #include "firmware_data.h"
 
+// TODO: DELETE ME!
+#define fw_pFlags 0x00FFFFFF
+#define fw_pFbPrev 0x00FFFFFF
+#define fw_pFbNext 0x00FFFFFF
+#define fw_pLUT 0x00FFFFFF
+#define fw_usbPacketBufOffset 0x00FFFFFF
+
 
 bool FcRemote::installFirmware()
 {
@@ -48,7 +55,7 @@ bool FcRemote::installFirmware()
 }
 
 bool FcRemote::boot()
-{
+{ 
     // Run the new firmware, and let it boot
     if (!target.reset())
         return false;
@@ -58,15 +65,15 @@ bool FcRemote::boot()
 
 bool FcRemote::setLED(bool on)
 {
-    const unsigned pin = target.PTC5;
+    const unsigned pin = target.PTD6;
     return
         target.pinMode(pin, OUTPUT) &&
-        target.digitalWrite(pin, on);
+        target.digitalWrite(pin, !on);
 }
 
 bool FcRemote::setFlags(uint8_t cflag)
 {
-    // Set control flags
+    // Set control flags    
     return target.memStoreByte(fw_pFlags, cflag);
 }
 

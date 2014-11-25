@@ -1046,7 +1046,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="61" y1="56" x2="54.53" y2="56" width="0.254" layer="16"/>
 <via x="54.53" y="56" extent="1-16" drill="0.6" shape="square"/>
 </signal>
-<signal name="TARGET_USB_D-">
+<signal name="TARGET_USB_D+">
 <contactref element="U$1" pad="5"/>
 <contactref element="U$3" pad="D+"/>
 <via x="52" y="53" extent="1-16" drill="0.6" shape="square"/>
@@ -1061,7 +1061,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <via x="17" y="53" extent="1-16" drill="0.6" shape="square"/>
 <wire x1="17" y1="53" x2="18" y2="53" width="0.254" layer="16"/>
 </signal>
-<signal name="TARGET_USB_D+">
+<signal name="TARGET_USB_D-">
 <contactref element="U$1" pad="6"/>
 <contactref element="U$3" pad="D-"/>
 <wire x1="15.5" y1="52" x2="49" y2="52" width="0.254" layer="16"/>
@@ -1426,7 +1426,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="11.135" y1="78.6" x2="11.135" y2="81.715" width="0.254" layer="1"/>
 <wire x1="11.135" y1="81.715" x2="10.85" y2="82" width="0.254" layer="1"/>
 <contactref element="R27" pad="2"/>
-<wire x1="10.85" y1="82" x2="10.85" y2="84" width="0" layer="19" extent="1-1"/>
+<wire x1="10.85" y1="84" x2="10.85" y2="82" width="0.254" layer="1"/>
 </signal>
 <signal name="N$3">
 <contactref element="IC1" pad="3"/>

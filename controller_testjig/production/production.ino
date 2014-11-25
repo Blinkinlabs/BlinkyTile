@@ -12,7 +12,8 @@
 #include "electrical_test.h"
 #include "testjig.h"
 
-ARMKinetisDebug target(swclkPin, swdioPin);
+//ARMKinetisDebug target(swclkPin, swdioPin);
+ARMKinetisDebug target(swclkPin, swdioPin, ARMDebug::LOG_NORMAL);
 FcRemote remote(target);
 ElectricalTest etest(target);
 
@@ -51,12 +52,12 @@ void success()
     Serial.println("#### Tests Passed! ####");
     Serial.println("");
 
-    // Green and blue throbbing means success!
-    while (1) {
-        float x = sin(millis() * 0.008);
-        if (!remote.setPixel(0, 0, 0xc + 0x10 * x, 0)) return;
-        if (!remote.setPixel(1, 0, 0, 0xc - 0x10 * x)) return;
-    }
+//    // Green and blue throbbing means success!
+//    while (1) {
+//        float x = sin(millis() * 0.008);
+//        if (!remote.setPixel(0, 0, 0xc + 0x10 * x, 0)) return;
+//        if (!remote.setPixel(1, 0, 0, 0xc - 0x10 * x)) return;
+//    }
 }
 
 #define TEST_UNTESTED 0
@@ -88,11 +89,13 @@ void loop()
     waitForButton();
     
     testState = TEST_FAIL;
+    digitalWrite(ledPassPin, HIGH);
+    digitalWrite(ledFailPin, HIGH);
 
     // Turn on the target power supply
     if (!etest.powerOn())
         return;
-
+        
     // Start debugging the target
     if (!target.begin())
         return;
@@ -111,21 +114,21 @@ void loop()
     if (!remote.boot())
         return;
     
-    // Disable interpolation, since we only update fbNext
-    if (!remote.setFlags(CFLAG_NO_INTERPOLATION))
-        return;
-
-    // Set a default color lookup table
-    if (!remote.initLUT())
-        return;
-
-    // Pixel pattern to display while running the frame rate test (white / green)
-    if (!remote.setPixel(0, 16, 16, 16)) return;
-    if (!remote.setPixel(1, 0, 24, 0)) return;
-
-    // Check the frame rate; make sure the firmware is going fast enough
-    if (!remote.testFrameRate())
-        return;
+//    // Disable interpolation, since we only update fbNext
+//    if (!remote.setFlags(CFLAG_NO_INTERPOLATION))
+//        return;
+//
+//    // Set a default color lookup table
+//    if (!remote.initLUT())
+//        return;
+//
+//    // Pixel pattern to display while running the frame rate test (white / green)
+//    if (!remote.setPixel(0, 16, 16, 16)) return;
+//    if (!remote.setPixel(1, 0, 24, 0)) return;
+//
+//    // Check the frame rate; make sure the firmware is going fast enough
+//    if (!remote.testFrameRate())
+//        return;
 
     testState = TEST_PASS;
     success();

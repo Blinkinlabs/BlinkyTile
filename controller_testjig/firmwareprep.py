@@ -8,19 +8,20 @@
 ########################### Configuration ###########################
 
 # Firmware image to deploy
-HEX_FILE = "../bin/fc-firmware-v107.hex"
-ELF_FILE = "../bin/fc-firmware-v107.elf"
+HEX_FILE = "../firmware/blinky-firmware.hex"
+ELF_FILE = "../firmware/blinky-firmware.elf"
 
 # Which GDB to use for the firmware image
 GDB_COMMAND = "arm-none-eabi-gdb"
 
 # Table of expressions to evaluate under GDB, and names to give them
 DEFINITIONS = [
-    ('fw_pFlags', '&buffers.flags'),
-    ('fw_pFbPrev', '&buffers.fbPrev'),
-    ('fw_pFbNext', '&buffers.fbNext'),
-    ('fw_pLUT', '&buffers.lutCurrent.entries[0]'),
-    ('fw_usbPacketBufOffset', '&((usb_packet_t*)0)->buf'),
+# TODO: rework these
+#    ('fw_pFlags', '&buffers.flags'),
+#    ('fw_pFbPrev', '&buffers.fbPrev'),
+#    ('fw_pFbNext', '&buffers.fbNext'),
+#    ('fw_pLUT', '&buffers.lutCurrent.entries[0]'),
+#    ('fw_usbPacketBufOffset', '&((usb_packet_t*)0)->buf'),
     ]
 
 # Where to generate output

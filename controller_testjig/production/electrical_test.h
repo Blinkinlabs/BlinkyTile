@@ -46,6 +46,11 @@ private:
         return target.pin(target.PTD, index);
     }
 
+    // Pin number for a port/pin on the output
+    int outPin(ARMKinetisDebug::Port port, int index) {
+        return target.pin(port, index);
+    }
+
     void setPowerSupplyVoltage(float volts);
     float analogVolts(int pin);
     bool analogThresholdFromSample(float volts, int pin, float nominal, float tolerance = 0.30);
@@ -54,7 +59,6 @@ private:
     bool testOutputPattern(uint8_t bits);
     bool testAllOutputPatterns();
     bool testUSBConnections();
-    bool testBoostConverter();
     bool testSerialConnections();
     bool testHighZ(int pin);
     bool testPull(int pin, bool state);

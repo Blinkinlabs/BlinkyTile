@@ -7590,7 +7590,9 @@ Cute hack to generate variable output voltage.
 Use a rail-to-rail opamp, &gt;30mA output.</text>
 <text x="-124.46" y="-162.56" size="1.778" layer="91">Changes to make:
 -connect target_ground and ground
--swap USB A connector for USB B</text>
+-swap USB A connector for USB B
+-target_pa4 connection causes the target to hang
+-Signal N$1 not connected on board, need to jump between R26 and R27</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="-33.02" y="30.48"/>
@@ -7885,7 +7887,7 @@ Use a rail-to-rail opamp, &gt;30mA output.</text>
 <wire x1="10.16" y1="-76.2" x2="10.16" y2="-63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="TARGET_USB_D-" class="0">
+<net name="TARGET_USB_D+" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="5"/>
 <wire x1="-48.26" y1="30.48" x2="-78.74" y2="30.48" width="0.1524" layer="91"/>
@@ -7897,7 +7899,7 @@ Use a rail-to-rail opamp, &gt;30mA output.</text>
 <label x="121.92" y="-68.58" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="TARGET_USB_D+" class="0">
+<net name="TARGET_USB_D-" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="6"/>
 <wire x1="-78.74" y1="27.94" x2="-48.26" y2="27.94" width="0.1524" layer="91"/>

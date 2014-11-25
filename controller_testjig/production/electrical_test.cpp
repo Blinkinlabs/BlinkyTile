@@ -27,6 +27,25 @@
 #include "arm_kinetis_reg.h"
 
 
+// General IO pin that should be tested
+typedef struct testPin {
+  int input;      // analog input the pin is connected to
+  ARMKinetisDebug::Port port;
+  int index;
+  float voltage;  // Expected voltage (3.3V from the processor, 5V through a buffer)
+};
+
+testPin testPins[] {
+  {0, ARMKinetisDebug::PTA, 4, 3.3 },    // GPIO PA4
+  {1, ARMKinetisDebug::PTB, 0, 3.3 },    // GPIO PB0
+  {2, ARMKinetisDebug::PTC, 1, 3.3 },    // GPIO PC1
+  {3, ARMKinetisDebug::PTD, 4, 5 },      // LED 5V out
+  {4, ARMKinetisDebug::PTC, 3, 5 },      // LED ADDR
+  {5, ARMKinetisDebug::PTB, 1, 3.3 },    // GPIO PB1
+  {7, ARMKinetisDebug::PTC, 4, 5 },      // LED DATA
+};
+
+
 float ElectricalTest::analogVolts(int pin)
 {
     // Analog input and voltage divider constants
@@ -140,61 +159,6 @@ void ElectricalTest::setPowerSupplyVoltage(float volts)
     delay(150);
 }
 
-bool ElectricalTest::testBoostConverter()
-{
-    target.log(logLevel, "ETEST: Testing boost converter");
-
-    // Test over a range of input voltages
-    for (float supply = 5.0; supply > 3.5; supply -= 0.2) {
-
-        // Turn all outputs on
-        if (!target.digitalWritePort(outPin(0), 0xFF))
-            return false;
-
-        // Adjust power supply
-        setPowerSupplyVoltage(supply);
-
-        // Collect all relevant voltages
-        float vusb = analogVolts(analogTargetVUsbPin);
-        float vcc = analogVolts(analogTarget33vPin);
-        float v0 = analogVolts(0);
-        float v1 = analogVolts(1);
-        float v2 = analogVolts(2);
-        float v3 = analogVolts(3);
-        float v4 = analogVolts(4);
-        float v5 = analogVolts(5);
-        float v6 = analogVolts(6);
-        float v7 = analogVolts(7);
-
-        target.log(logLevel,
-            "  Supply at %.1fv : Target vusb=%.2fv vcc=%.2fv outputs=["
-            "%.2fv %.2fv %.2fv %.2fv %.2fv %.2fv %.2fv %.2fv]",
-            supply, vusb, vcc, v0, v1, v2, v3, v4, v5, v6, v7);
-
-        if (!analogThresholdFromSample(vusb, analogTargetVUsbPin, supply)) return false;
-        if (!analogThresholdFromSample(vcc, analogTarget33vPin, 3.3)) return false;
-        if (!analogThresholdFromSample(v0, 0, 5.0)) return false;
-        if (!analogThresholdFromSample(v1, 1, 5.0)) return false;
-        if (!analogThresholdFromSample(v2, 2, 5.0)) return false;
-        if (!analogThresholdFromSample(v3, 3, 5.0)) return false;
-        if (!analogThresholdFromSample(v4, 4, 5.0)) return false;
-        if (!analogThresholdFromSample(v5, 5, 5.0)) return false;
-        if (!analogThresholdFromSample(v6, 6, 5.0)) return false;
-        if (!analogThresholdFromSample(v7, 7, 5.0)) return false;
-
-        // Also make sure we can turn outputs off properly
-        if (!target.digitalWritePort(outPin(0), 0x00))
-            return false;
-        for (unsigned n = 0; n < 8; n++)
-            if (!analogThreshold(n, 0))
-                return false;
-    }
-
-    // Done! Go back to a nominal 5V supply. We'll want this to be stable for flash programming.
-    setPowerSupplyVoltage(5.0);
-    return true;
-}
-
 void ElectricalTest::powerOff()
 {
     setPowerSupplyVoltage(0);
@@ -286,59 +250,6 @@ bool ElectricalTest::testUSBConnections()
     return true;
 }
 
-bool ElectricalTest::testSerialConnections()
-{
-    target.log(logLevel, "ETEST: Testing serial connections");
-
-    // This tests serial RX, TX, and the DMA loopback, which are all adjacent.
-    target.pinMode(target.PTB0, OUTPUT);
-    target.pinMode(target.PTC0, INPUT);
-    for (unsigned i = 0; i < 10; i++) {
-        target.digitalWrite(target.PTB0, i&1);
-        if (target.digitalRead(target.PTC0) != (i&1)) {
-            target.log(LOG_ERROR, "ETEST: Bad connection between DMA loopback pins PTB0 and PTC0");
-            return false;
-        }
-    }
-
-    // Leave that connection driven, check for shorts to serial RX/TX
-    if (!testHighZ(fcTXPin)) {
-        target.log(LOG_ERROR, "ETEST: Fault on serial TX pin, expected High-Z");
-        return false;
-    }
-    if (!testHighZ(fcRXPin)) {
-        target.log(LOG_ERROR, "ETEST: Fault on serial RX pin, expected High-Z");
-        return false;
-    }
-
-    // Drive serial TX, check for results and make sure there's no short to RX
-    target.pinMode(target.PTB17, OUTPUT);
-    for (unsigned i = 0; i < 10; i++) {
-        target.digitalWrite(target.PTB17, i&1);
-        if (digitalRead(fcTXPin) != (i&1)) {
-            target.log(LOG_ERROR, "ETEST: Bad connection on serial TX pin");
-            return false;
-        }
-    }
-    if (!testHighZ(fcRXPin)) {
-        target.log(LOG_ERROR, "ETEST: Short between serial TX and RX");
-        return false;
-    }
-
-    // Drive RX, and test that
-    pinMode(fcRXPin, OUTPUT);
-    target.pinMode(target.PTB16, INPUT);
-    for (unsigned i = 0; i < 10; i++) {
-        digitalWrite(fcRXPin, i&1);
-        if (target.digitalRead(target.PTB16) != (i&1)) {
-            target.log(LOG_ERROR, "ETEST: Bad connection on serial RX pin");
-            return false;
-        }
-    }
-
-    return true;
-}
-
 bool ElectricalTest::runAll()
 {
     target.log(logLevel, "ETEST: Beginning electrical test");
@@ -350,17 +261,17 @@ bool ElectricalTest::runAll()
     if (!testUSBConnections())
         return false;
 
-    // Output patterns
-    if (!testAllOutputPatterns())
-        return false;
+//    // Output patterns
+//    if (!testAllOutputPatterns())
+//        return false;
 
-    // Test serial connections, and the adjacent DMA loopback
-    if (!testSerialConnections())
-        return false;
+    // TODO: Reconsider tests given the pcb topology
 
-    // Now try dialing down the power supply voltage, and make sure it still works
-    if (!testBoostConverter())
-        return false;
+    // TODO: Add electrical tests for buttons
+    
+    // TODO: Add electrical test for LED
+    
+    // TODO: Add electrical test for flash
 
     target.log(logLevel, "ETEST: Successfully completed electrical test");
     return true;
