@@ -6,15 +6,21 @@
 #define SWITCH_PIN    9
 
 
-#define OUTPUT_COUNT 14       // Number of address outputs enabled
-#define MAX_OUTPUTS  14*3     // Number of address outputs available
+#define MAX_OUTPUTS  50     // Number of address outputs available
+#define OUTPUT_COUNT 16     // Number of address outputs enabled
+
+//// Programmer pins
+//const int csPin      = 10;
+//const int doutPin    = 11;
+//const int dinPin     = 12;
+//const int sckPin     = 13;
+
 
 // Data output pin
-const int dataPin        = 0;
-const int powerEnablePin = 2;
-
-const int passLedPin     = 23;
-const int failLedPin     = 22;
+const int dataPin    = 0;
+const int powerPin   = 2;
+const int failLedPin = 22;
+const int passLedPin = 23;
 
 static volatile uint8_t *dmxPort;
 static uint8_t dmxBit = 0;
@@ -39,10 +45,12 @@ const int addressPins[MAX_OUTPUTS] = {
   5,       // 12
   4,       // 13
   3,       // 14
+  2,       // 15
+  1,       // 16
 };
 
 // Output addresses to program
-int addresses[MAX_OUTPUTS] = {
+const int addresses[MAX_OUTPUTS] = {
   1,
   2,
   3,
@@ -57,6 +65,8 @@ int addresses[MAX_OUTPUTS] = {
   12,
   13,
   14,
+  15,
+  16
 };
 
 // Data table of bytes we need to send to program the addresses
@@ -65,15 +75,6 @@ int addresses[MAX_OUTPUTS] = {
 #define PROGRAM_ADDRESS_FRAMES 1+3
 int addressProgrammingData[MAX_OUTPUTS][PROGRAM_ADDRESS_FRAMES];
 
-// Turn power to the LEDs on
-void enableLedPower() {
-  digitalWriteFast(powerEnablePin, LOW);
-}
-
-// Turn power to the LEDs off
-void disableLedPower() {
-  digitalWriteFast(powerEnablePin, HIGH);
-}
 
 void writePixel(int pixel, int r, int g, int b) {
   dataArray[0] = 0;    // Start bit!
@@ -165,13 +166,6 @@ void dmxSendByte(uint8_t value)
 // Send programming data
 void programAddresses() {
   
-  digitalWriteFast(passLedPin, LOW);
-  
-  delay(100);
-  disableLedPower();
-  delay(100);
-  enableLedPower();
-  
   // Pull data pin low
   digitalWriteFast(dataPin, LOW);
   
@@ -183,8 +177,8 @@ void programAddresses() {
   
   for(int group = 0; group < GROUPS; group++) {
   
-    delay(1000);
-  //  delayMicroseconds(BREAK_LENGTH);
+    delay(500);
+    //delayMicroseconds(BREAK_LENGTH);
   
     noInterrupts();
     elapsedMicros startTime;            // Microsecond timing starts here
@@ -227,17 +221,8 @@ void programAddresses() {
   
   // And set the data pin low
   digitalWriteFast(dataPin, HIGH);
-  
-  // Toggle power to the LEDs
-  digitalWriteFast(failLedPin, LOW);
-  delay(2000);
-  disableLedPower();
-  delay(500);
-  enableLedPower();
-  
-  digitalWriteFast(passLedPin, HIGH);
-  digitalWriteFast(failLedPin, HIGH);
 }
+
 
 
 
@@ -289,16 +274,14 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   digitalWriteFast(dataPin, HIGH);
   
-  // Turn on LED power
-  pinMode(powerEnablePin, OUTPUT);
-  enableLedPower();
+  pinMode(powerPin, OUTPUT);
+  digitalWrite(powerPin, LOW);
   
-  // Turn on status LEDs
-  pinMode(passLedPin, OUTPUT);
-  digitalWriteFast(passLedPin, HIGH);
   pinMode(failLedPin, OUTPUT);
-  digitalWriteFast(failLedPin, HIGH);
-
+  digitalWrite(failLedPin, LOW);
+  
+  pinMode(passLedPin, OUTPUT);
+  digitalWrite(passLedPin, LOW);
   
   // Set up port pointers for interrupt routine
   dmxPort = portOutputRegister(digitalPinToPort(dataPin));
@@ -316,6 +299,11 @@ void setup() {
   
   // Finally, start listening on the serial port
   Serial.begin(115200);
+  
+  digitalWrite(failLedPin, HIGH);
+  digitalWrite(passLedPin, HIGH);
+  delay(1000);
+  digitalWrite(failLedPin, LOW);
 }
 
 
@@ -328,10 +316,10 @@ void handleCommand(char* commandBuffer) {
     
     Serial.print("Identify pixel: ");
     Serial.println(parameter);
-    
+     
     for(int output = 0; output < OUTPUT_COUNT; output++) {
       if(output + 1 == parameter) {
-        writePixel(output + 1, 255, 0, 255);
+        writePixel(output + 1, 255, 255, 255);
       }
       else {
         writePixel(output + 1, 1, 1, 1);
@@ -348,6 +336,7 @@ void handleCommand(char* commandBuffer) {
     Serial.println(parameter);
     
     for(int output = 0; output < OUTPUT_COUNT; output++) {
+
       if(parameter == 0) {
         writePixel(output + 1, 255, 0, 0);
       }
@@ -367,10 +356,26 @@ void handleCommand(char* commandBuffer) {
     draw();  // TODO: Fix this bug :-P
   }
   if(command == COMMAND_PROGRAM_ADDRESSES) {
+    digitalWrite(failLedPin, HIGH);
+    digitalWrite(passLedPin, LOW);
     Serial.print("Programming addresses");
     Serial.println("");
+    digitalWrite(powerPin, HIGH);
+    delay(100);
+    digitalWrite(powerPin, LOW);
     
     programAddresses();
+    programAddresses(); // TODO: Fix this bug :-P
+    
+    //delay(5000);
+
+    digitalWrite(powerPin, HIGH);
+    delay(500);
+    digitalWrite(powerPin, LOW);
+    Serial.print("Programming END");
+    Serial.println("");
+    digitalWrite(failLedPin, LOW);
+    digitalWrite(passLedPin, HIGH);
   }
 }
 
@@ -406,14 +411,13 @@ void loop() {
   }
   
   if(digitalRead(SWITCH_PIN) == LOW) {
-    programAddresses();
-    
+    delay(50);
+    handleCommand("p");
     while(digitalRead(SWITCH_PIN) == LOW) {}
   }
-  
-//  if(command == FLASH_RGBW) {
+
     static int counts = 0;
-    static int countsPerChange = 500000;
+    static int countsPerChange = 300000;
     static int color = 0;
     
     counts++;
@@ -439,3 +443,4 @@ void loop() {
       color = (color + 1) % 4;
     }
 }
+
