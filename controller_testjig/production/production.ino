@@ -106,6 +106,10 @@ void loop()
     if (!etest.runAll())
         return;
 
+    // Test for the presence of the flash chip
+    if (!remote.testExternalFlash())
+        return;
+
     // Program firmware, blinking both LEDs in unison for status.
     if (!remote.installFirmware())
         return;

@@ -142,7 +142,7 @@ bool ARMKinetisDebug::peripheralInit()
         memStore(REG_SIM_SCGC5, 0x00043F82) && // clocks active to all GPIO
         memStore(REG_SIM_SCGC6,
             REG_SIM_SCGC6_RTC | REG_SIM_SCGC6_FTM0 | REG_SIM_SCGC6_FTM1 |
-            REG_SIM_SCGC6_ADC0 | REG_SIM_SCGC6_FTFL) &&
+            REG_SIM_SCGC6_ADC0 | REG_SIM_SCGC6_FTFL | REG_SIM_SCGC6_SPI0) &&
 
         // Start in FEI mode
         // Enable capacitors for crystal
@@ -316,7 +316,6 @@ bool ARMKinetisDebug::flashMassErase()
 bool ARMKinetisDebug::flashSectorBufferInit()
 {
     // Use FlexRAM as normal RAM, and erase it. Test to make sure it's working.
-    return
         ftfl_setFlexRAMFunction(0xFF) &&
         memStoreAndVerify(REG_FLEXRAM_BASE, 0x12345678) &&
         memStoreAndVerify(REG_FLEXRAM_BASE, 0xFFFFFFFF) &&
@@ -586,4 +585,78 @@ bool ARMKinetisDebug::digitalWritePort(unsigned port, unsigned value)
 bool ARMKinetisDebug::usbSetPullup(bool enable)
 {
     return memStoreByte(REG_USB0_CONTROL, enable ? USB_CONTROL_DPPULLUPNONOTG : 0);
+}
+
+bool ARMKinetisDebug::initializeSpi0()
+{
+    // Note SPI hardware should be initialized when power turned on
+
+    // Configure the IO pins for flash use
+    if(!memStore(REG_PORTC_PCR6, REG_PORT_PCR_DSE | REG_PORT_PCR_MUX(2)))     // SPI0_OUT (Clock)
+        return false;
+    if(!memStore(REG_PORTC_PCR7, REG_PORT_PCR_MUX(2)))     // SPI0_SIN (MOSI)
+        return false;
+    if(!memStore(REG_PORTC_PCR5, REG_PORT_PCR_DSE | REG_PORT_PCR_MUX(2)))     // SPI0_SCK (MISO)
+        return false;
+    if(!memStore(REG_PORTC_PCR2, REG_PORT_PCR_MUX(2)))     // SPO0_PCS2
+        return false;
+
+    uint32_t mtr = REG_SPI_MCR_MSTR | REG_SPI_MCR_PCSIS(0x1F) | REG_SPI_MCR_CLR_RXF | REG_SPI_MCR_CLR_TXF;
+    uint32_t ctar0 = REG_SPI_CTAR_DBR | REG_SPI_CTAR_FMSZ(7) |  REG_SPI_CTAR_PCSSCK(0x3) | REG_SPI_CTAR_CSSCK(0x1) | REG_SPI_CTAR_PASC(0x3) | REG_SPI_CTAR_ASC(0x1);
+    uint32_t ctar1 = REG_SPI_CTAR_DBR | REG_SPI_CTAR_FMSZ(15) | REG_SPI_CTAR_PCSSCK(0x3) | REG_SPI_CTAR_CSSCK(0x1) | REG_SPI_CTAR_PASC(0x3) | REG_SPI_CTAR_ASC(0x1);
+                
+    // Configure the DSPI module
+    if(!memStore(REG_SPI0_MCR, mtr | REG_SPI_MCR_MDIS | REG_SPI_MCR_HALT))
+        return false;
+    if(!memStore(REG_SPI0_CTAR0, ctar0))
+        return false;
+    if(!memStore(REG_SPI0_CTAR1, ctar1))
+        return false;
+    if(!memStore(REG_SPI0_MCR, mtr))
+        return false;
+
+    return true;
+}
+
+bool ARMKinetisDebug::sendSpi0(uint8_t data, bool lastTransaction)
+{
+    uint32_t continuous = 0;                                                        
+    if(!lastTransaction) {continuous = SPI_PUSHR_CONT;}
+
+//                SPI0_MCR = SPI_MCR_MSTR | SPI_MCR_PCSIS(0x1F) | SPI_MCR_CLR_RXF | SPI_MCR_CLR_TXF;               
+//                SPI0_SR = SPI_SR_TCF;                                                           
+//                SPI0_PUSHR = continuous | SPI_PUSHR_PCS(pcs) | b;                               
+//                while(!(SPI0_SR & SPI_SR_TCF));
+
+    if(!memStore(REG_SPI0_MCR, REG_SPI_MCR_MSTR | REG_SPI_MCR_PCSIS(0x1F) | REG_SPI_MCR_CLR_RXF | REG_SPI_MCR_CLR_TXF))
+        return false;
+    if(!memStore(REG_SPI0_SR, REG_SPI_SR_TCF))
+        return false;
+    if(!memStore(REG_SPI0_PUSHR, continuous | REG_SPI_PUSHR_PCS(1<<2) | data))
+        return false;
+        
+    // Timeout error here?
+    uint32_t spi0_sr = 0;
+    bool readStatus;
+    do {
+        readStatus = memLoad(REG_SPI0_SR, spi0_sr);
+    }
+    while(readStatus && !(spi0_sr & REG_SPI_SR_TCF));
+    if(!readStatus)
+        return false;
+    
+    return true;
+}
+
+bool ARMKinetisDebug::receiveSpi0(uint8_t& data, bool lastTransaction)
+{
+    if(!sendSpi0(0xFF, lastTransaction))
+        return false;
+
+//                return SPI0_POPR;
+  
+    // TODO: is this aligned correctly?
+    memLoadByte(REG_SPI0_POPR, data);
+
+    return true;
 }

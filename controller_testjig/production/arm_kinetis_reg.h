@@ -678,3 +678,93 @@
 #define REG_MDM_CONTROL_VLLS_DEBUG_ACK      (1 << 6)
 #define REG_MDM_CONTROL_LLS_ACK             (1 << 7)
 #define REG_MDM_CONTROL_TIMESTAMP_DISABLE   (1 << 8)
+
+
+
+// Chapter 42: SPI (DSPI) 
+#define REG_SPI0_MCR                0x4002C000 // DSPI Module Configuration Register 
+#define REG_SPI_MCR_MSTR                    (uint32_t)0x80000000            // Master/Slave Mode Select 
+#define REG_SPI_MCR_CONT_SCKE               (uint32_t)0x40000000            // 
+#define REG_SPI_MCR_DCONF(n)                (((n) & 3) << 28)               // 
+#define REG_SPI_MCR_FRZ                     (uint32_t)0x08000000            // 
+#define REG_SPI_MCR_MTFE                    (uint32_t)0x04000000            //
+#define REG_SPI_MCR_ROOE                    (uint32_t)0x01000000            //
+#define REG_SPI_MCR_PCSIS(n)                (((n) & 0x1F) << 16)            //
+#define REG_SPI_MCR_DOZE                    (uint32_t)0x00008000            //
+#define REG_SPI_MCR_MDIS                    (uint32_t)0x00004000            //
+#define REG_SPI_MCR_DIS_TXF                 (uint32_t)0x00002000            //
+#define REG_SPI_MCR_DIS_RXF                 (uint32_t)0x00001000            //
+#define REG_SPI_MCR_CLR_TXF                 (uint32_t)0x00000800            //
+#define REG_SPI_MCR_CLR_RXF                 (uint32_t)0x00000400            //
+#define REG_SPI_MCR_SMPL_PT(n)              (((n) & 3) << 8)                //
+#define REG_SPI_MCR_HALT                    (uint32_t)0x00000001            //
+#define REG_SPI0_TCR                0x4002C008 // DSPI Transfer Count Register
+#define REG_SPI0_CTAR0              0x4002C00C // DSPI Clock and Transfer Attributes Register, In Master Mode
+#define REG_SPI_CTAR_DBR                    (uint32_t)0x80000000            // Double Baud Rate
+#define REG_SPI_CTAR_FMSZ(n)                (((n) & 15) << 27)              // Frame Size (+1)
+#define REG_SPI_CTAR_CPOL                   (uint32_t)0x04000000            // Clock Polarity
+#define REG_SPI_CTAR_CPHA                   (uint32_t)0x02000000            // Clock Phase
+#define REG_SPI_CTAR_LSBFE                  (uint32_t)0x01000000            // LSB First
+#define REG_SPI_CTAR_PCSSCK(n)              (((n) & 3) << 22)               // PCS to SCK Delay Prescaler
+#define REG_SPI_CTAR_PASC(n)                (((n) & 3) << 20)               // After SCK Delay Prescaler
+#define REG_SPI_CTAR_PDT(n)                 (((n) & 3) << 18)               // Delay after Transfer Prescaler
+#define REG_SPI_CTAR_PBR(n)                 (((n) & 3) << 16)               // Baud Rate Prescaler
+#define REG_SPI_CTAR_CSSCK(n)               (((n) & 15) << 12)              // PCS to SCK Delay Scaler
+#define REG_SPI_CTAR_ASC(n)                 (((n) & 15) << 8)               // After SCK Delay Scaler
+#define REG_SPI_CTAR_DT(n)                  (((n) & 15) << 4)               // Delay After Transfer Scaler
+#define REG_SPI_CTAR_BR(n)                  (((n) & 15) << 0)               // Baud Rate Scaler
+#define REG_SPI0_CTAR0_SLAVE        0x4002C00C // DSPI Clock and Transfer Attributes Register, In Slave Mode
+#define REG_SPI0_CTAR1              0x4002C010 // DSPI Clock and Transfer Attributes Register, In Master Mode
+#define REG_SPI0_SR                 0x4002C02C // DSPI Status Register
+#define REG_SPI_SR_TCF                      (uint32_t)0x80000000            // Transfer Complete Flag
+#define REG_SPI_SR_TXRXS                    (uint32_t)0x40000000            // TX and RX Status
+#define REG_SPI_SR_EOQF                     (uint32_t)0x10000000            // End of Queue Flag
+#define REG_SPI_SR_TFUF                     (uint32_t)0x08000000            // Transmit FIFO Underflow Flag
+#define REG_SPI_SR_TFFF                     (uint32_t)0x02000000            // Transmit FIFO Fill Flag
+#define REG_SPI_SR_RFOF                     (uint32_t)0x00080000            // Receive FIFO Overflow Flag
+#define REG_SPI_SR_RFDF                     (uint32_t)0x00020000            // Receive FIFO Drain Flag
+#define REG_SPI0_RSER               0x4002C030 // DSPI DMA/Interrupt Request Select and Enable Register
+#define REG_SPI_RSER_TCF_RE                 (uint32_t)0x80000000            // Transmission Complete Request Enable
+#define REG_SPI_RSER_EOQF_RE                (uint32_t)0x10000000            // DSPI Finished Request Request Enable
+#define REG_SPI_RSER_TFUF_RE                (uint32_t)0x08000000            // Transmit FIFO Underflow Request Enable
+#define REG_SPI_RSER_TFFF_RE                (uint32_t)0x02000000            // Transmit FIFO Fill Request Enable
+#define REG_SPI_RSER_TFFF_DIRS              (uint32_t)0x01000000            // Transmit FIFO FIll Dma or Interrupt Request Select
+#define REG_SPI_RSER_RFOF_RE                (uint32_t)0x00080000            // Receive FIFO Overflow Request Enable
+#define REG_SPI_RSER_RFDF_RE                (uint32_t)0x00020000            // Receive FIFO Drain Request Enable
+#define REG_SPI_RSER_RFDF_DIRS              (uint32_t)0x00010000            // Receive FIFO Drain DMA or Interrupt Request Select
+#define REG_SPI0_PUSHR              0x4002C034 // DSPI PUSH TX FIFO Register In Master Mode
+#define REG_SPI_PUSHR_CONT                  (uint32_t)0x80000000            //
+#define REG_SPI_PUSHR_CTAS(n)               (((n) & 7) << 28)               //
+#define REG_SPI_PUSHR_EOQ                   (uint32_t)0x08000000            //
+#define REG_SPI_PUSHR_CTCNT                 (uint32_t)0x04000000            //
+#define REG_SPI_PUSHR_PCS(n)                (((n) & 31) << 16)              //
+#define REG_SPI0_PUSHR_SLAVE        0x4002C034 // DSPI PUSH TX FIFO Register In Slave Mode
+#define REG_SPI0_POPR               0x4002C038 // DSPI POP RX FIFO Register
+#define REG_SPI0_TXFR0              0x4002C03C // DSPI Transmit FIFO Registers
+#define REG_SPI0_TXFR1              0x4002C040 // DSPI Transmit FIFO Registers
+#define REG_SPI0_TXFR2              0x4002C044 // DSPI Transmit FIFO Registers
+#define REG_SPI0_TXFR3              0x4002C048 // DSPI Transmit FIFO Registers
+#define REG_SPI0_RXFR0              0x4002C07C // DSPI Receive FIFO Registers
+#define REG_SPI0_RXFR1              0x4002C080 // DSPI Receive FIFO Registers
+#define REG_SPI0_RXFR2              0x4002C084 // DSPI Receive FIFO Registers
+#define REG_SPI0_RXFR3              0x4002C088 // DSPI Receive FIFO Registers
+typedef struct {
+        volatile uint32_t       MCR;    // 0
+        volatile uint32_t       unused1;// 4
+        volatile uint32_t       TCR;    // 8
+        volatile uint32_t       CTAR0;  // c
+        volatile uint32_t       CTAR1;  // 10
+        volatile uint32_t       CTAR2;  // 14
+        volatile uint32_t       CTAR3;  // 18
+        volatile uint32_t       CTAR4;  // 1c
+        volatile uint32_t       CTAR5;  // 20
+        volatile uint32_t       CTAR6;  // 24
+        volatile uint32_t       CTAR7;  // 28
+        volatile uint32_t       SR;     // 2c
+        volatile uint32_t       RSER;   // 30
+        volatile uint32_t       PUSHR;  // 34
+        volatile uint32_t       POPR;   // 38
+        volatile uint32_t       TXFR[16]; // 3c
+        volatile uint32_t       RXFR[16]; // 7c
+} REG_SPI_t;
+#define REG_SPI0            (*(SPI_t *)0x4002C000)

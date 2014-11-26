@@ -51,6 +51,15 @@ public:
 
     // USB controller pull-up resistor
     bool usbSetPullup(bool enable);
+    
+    // high-level routine to initialize the SPI0 hardware
+    bool initializeSpi0();
+
+    // high-level routine to send data to SPI0
+    bool sendSpi0(uint8_t data, bool lastTransaction);
+
+    // high-level routine to read data from SPI0    
+    bool receiveSpi0(uint8_t& data, bool lastTransaction);
 
     // Flash mass-erase operation. Works even on protected devices.
     bool flashMassErase();
