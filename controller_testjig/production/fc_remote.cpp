@@ -39,16 +39,20 @@ bool FcRemote::installFirmware()
     // Install firmware, blinking both target and local LEDs in unison.
 
     bool blink = false;
+    static int i = 0;
     ARMKinetisDebug::FlashProgrammer programmer(target, fw_data, fw_sectorCount);
 
     if (!programmer.begin())
         return false;
 
     while (!programmer.isComplete()) {
-        blink = !blink;
         if (!programmer.next()) return false;
-        if (!setLED(blink)) return false;
-        digitalWrite(ledPin, blink);
+        
+        if((i++ % 128) == 0) {
+            blink = !blink;
+            if (!setLED(blink)) return false;
+            digitalWrite(ledPin, blink);
+        }
     }
 
     return true;
