@@ -175,8 +175,8 @@ extern "C" int main()
         // TODO: There's a failure mode here where an undervoltage condition could cause
         // this to wipe the flash.
         if(!animations.isInitialized()) {
-            makeDefaultAnimation(flash);
-            animations.begin(flash);
+//            makeDefaultAnimation(flash);
+//            animations.begin(flash);
         }
     }
 

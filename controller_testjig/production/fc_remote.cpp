@@ -207,6 +207,15 @@ bool FcRemote::testExternalFlash()
     
     uint8_t sr;
     do {
+        static bool blink = false;
+        static int i = 0;
+        
+        if((i++ % FLASH_SPEED) == 0) {
+            blink = !blink;
+            if (!setLED(blink)) return false;
+            digitalWrite(ledPin, blink);
+        }
+      
       if(!target.sendSpi0(0x05, false)) {
           target.log(target.LOG_ERROR, "External flash test: Error getting status report");
           return false;

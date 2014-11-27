@@ -70,9 +70,7 @@ bool ElectricalTest::analogThresholdFromSample(float volts, int pin, float nomin
 }
 
 bool ElectricalTest::testOutputPattern(uint8_t bits)
-{
-    target.log(logLevel, "testing pattern: %02X", bits);
-    
+{   
     // These are the output pins that we want to cycle through
     #define OUTPUT_PIN_COUNT 4
     testPin outputPins[OUTPUT_PIN_COUNT] {
@@ -104,13 +102,11 @@ bool ElectricalTest::testOutputPattern(uint8_t bits)
         bool bit = (bits >> pin) & 1;
         if(!outputPins[pin].inverted) {
             if (!analogThreshold(outputPins[pin].analogInput, bit ? outputPins[pin].expectedVoltage : 0.0))
-//                return false;
-                {}
+                return false;
         }
         else {
             if (!analogThreshold(outputPins[pin].analogInput, bit ? 0.0 : outputPins[pin].expectedVoltage))
-//                return false;
-                {}
+                return false;
         }
     }
 
@@ -299,6 +295,9 @@ bool ElectricalTest::testPinsForShort(int count, unsigned* pins) {
 
 bool ElectricalTest::testTopPinShorts()
 {
+  target.pinMode(target.PTC2, OUTPUT);
+  target.digitalWrite(target.PTC2, HIGH);
+  
     // These pins are in the top row of the chip and can be tested as a block
     #define TOP_PIN_COUNT 9
     unsigned topPins[TOP_PIN_COUNT] = {
