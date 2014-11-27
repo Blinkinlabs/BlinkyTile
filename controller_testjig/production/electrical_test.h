@@ -59,6 +59,9 @@ private:
     bool testOutputPattern(uint8_t bits);
     bool testAllOutputPatterns();
     bool testUSBConnections();
+    bool testPinsForShort(int count, unsigned* pins);
+    bool testTopPinShorts();
+    bool testSidePinShorts();
     bool testSerialConnections();
     bool testHighZ(int pin);
     bool testPull(int pin, bool state);

@@ -26,23 +26,12 @@
 #include "testjig.h"
 #include "arm_kinetis_reg.h"
 
-
 // General IO pin that should be tested
 typedef struct testPin {
-  int input;      // analog input the pin is connected to
-  ARMKinetisDebug::Port port;
-  int index;
-  float voltage;  // Expected voltage (3.3V from the processor, 5V through a buffer)
-};
-
-testPin testPins[] {
-  {0, ARMKinetisDebug::PTA, 4, 3.3 },    // GPIO PA4
-  {1, ARMKinetisDebug::PTB, 0, 3.3 },    // GPIO PB0
-  {2, ARMKinetisDebug::PTC, 1, 3.3 },    // GPIO PC1
-  {3, ARMKinetisDebug::PTD, 4, 5 },      // LED 5V out
-  {4, ARMKinetisDebug::PTC, 3, 5 },      // LED ADDR
-  {5, ARMKinetisDebug::PTB, 1, 3.3 },    // GPIO PB1
-  {7, ARMKinetisDebug::PTC, 4, 5 },      // LED DATA
+    int analogInput;        // analog input the pin is connected to
+    int pinNumber;          // pin number on the DUT
+    float expectedVoltage;  // Expected voltage (3.3V from the processor, 5V through a buffer)
+    bool inverted;          // True if the analog signal is inverted from the input.
 };
 
 
@@ -82,21 +71,47 @@ bool ElectricalTest::analogThresholdFromSample(float volts, int pin, float nomin
 
 bool ElectricalTest::testOutputPattern(uint8_t bits)
 {
-    // Set the target's 8-bit output port to the given value, and check all analog values
+    target.log(logLevel, "testing pattern: %02X", bits);
+    
+    // These are the output pins that we want to cycle through
+    #define OUTPUT_PIN_COUNT 4
+    testPin outputPins[OUTPUT_PIN_COUNT] {
+//        {0, target.PTA4, 3.3, false},    // GPIO PA4
+        {1, target.PTB0, 3.3, false},    // GPIO PB0
+//        {2, target.PTC1, 3.3, false},    // GPIO PC1
+        {3, target.PTD4, 5, true},       // LED 5V out
+        {4, target.PTC3, 5, false},      // LED ADDR
+//        {5, target.PTB1, 3.3, false},    // GPIO PB1
+        {7, target.PTC4, 5, false},      // LED DATA
+    };
+
+    // Set the target's output pins to the given bitmask, and check all analog values
 
     // Write the port all at once
-    if (!target.digitalWritePort(outPin(0), bits))
-        return false;
+    for(int pin = 0; pin < OUTPUT_PIN_COUNT; pin++) {
+        if(!target.pinMode(outputPins[pin].pinNumber, OUTPUT))
+            return false;
+        if(!target.digitalWrite(outputPins[pin].pinNumber, (bits >> pin) & 0x01))
+            return false;
+    }
 
     // Check power supply each time
     if (!analogThreshold(analogTarget33vPin, 3.3)) return false;
     if (!analogThreshold(analogTargetVUsbPin, 5.0)) return false;
 
     // Check all data signal levels
-    for (unsigned n = 0; n < 8; n++) {
-        bool bit = (bits >> n) & 1;
-        if (!analogThreshold(n, bit ? 5.0 : 0.0))
-            return false;
+    for(int pin = 0; pin < OUTPUT_PIN_COUNT; pin++)  {
+        bool bit = (bits >> pin) & 1;
+        if(!outputPins[pin].inverted) {
+            if (!analogThreshold(outputPins[pin].analogInput, bit ? outputPins[pin].expectedVoltage : 0.0))
+//                return false;
+                {}
+        }
+        else {
+            if (!analogThreshold(outputPins[pin].analogInput, bit ? 0.0 : outputPins[pin].expectedVoltage))
+//                return false;
+                {}
+        }
     }
 
     return true;
@@ -250,6 +265,73 @@ bool ElectricalTest::testUSBConnections()
     return true;
 }
 
+bool ElectricalTest::testPinsForShort(int count, unsigned* pins) {
+    // First set all the pins to input, pullup.
+    for(int pin = 0; pin < count; pin++) {
+        target.pinMode(pins[pin], INPUT_PULLUP);
+    }
+    
+    // Check that all pins are indeed high
+    for(int pin = 0; pin < count; pin++) {
+        if(!target.digitalRead(pins[pin])) {
+            target.log(LOG_ERROR, "ETEST: pin stuck low, pin %i", pins[pin]);
+            return false;
+        }
+    }
+    
+    // For each pin, set it low, then check if any adjacent pins went low
+    for(int pinUnderTest = 0; pinUnderTest < count; pinUnderTest++) {
+        target.pinMode(pins[pinUnderTest], OUTPUT);
+        target.digitalWrite(pins[pinUnderTest], LOW);
+        
+        for(int pin = 0; pin < count; pin++) {
+            if((pinUnderTest != pin) && !(target.digitalRead(pins[pin]))) {
+                target.log(LOG_ERROR, "ETEST: pin %i shorted to pin %i", pins[pinUnderTest], pins[pin]);
+                return false;
+            }
+        }
+        
+        target.pinMode(pins[pinUnderTest], INPUT_PULLUP);
+    }
+    
+    return true;
+}
+
+bool ElectricalTest::testTopPinShorts()
+{
+    // These pins are in the top row of the chip and can be tested as a block
+    #define TOP_PIN_COUNT 9
+    unsigned topPins[TOP_PIN_COUNT] = {
+        target.PTC3, // ADDRESS_PROGRAM (it's around the corner anyway)
+        target.PTC4, // DATA_OUT (has 1k resistor)
+        target.PTC5, // FLASH_SCK
+        target.PTC6, // FLASH_MOSI (must pull CS pin high)
+        target.PTC7, // FLASH_MISO
+        target.PTD4, // POWER_ENABLE
+        target.PTD5, // BUTTON2
+        target.PTD6, // STATUS
+        target.PTD7, // BUTTON1
+    };
+    
+    return testPinsForShort(TOP_PIN_COUNT, topPins);
+}
+
+bool ElectricalTest::testSidePinShorts()
+{
+    // These pins are in the top row of the chip and can be tested as a block
+    #define SIDE_PIN_COUNT 2
+    unsigned sidePins[TOP_PIN_COUNT] = {
+//        target.PTB0,    // Can't test these since 
+//        target.PTB1,
+//        target.PTC1,
+        target.PTC2, // FLASH_CS
+        target.PTC3, // ADDRESS_PROGRAM
+//        target.PTA4, // (it's adjacent to PB0 in the breakout header)
+    };
+    
+    return testPinsForShort(SIDE_PIN_COUNT, sidePins);
+}
+
 bool ElectricalTest::runAll()
 {
     target.log(logLevel, "ETEST: Beginning electrical test");
@@ -260,18 +342,18 @@ bool ElectricalTest::runAll()
     // USB tests
     if (!testUSBConnections())
         return false;
+        
+    // Top row of pins short test
+    if (!testTopPinShorts())
+        return false;
+        
+    // Top row of pins short test
+    if (!testSidePinShorts())
+        return false;
 
-//    // Output patterns
-//    if (!testAllOutputPatterns())
-//        return false;
-
-    // TODO: Reconsider tests given the pcb topology
-
-    // TODO: Add electrical tests for buttons
-    
-    // TODO: Add electrical test for LED
-    
-    // TODO: Add electrical test for flash
+    // Output patterns
+    if (!testAllOutputPatterns())
+        return false;
 
     target.log(logLevel, "ETEST: Successfully completed electrical test");
     return true;

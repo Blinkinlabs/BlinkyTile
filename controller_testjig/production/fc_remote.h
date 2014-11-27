@@ -40,6 +40,8 @@ public:
 
     // Test that the flash chip works
     bool testExternalFlash();
+    
+    bool testUserButtons();
 
 //    // Measure actual frame rate of Fadecandy firmware
 //    float measureFrameRate(float minDuration = 1.0);

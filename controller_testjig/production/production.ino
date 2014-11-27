@@ -109,6 +109,10 @@ void loop()
     // Test for the presence of the flash chip
     if (!remote.testExternalFlash())
         return;
+        
+    // Test that the user buttons work
+    if (!remote.testUserButtons())
+        return;
 
     // Program firmware, blinking both LEDs in unison for status.
     if (!remote.installFirmware())
