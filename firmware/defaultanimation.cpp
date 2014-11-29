@@ -1,10 +1,10 @@
 #include "defaultanimation.h"
 #include "animation.h"
-#include "winbondflash.h"
+#include "jedecflash.h"
 #include "blinkytile.h"
 
 // Make a default animation, and write it to flash
-void makeDefaultAnimation(winbondFlashSPI& flash) {
+void makeDefaultAnimation(FlashSPI& flash) {
     flash.setWriteEnable(true);
     flash.eraseAll();
     while(flash.busy()) {

@@ -36,7 +36,7 @@
 #include "blinkytile.h"
 #include "animation.h"
 #include "defaultanimation.h"
-#include "winbondflash.h"
+#include "jedecflash.h"
 #include "protocol.h"
 #include "dmx.h"
 #include "patterns.h"
@@ -46,8 +46,8 @@
 // static fcBuffers buffers;
 // fcLinearLUT fcBuffers::lutCurrent;
 
-// Winbond flash stuff
-winbondFlashSPI flash;
+// External flash chip
+FlashSPI flash;
 
 // Animations class
 Animations animations;
@@ -168,7 +168,7 @@ extern "C" int main()
     enableOutputPower();
 
     // If the flash initializes successfully, then load the animations table.
-    if(flash.begin(winbondFlashClass::autoDetect)) {
+    if(flash.begin(FlashClass::autoDetect)) {
         animations.begin(flash);
 
         // If the flash was not set up with an animation, burn one to it.

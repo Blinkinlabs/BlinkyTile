@@ -22,7 +22,7 @@
  */
 
 #include "animation.h"
-#include "winbondflash.h"
+#include "jedecflash.h"
 //#include "matrix.h"
  #include "blinkytile.h"
 
@@ -38,7 +38,7 @@ bool Animations::isInitialized() {
     return initialized;
 }
 
-void Animations::begin(winbondFlashClass& _flash) {
+void Animations::begin(FlashClass& _flash) {
     initialized = false;
     flash = &_flash;
 

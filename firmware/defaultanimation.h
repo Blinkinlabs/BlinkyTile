@@ -1,8 +1,8 @@
 #ifndef DEFAULT_ANIMATION_H
 #define DEFAULT_ANIMATION_H
 
-#include "winbondflash.h"
+#include "jedecflash.h"
 
-void makeDefaultAnimation(winbondFlashSPI& flash);
+void makeDefaultAnimation(FlashSPI& flash);
 
 #endif

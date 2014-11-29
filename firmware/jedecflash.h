@@ -1,12 +1,31 @@
 /*
-                Winbond spi flash memory chip operating library for Arduino
-                by WarMonkey (luoshumymail@gmail.com)
-                for more information, please visit bbs.kechuang.org
-                latest version available on http://code.google.com/p/winbondflash
-*/
+ * Generic JEDEC-compatible SPI flash library
+ *
+ * Copyright (c) 2014 Matt Mets
+ *
+ * based on Winbond spi flash memory chip operating library for Arduino
+ * by WarMonkey (luoshumymail@gmail.com)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
-#ifndef _WINBONDFLASH_H__
-#define _WINBONDFLASH_H__
+#ifndef _JEDECFLASH_H__
+#define _JEDECFLASH_H__
 
 #include <inttypes.h>
 #include "spi4teensy3.h"
@@ -14,7 +33,7 @@
 //W25Q64 = 256_bytes_per_page * 16_pages_per_sector * 16_sectors_per_block * 128_blocks_per_chip
 //= 256b*16*16*128 = 8Mbyte = 64MBits
 
-class winbondFlashClass {
+class FlashClass {
 public:  
     enum manufacturerId {
         Spansion = 0x01,
@@ -54,10 +73,6 @@ public:
     //addr is 12bit-aligned, 0x00fff000
     void eraseSector(uint32_t addr);
 
-    // //erase a 32k block ( 32768b )
-    //addr is 15bit-aligned, 0x00ff8000
-    // void erase32kBlock(uint32_t addr);
-
     //erase a 64k block ( 65536b )
     //addr is 16bit-aligned, 0x00ff0000
     void erase64kBlock(uint32_t addr);
@@ -88,7 +103,7 @@ protected:
     
 };
 
-class winbondFlashSPI: public winbondFlashClass {
+class FlashSPI: public FlashClass {
 private:
 //  uint8_t nss;
     inline void select() {

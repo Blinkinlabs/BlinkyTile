@@ -38,7 +38,7 @@ C_FILES = \
 
 CPP_FILES = \
 	main.cpp \
-	winbondflash.cpp \
+	jedecflash.cpp \
 	spi4teensy3.cpp \
 	protocol.cpp \
 	blinkytile.cpp \

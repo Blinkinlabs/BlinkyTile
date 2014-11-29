@@ -1,35 +1,46 @@
 /*
-                Winbond spi flash memory chip operating library for Arduino
-                by WarMonkey (luoshumymail@gmail.com)
-                for more information, please visit bbs.kechuang.org
-                latest version available on http://code.google.com/p/winbondflash
-*/
+ * Generic JEDEC-compatible SPI flash library
+ *
+ * Copyright (c) 2014 Matt Mets
+ *
+ * based on Winbond spi flash memory chip operating library for Arduino
+  * by WarMonkey (luoshumymail@gmail.com)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 
 #include "Wprogram.h"
 #include <errno.h>
-#include "winbondflash.h"
+#include "jedecflash.h"
 
 //COMMANDS
 #define W_EN    0x06    //write enable
 #define W_DE    0x04    //write disable
 #define R_SR1   0x05    //read status reg 1
-//#define R_SR2   0x35    //read status reg 2
 #define W_SR    0x01    //write status reg
 #define PAGE_PGM        0x02    //page program
-//#define QPAGE_PGM       0x32    //quad input page program
 #define BLK_E_64K       0xD8    //block erase 64KB
-//#define BLK_E_32K       0x52    //block erase 32KB
 #define SECTOR_E        0x20    //sector erase 4KB
 #define CHIP_ERASE      0xc7    //chip erase
 #define CHIP_ERASE2     0x60    //=CHIP_ERASE
-//#define E_SUSPEND       0x75    //erase suspend
-//#define E_RESUME        0x7a    //erase resume
 #define PDWN            0xb9    //power down
-//#define HIGH_PERF_M     0xa3    //high performance mode
-//#define CONT_R_RST      0xff    //continuous read mode reset
 #define RELEASE         0xab    //release power down or HPM/Dev ID (deprecated)
-//#define R_MANUF_ID      0x90    //read Manufacturer and Dev ID (deprecated)
-//#define R_UNIQUE_ID     0x4b    //read unique ID (suggested)
 #define R_JEDEC_ID      0x9f    //read JEDEC ID = Manuf+ID (suggested)
 #define READ            0x03
 #define FAST_READ       0x0b
@@ -43,8 +54,8 @@
 #define DEFAULT_TIMEOUT 200
 
 typedef struct {
-    winbondFlashClass::manufacturerId mfr;
-    winbondFlashClass::partNumber pn;
+    FlashClass::manufacturerId mfr;
+    FlashClass::partNumber pn;
     uint16_t id;
     uint32_t bytes;
     uint32_t pages;
@@ -53,33 +64,29 @@ typedef struct {
 }winbondPnListType;
     
 static const winbondPnListType winbondPnList[] = {
-    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q80,    0x4014, 1048576,  4096,  256,  16},
-    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q16,    0x4015, 2097152,  8192,  512,  32},
-    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q32,    0x4016, 4194304, 16384, 1024,  64},
-    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q64,    0x4017, 8388608, 32768, 2048, 128},
-    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q128,   0x4018,16777216, 65536, 4096, 256},
-    { winbondFlashClass::Spansion, winbondFlashClass::S25FL208K, 0x4014, 1048576,  4096,  256,  16},
-    { winbondFlashClass::Spansion, winbondFlashClass::S25FL216K, 0x4015, 2097152,  8192,  512,  32},
+    { FlashClass::Winbond,  FlashClass::W25Q80,    0x4014, 1048576,  4096,  256,  16},
+    { FlashClass::Winbond,  FlashClass::W25Q16,    0x4015, 2097152,  8192,  512,  32},
+    { FlashClass::Winbond,  FlashClass::W25Q32,    0x4016, 4194304, 16384, 1024,  64},
+    { FlashClass::Winbond,  FlashClass::W25Q64,    0x4017, 8388608, 32768, 2048, 128},
+    { FlashClass::Winbond,  FlashClass::W25Q128,   0x4018,16777216, 65536, 4096, 256},
+    { FlashClass::Spansion, FlashClass::S25FL208K, 0x4014, 1048576,  4096,  256,  16},
+    { FlashClass::Spansion, FlashClass::S25FL216K, 0x4015, 2097152,  8192,  512,  32},
 };
     
-uint16_t winbondFlashClass::readSR()
+uint16_t FlashClass::readSR()
 {
-    uint8_t r1,r2;
+    uint8_t r1;
     select();
     send(R_SR1);
     r1 = receive(0xff, true);
     deselect();
     deselect();//some delay
     select();
-    // TODO: No SR2 in spansion part, 
-    // send(R_SR2);
-    // r2 = receive(0xff, true);
-    r2 = 0;
     deselect();
-    return (((uint16_t)r2)<<8)|r1;
+    return r1;
 }
 
-uint8_t winbondFlashClass::readManufacturer()
+uint8_t FlashClass::readManufacturer()
 {
     uint8_t c;
     select();
@@ -91,27 +98,7 @@ uint8_t winbondFlashClass::readManufacturer()
     return c;
 }
 
-// uint64_t winbondFlashClass::readUniqueID()
-// {
-//   uint64_t uid;
-//   uint8_t *arr;
-//   arr = (uint8_t*)&uid;
-//   select();
-//   send(R_UNIQUE_ID);
-//   send(0x00);
-//   send(0x00);
-//   send(0x00);
-//   send(0x00);
-//   //for little endian machine only
-//   for(int i=7;i>=0;i--)
-//   {
-//     arr[i] = receive(0x00, i==0);
-//   }
-//   deselect();
-//   return uid;
-// }
-
-uint16_t winbondFlashClass::readPartID()
+uint16_t FlashClass::readPartID()
 {
     uint8_t a,b;
     select();
@@ -123,7 +110,7 @@ uint16_t winbondFlashClass::readPartID()
     return (a<<8)|b;
 }
 
-bool winbondFlashClass::checkPartNo(partNumber _partno)
+bool FlashClass::checkPartNo(partNumber _partno)
 {
     uint8_t manuf;
     uint16_t id;
@@ -166,7 +153,7 @@ bool winbondFlashClass::checkPartNo(partNumber _partno)
     return false;//partNo not found
 }
 
-bool winbondFlashClass::busy()
+bool FlashClass::busy()
 {
     uint8_t r1;
     select();
@@ -178,14 +165,14 @@ bool winbondFlashClass::busy()
     return false;
 }
 
-void winbondFlashClass::setWriteEnable(bool cmd)
+void FlashClass::setWriteEnable(bool cmd)
 {
     select();
     send( cmd ? W_EN : W_DE, true);
     deselect();
 }
 
-long winbondFlashClass::bytes()
+long FlashClass::bytes()
 {
     for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
     {
@@ -197,7 +184,7 @@ long winbondFlashClass::bytes()
     return 0;
 }
 
-uint16_t winbondFlashClass::pages()
+uint16_t FlashClass::pages()
 {
     for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
     {
@@ -209,7 +196,7 @@ uint16_t winbondFlashClass::pages()
     return 0;
 }
 
-uint16_t winbondFlashClass::sectors()
+uint16_t FlashClass::sectors()
 {
     for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
     {
@@ -221,7 +208,7 @@ uint16_t winbondFlashClass::sectors()
     return 0;
 }
 
-uint16_t winbondFlashClass::blocks()
+uint16_t FlashClass::blocks()
 {
     for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
     {
@@ -233,7 +220,7 @@ uint16_t winbondFlashClass::blocks()
     return 0;
 }
 
-bool winbondFlashClass::begin(partNumber _partno)
+bool FlashClass::begin(partNumber _partno)
 {
     select();
     send(RELEASE, true);
@@ -246,7 +233,7 @@ bool winbondFlashClass::begin(partNumber _partno)
     return true;
 }
 
-void winbondFlashClass::end()
+void FlashClass::end()
 {
     select();
     send(PDWN, true);
@@ -254,7 +241,7 @@ void winbondFlashClass::end()
     delayMicroseconds(5);  //>3us
 }
 
-uint16_t winbondFlashClass::read(uint32_t addr,uint8_t *buf,uint16_t n)
+uint16_t FlashClass::read(uint32_t addr,uint8_t *buf,uint16_t n)
 {
     if(busy())
         return 0;
@@ -273,7 +260,7 @@ uint16_t winbondFlashClass::read(uint32_t addr,uint8_t *buf,uint16_t n)
     return n;
 }
 
-void winbondFlashClass::writePage(uint32_t addr_start,uint8_t *buf)
+void FlashClass::writePage(uint32_t addr_start,uint8_t *buf)
 {
     select();
     send(PAGE_PGM);
@@ -288,7 +275,7 @@ void winbondFlashClass::writePage(uint32_t addr_start,uint8_t *buf)
     deselect();
 }
 
-void winbondFlashClass::eraseSector(uint32_t addr_start)
+void FlashClass::eraseSector(uint32_t addr_start)
 {
     select();
     send(SECTOR_E);
@@ -298,17 +285,7 @@ void winbondFlashClass::eraseSector(uint32_t addr_start)
     deselect();
 }
 
-// void winbondFlashClass::erase32kBlock(uint32_t addr_start)
-// {
-//   select();
-//   send(BLK_E_32K);
-//   send(addr_start>>16);
-//   send(addr_start>>8);
-//   send(addr_start, true);
-//   deselect();
-// }
-
-void winbondFlashClass::erase64kBlock(uint32_t addr_start)
+void FlashClass::erase64kBlock(uint32_t addr_start)
 {
     select();
     send(BLK_E_64K);
@@ -318,43 +295,29 @@ void winbondFlashClass::erase64kBlock(uint32_t addr_start)
     deselect();
 }
 
-void winbondFlashClass::eraseAll()
+void FlashClass::eraseAll()
 {
     select();
     send(CHIP_ERASE, true);
     deselect();
 }
 
-// void winbondFlashClass::eraseSuspend()
-// {
-//   select();
-//   send(E_SUSPEND, true);
-//   deselect();
-// }
-
-// void winbondFlashClass::eraseResume()
-// {
-//   select();
-//   send(E_RESUME, true);
-//   deselect();
-// }
-
-//bool winbondFlashSPI::begin(partNumber _partno, uint8_t _nss)
-bool winbondFlashSPI::begin(partNumber _partno)
+//bool FlashSPI::begin(partNumber _partno, uint8_t _nss)
+bool FlashSPI::begin(partNumber _partno)
 {
 //  nss = _nss;
 
-    spi4teensy3::init(7);
+    spi4teensy3::init();
 //    spi4teensy3::init();
 
 //  pinMode(nss, OUTPUT);
     deselect();
 
-    return winbondFlashClass::begin(_partno);
+    return FlashClass::begin(_partno);
 }
 
-void winbondFlashSPI::end()
+void FlashSPI::end()
 {
-    winbondFlashClass::end();
+    FlashClass::end();
 }
 

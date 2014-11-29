@@ -24,12 +24,12 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include "winbondflash.h"
+#include "jedecflash.h"
 
 
 class Animation {
   public:
-    winbondFlashClass* flash;    // Flash chip to read from
+    FlashClass* flash;    // Flash chip to read from
     uint32_t frameCount;         // Number of frames in this animation
     uint32_t speed;              // Speed, in ms between frames
     uint32_t startingAddress;    // Address in flash of the first animation frame.
@@ -58,7 +58,7 @@ class Animation {
 
 class Animations {
   private:
-    winbondFlashClass* flash;
+    FlashClass* flash;
 
     Animation animations[MAX_ANIMATIONS_COUNT];
     uint32_t animationCount;    // Number of animations in this class
@@ -66,7 +66,7 @@ class Animations {
     bool initialized;
 
   public:
-    void begin(winbondFlashClass& _flash);
+    void begin(FlashClass& _flash);
 
     // True if the animations table was read correctly from flash
     bool isInitialized();
