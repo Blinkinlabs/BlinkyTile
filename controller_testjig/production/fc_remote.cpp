@@ -209,6 +209,7 @@ bool FcRemote::testExternalFlash()
     do {
         static bool blink = false;
         static int i = 0;
+        const int FLASH_SPEED = 40;
         
         if((i++ % FLASH_SPEED) == 0) {
             blink = !blink;
