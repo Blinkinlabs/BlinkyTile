@@ -7,7 +7,7 @@
 
 
 #define MAX_OUTPUTS  50     // Number of address outputs available
-#define OUTPUT_COUNT 16     // Number of address outputs enabled
+#define OUTPUT_COUNT 14     // Number of address outputs enabled
 
 //// Programmer pins
 //const int csPin      = 10;
@@ -30,7 +30,7 @@ static uint8_t dmxBit = 0;
 uint8_t dataArray[1 + MAX_OUTPUTS*BYTES_PER_PIXEL];    // Storage for DMX output (0 is the start frame)
 
 // Address pin connections
-const int addressPins[MAX_OUTPUTS] = {
+const int addressPins[OUTPUT_COUNT] = {
   21,      // 1
   20,      // 2
   19,      // 3
@@ -45,12 +45,10 @@ const int addressPins[MAX_OUTPUTS] = {
   5,       // 12
   4,       // 13
   3,       // 14
-  2,       // 15
-  1,       // 16
 };
 
 // Output addresses to program
-const int addresses[MAX_OUTPUTS] = {
+const int addresses[OUTPUT_COUNT] = {
   1,
   2,
   3,
@@ -65,15 +63,13 @@ const int addresses[MAX_OUTPUTS] = {
   12,
   13,
   14,
-  15,
-  16
 };
 
 // Data table of bytes we need to send to program the addresses
 // Note that this table needs to be initialized by a call to 
 // makeAddressTable() before using.
 #define PROGRAM_ADDRESS_FRAMES 1+3
-int addressProgrammingData[MAX_OUTPUTS][PROGRAM_ADDRESS_FRAMES];
+int addressProgrammingData[OUTPUT_COUNT][PROGRAM_ADDRESS_FRAMES];
 
 
 void writePixel(int pixel, int r, int g, int b) {
@@ -93,7 +89,7 @@ void setAddresses(int level, int offset, int count) {
 
 
 void setAddresses(int level) {
-  for(int address = 0; address < OUTPUT_COUNT; address++) {
+  for(int address = 0; address < MAX_OUTPUTS; address++) {
     digitalWriteFast(addressPins[address], level);
   }
 }
@@ -112,7 +108,7 @@ uint8_t flipEndianness(uint8_t input) {
 
 // Make a table of the values we have to send to program the addressess
 void makeAddressTable() {
-  for(int address = 0; address < MAX_OUTPUTS; address++) {
+  for(int address = 0; address < OUTPUT_COUNT; address++) {
     // WS2822S (from datasheet)
     int channel = (addresses[address]-1)*3+1;
     addressProgrammingData[address][1] = 0;
@@ -134,8 +130,8 @@ void makeAddressTable() {
 #define FRAME_STOP_BITS_TIME     (FRAME_START_BIT_TIME + 8*BIT_LENGTH + 2*BIT_LENGTH)
 
 
-#define GROUPS        4    // These should equal the MAX_OUTPUTS
-#define GROUP_SIZE    4
+#define GROUPS        2    // These multiplied together should equal the OUTPUT_COUNTS
+#define GROUP_SIZE    8
 
 
 void dmxSendByte(uint8_t value)
@@ -170,7 +166,7 @@ void programAddresses() {
   digitalWriteFast(dataPin, LOW);
   
   // Set address pins to outputs
-  for(int i = 0; i < MAX_OUTPUTS; i++) {
+  for(int i = 0; i < OUTPUT_COUNT; i++) {
     pinMode(addressPins[i], OUTPUT);
     digitalWriteFast(addressPins[i], LOW);
   }
@@ -304,6 +300,9 @@ void setup() {
   digitalWrite(passLedPin, HIGH);
   delay(1000);
   digitalWrite(failLedPin, LOW);
+      Serial.println("Identify pixel: ");
+    
+  
 }
 
 
