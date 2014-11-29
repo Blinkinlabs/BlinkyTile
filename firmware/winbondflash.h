@@ -16,17 +16,20 @@
 
 class winbondFlashClass {
 public:  
-    enum partNumber {
-        custom = -1,
-        autoDetect = 0,
-        W25Q80 = 1,
-        W25Q16 = 2,
-        W25Q32 = 4,
-        W25Q64 = 8,
-        W25Q128 = 16,
+    enum manufacturerId {
+        Spansion = 0x01,
+        Winbond = 0xEF, // todo: testme
+    };
 
-        S25FL208K = 32,
-        S25FL216K = 64
+    enum partNumber {
+        autoDetect,
+        W25Q80,
+        W25Q16,
+        W25Q32,
+        W25Q64,
+        W25Q128,
+        S25FL208K,
+        S25FL216K,
     };
 
     bool begin(partNumber _partno = autoDetect);

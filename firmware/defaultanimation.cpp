@@ -7,7 +7,10 @@
 void makeDefaultAnimation(winbondFlashSPI& flash) {
     flash.setWriteEnable(true);
     flash.eraseAll();
-    while(flash.busy()) { delay(100); }
+    while(flash.busy()) {
+        watchdog_refresh();
+        delay(100);
+    }
     flash.setWriteEnable(false);
 
     #define SAMPLE_ANIMATION_ADDRESS 0x00000100
@@ -23,7 +26,10 @@ void makeDefaultAnimation(winbondFlashSPI& flash) {
    
     flash.setWriteEnable(true); 
     flash.writePage(ANIMATIONS_TABLE_ADDRESS, (uint8_t*) sampleTable);
-    while(flash.busy()) { delay(100); }
+    while(flash.busy()) {
+        watchdog_refresh();
+        delay(100);
+    }
     flash.setWriteEnable(false); 
 
     uint8_t sampleAnimation[256];
@@ -60,6 +66,9 @@ void makeDefaultAnimation(winbondFlashSPI& flash) {
 
     flash.setWriteEnable(true); 
     flash.writePage(SAMPLE_ANIMATION_ADDRESS, sampleAnimation);
-    while(flash.busy()) { delay(100); }
+    while(flash.busy()) {
+        watchdog_refresh();
+        delay(100);
+    }
     flash.setWriteEnable(false);
 }

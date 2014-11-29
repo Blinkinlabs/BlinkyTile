@@ -46,11 +46,3 @@
 //#define PRODUCT_ID              0x6666    // Fake product ID
 //#define DEVICE_VER              0x0100	  // BCD device version
 //#define DEVICE_VER_STRING		"1.00"
-
-static inline void watchdog_refresh(void)
-{
-        __disable_irq();
-        WDOG_REFRESH = 0xA602;
-        WDOG_REFRESH = 0xB480;
-        __enable_irq();
-}

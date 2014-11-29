@@ -52,5 +52,12 @@ extern void enableOutputPower();
 // Turn off the output power line
 extern void disableOutputPower();
 
+static inline void watchdog_refresh(void)
+{
+        __disable_irq();
+        WDOG_REFRESH = 0xA602;
+        WDOG_REFRESH = 0xB480;
+        __enable_irq();
+}
 #endif
 

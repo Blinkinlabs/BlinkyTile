@@ -175,9 +175,12 @@ extern "C" int main()
         // TODO: There's a failure mode here where an undervoltage condition could cause
         // this to wipe the flash.
         if(!animations.isInitialized()) {
-//            makeDefaultAnimation(flash);
-//            animations.begin(flash);
+            makeDefaultAnimation(flash);
+            animations.begin(flash);
         }
+    }
+    else {
+        setStatusLed(20);
     }
 
 
@@ -197,8 +200,8 @@ extern "C" int main()
         userButtons.buttonTask();
 
         static int state = 0;
-        #define PATTERN_COUNT 5
-        static int pattern = 1;
+        #define PATTERN_COUNT 3
+        static int pattern = 0;
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
@@ -212,7 +215,7 @@ extern "C" int main()
                 case 0:
                     // If the flash wasn't initialized, then skip to the next built-in pattern.
                     if(!animations.isInitialized()) {
-                        pattern++;
+//                        pattern++;
                         break;
                     }
 
@@ -247,12 +250,12 @@ extern "C" int main()
                 case 2:
                     count_up_loop();
                     break;
-                case 3:
-                    white_loop();
-                    break;
-                case 4:
-                    green_loop();
-                    break;
+//                case 3:
+//                    white_loop();
+//                    break;
+//                case 4:
+//                    green_loop();
+//                    break;
             }
 
             dmxShow();

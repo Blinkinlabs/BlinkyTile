@@ -43,6 +43,7 @@
 #define DEFAULT_TIMEOUT 200
 
 typedef struct {
+    winbondFlashClass::manufacturerId mfr;
     winbondFlashClass::partNumber pn;
     uint16_t id;
     uint32_t bytes;
@@ -52,16 +53,13 @@ typedef struct {
 }winbondPnListType;
     
 static const winbondPnListType winbondPnList[] = {
-    { winbondFlashClass::W25Q80, 0x4014,1048576, 4096, 256, 16  },
-    { winbondFlashClass::W25Q16, 0x4015,2097152, 8192, 512, 32  },
-    { winbondFlashClass::W25Q32, 0x4016,4194304, 16384,1024,64  },
-    { winbondFlashClass::W25Q64, 0x4017,8388608, 32768,2048,128 },
-    { winbondFlashClass::W25Q128,0x4018,16777216,65536,4096,256 },
-};
-
-static const winbondPnListType spansionPnList[] = {
-    { winbondFlashClass::S25FL208K, 0x4014,1048576, 4096, 256, 16  },
-    { winbondFlashClass::S25FL216K, 0x4015,2097152, 8192, 512, 32  },
+    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q80,    0x4014, 1048576,  4096,  256,  16},
+    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q16,    0x4015, 2097152,  8192,  512,  32},
+    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q32,    0x4016, 4194304, 16384, 1024,  64},
+    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q64,    0x4017, 8388608, 32768, 2048, 128},
+    { winbondFlashClass::Winbond,  winbondFlashClass::W25Q128,   0x4018,16777216, 65536, 4096, 256},
+    { winbondFlashClass::Spansion, winbondFlashClass::S25FL208K, 0x4014, 1048576,  4096,  256,  16},
+    { winbondFlashClass::Spansion, winbondFlashClass::S25FL216K, 0x4015, 2097152,  8192,  512,  32},
 };
     
 uint16_t winbondFlashClass::readSR()
@@ -136,73 +134,35 @@ bool winbondFlashClass::checkPartNo(partNumber _partno)
     id = receive(0x00) << 8;
     id |= receive(0x00, true);
     deselect();
-    
-    if(manuf == WINBOND_MANUF) {
 
-        if(_partno == custom)
-            return true;
-
-        if(_partno == autoDetect)
+    // If it's autodetect mode, search the list of known parts to find a vendor/id match
+    if(_partno == autoDetect)
+    {
+        for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
         {
-            for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+            if((manuf == winbondPnList[i].mfr) && (id == winbondPnList[i].id))
             {
-                if(id == (winbondPnList[i].id))
-                {
-                    _partno = winbondPnList[i].pn;
-                    return true;
-                }
-            }
-            if(_partno == autoDetect)
-            {
-                return false;
+                partno = winbondPnList[i].pn;
+                return true;
             }
         }
-
-        //test chip id and partNo
+    }
+    else {
+        // If a specific part id was given, test that the installed part matches vendor/id.
         for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
         {
             if(_partno == winbondPnList[i].pn)
             {
-                if(id == winbondPnList[i].id)//id equal
-                    return true;
-                else
-                    return false;
-            }
-        }
-    }
-    else if(manuf == SPANSION_MANUF) {
-        
-        if(_partno == custom)
-            return true;
-
-        if(_partno == autoDetect)
-        {
-            for(int i=0;i<sizeof(spansionPnList)/sizeof(spansionPnList[0]);i++)
-            {
-                if(id == (spansionPnList[i].id))
-                {
-                    _partno = spansionPnList[i].pn;
+                if((manuf == winbondPnList[i].mfr) && (id == winbondPnList[i].id)) {
+                    partno = _partno;
                     return true;
                 }
-            }
-            if(_partno == autoDetect)
-            {
+
                 return false;
             }
         }
-
-        //test chip id and partNo
-        for(int i=0;i<sizeof(spansionPnList)/sizeof(spansionPnList[0]);i++)
-        {
-            if(_partno == spansionPnList[i].pn)
-            {
-                if(id == spansionPnList[i].id)//id equal
-                    return true;
-                else
-                    return false;
-            }
-        }
     }
+
     return false;//partNo not found
 }
 
@@ -385,7 +345,7 @@ bool winbondFlashSPI::begin(partNumber _partno)
 //  nss = _nss;
 
     spi4teensy3::init(7);
-    //spi4teensy3::init();
+//    spi4teensy3::init();
 
 //  pinMode(nss, OUTPUT);
     deselect();
