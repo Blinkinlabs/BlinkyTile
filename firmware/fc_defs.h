@@ -41,8 +41,3 @@
 #define PACKETS_PER_LUT         25
 
 //#define NUM_USB_BUFFERS         104       // Three full frames (3*25), one LUT buffer (25), a little extra (4)
-
-//#define VENDOR_ID               0x1d50    // OpenMoko
-//#define PRODUCT_ID              0x6666    // Fake product ID
-//#define DEVICE_VER              0x0100	  // BCD device version
-//#define DEVICE_VER_STRING		"1.00"

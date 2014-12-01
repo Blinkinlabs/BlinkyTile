@@ -83,35 +83,9 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 */
 
 
-
-#if defined(USB_SERIAL)
-  #define VENDOR_ID		0x1d50
-  #define PRODUCT_ID		0x6666
-  #define DEVICE_CLASS		2	// 2 = Communication Class
-  #define MANUFACTURER_NAME	{'B','l','i','n','k','i','n','l','a','b','s'}
-  #define MANUFACTURER_NAME_LEN	11
-  #define PRODUCT_NAME		{'L','i','g','h','t','B','u','d','d','y'}
-  #define PRODUCT_NAME_LEN	10
-  #define EP0_SIZE		64
-  #define NUM_ENDPOINTS		4
-  #define NUM_USB_BUFFERS	12
-  #define NUM_INTERFACE		2
-  #define CDC_STATUS_INTERFACE	0
-  #define CDC_DATA_INTERFACE	1
-  #define CDC_ACM_ENDPOINT	2
-  #define CDC_RX_ENDPOINT       3
-  #define CDC_TX_ENDPOINT       4
-  #define CDC_ACM_SIZE          16
-  #define CDC_RX_SIZE           64
-  #define CDC_TX_SIZE           64
-  #define CONFIG_DESC_SIZE	(9+9+5+5+4+5+7+9+7+7)
-  #define ENDPOINT2_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-  #define ENDPOINT3_CONFIG	ENDPOINT_RECEIVE_ONLY
-  #define ENDPOINT4_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-
-#elif defined(USB_SERIAL_HID)
+#if defined(USB_SERIAL_FC_DFU)
   #define VENDOR_ID		0x1D50
-  #define PRODUCT_ID		0x6666
+  #define PRODUCT_ID		0x6667
   #define DEVICE_CLASS		0xEF    // Miscellaneous device class
   #define DEVICE_SUBCLASS	0x02    // Interface association descriptor,
   #define DEVICE_PROTOCOL	0x01    // usage defined by descriptor.
@@ -119,54 +93,12 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define MANUFACTURER_NAME_LEN	11
   #define PRODUCT_NAME		{'L','i','g','h','t','B','u','d','d','y'}
   #define PRODUCT_NAME_LEN	10
-  #define EP0_SIZE		64
-  #define NUM_ENDPOINTS		6
-  #define NUM_USB_BUFFERS	30
-  #define NUM_INTERFACE		5
-  #define CDC_IAD_DESCRIPTOR	1
-  #define CDC_STATUS_INTERFACE	0
-  #define CDC_DATA_INTERFACE	1	// Serial
-  #define CDC_ACM_ENDPOINT	2
-  #define CDC_RX_ENDPOINT       3
-  #define CDC_TX_ENDPOINT       4
-  #define CDC_ACM_SIZE          16
-  #define CDC_RX_SIZE           64
-  #define CDC_TX_SIZE           64
-  #define KEYBOARD_INTERFACE    2	// Keyboard
-  #define KEYBOARD_ENDPOINT     1
-  #define KEYBOARD_SIZE         8
-  #define KEYBOARD_INTERVAL     1
-  #define MOUSE_INTERFACE       3	// Mouse
-  #define MOUSE_ENDPOINT        5
-  #define MOUSE_SIZE            8
-  #define MOUSE_INTERVAL        2
-  #define JOYSTICK_INTERFACE    4	// Joystick
-  #define JOYSTICK_ENDPOINT     6
-  #define JOYSTICK_SIZE         16
-  #define JOYSTICK_INTERVAL     1
-  #define KEYBOARD_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9)
-  #define MOUSE_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9)
-  #define JOYSTICK_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9+9+7 + 9)
-  #define CONFIG_DESC_SIZE	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9+9+7 + 9+9+7)
-  #define ENDPOINT1_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-  #define ENDPOINT2_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-  #define ENDPOINT3_CONFIG	ENDPOINT_RECEIVE_ONLY
-  #define ENDPOINT4_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-  #define ENDPOINT5_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-  #define ENDPOINT6_CONFIG	ENDPOINT_TRANSIMIT_ONLY
-
-#elif defined(USB_SERIAL_FC_DFU)
-  #define VENDOR_ID		0x1D50
-  #define PRODUCT_ID		0x6666
-  #define DEVICE_CLASS		0xEF    // Miscellaneous device class
-  #define DEVICE_SUBCLASS	0x02    // Interface association descriptor,
-  #define DEVICE_PROTOCOL	0x01    // usage defined by descriptor.
-  #define MANUFACTURER_NAME	{'B','l','i','n','k','i','n','l','a','b','s'}
-  #define MANUFACTURER_NAME_LEN	11
-  #define PRODUCT_NAME		{'L','i','g','h','t','B','u','d','d','y'}
-  #define PRODUCT_NAME_LEN	10
-  #define DFU_NAME              {'L','i','g','h','t','B','u','d','d','y',' ','B','o','o','t','l','o','a','d','e','r'}
-  #define DFU_NAME_LEN          21
+  #define SERIAL_NAME           {'L','i','g','h','t','B','u','d','d','y',' ','S','e','r','i','a','l'}
+  #define SERIAL_NAME_LEN       17
+  #define FC_NAME               {'L','i','g','h','t','B','u','d','d','y',' ','F','a','d','e','c','a','n','d','y'}
+  #define FC_NAME_LEN           20
+  #define DFU_NAME              {'L','i','g','h','t','B','u','d','d','y',' ','D','F','U'}
+  #define DFU_NAME_LEN          14
   #define EP0_SIZE		64
   #define NUM_ENDPOINTS		4       // 1=fadecandy,dfu 2,3,4=serial
   #define NUM_USB_BUFFERS	116     // TODO: FC uses 104, serial 12, we don't need this many?

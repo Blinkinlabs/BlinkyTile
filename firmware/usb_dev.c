@@ -125,7 +125,7 @@ static uint8_t ep0_tx_data_toggle = 0;
 uint8_t usb_rx_memory_needed = 0;
 
 volatile uint8_t usb_configuration = 0;
-volatile uint8_t usb_reboot_timer = 0;
+//volatile uint8_t usb_reboot_timer = 0;
 volatile uint8_t usb_dfu_state = DFU_appIDLE;
 
 static void endpoint0_stall(void)
@@ -332,15 +332,6 @@ static void usb_setup(void)
 		return;
 #endif
 
-// TODO: this does not work... why?
-#if defined(SEREMU_INTERFACE) || defined(KEYBOARD_INTERFACE)
-	  case 0x0921: // HID SET_REPORT
-		//serial_print(":)\n");
-		return;
-	  case 0x0A21: // HID SET_IDLE
-		break;
-	  // case 0xC940:
-#endif
 
 #ifdef DFU_INTERFACE
           case 0x03a1: // DFU_GETSTATUS
@@ -503,20 +494,7 @@ static void usb_control(uint32_t stat)
 			}
 			//serial_phex32(usb_cdc_line_coding[0]);
 			//serial_print("\n");
-			if (usb_cdc_line_coding[0] == 134) usb_reboot_timer = 15;
-			endpoint0_transmit(NULL, 0);
-		}
-#endif
-#ifdef KEYBOARD_INTERFACE
-		if (setup.word1 == 0x02000921 && setup.word2 == ((1<<16)|KEYBOARD_INTERFACE)) {
-			keyboard_leds = buf[0];
-			endpoint0_transmit(NULL, 0);
-		}
-#endif
-#ifdef SEREMU_INTERFACE
-		if (setup.word1 == 0x03000921 && setup.word2 == ((4<<16)|SEREMU_INTERFACE)
-		  && buf[0] == 0xA9 && buf[1] == 0x45 && buf[2] == 0xC2 && buf[3] == 0x6B) {
-			usb_reboot_timer = 5;
+//			if (usb_cdc_line_coding[0] == 134) usb_reboot_timer = 15;
 			endpoint0_transmit(NULL, 0);
 		}
 #endif
@@ -719,15 +697,11 @@ void usb_tx(uint32_t endpoint, usb_packet_t *packet)
 }
 
 
-
-
-
-
-void _reboot_Teensyduino_(void)
-{
-	// TODO: initialize R0 with a code....
-	__asm__ volatile("bkpt");
-}
+//void _reboot_Teensyduino_(void)
+//{
+//	// TODO: initialize R0 with a code....
+//	__asm__ volatile("bkpt");
+//}
 
 
 
@@ -744,30 +718,17 @@ void usb_isr(void)
 
 	if ((status & USB_INTEN_SOFTOKEN /* 04 */ )) {
 		if (usb_configuration) {
-			t = usb_reboot_timer;
-			if (t) {
-				usb_reboot_timer = --t;
-				if (!t) _reboot_Teensyduino_();
-			}
+//			t = usb_reboot_timer;
+//			if (t) {
+//				usb_reboot_timer = --t;
+//				if (!t) _reboot_Teensyduino_();
+//			}
 #ifdef CDC_DATA_INTERFACE
 			t = usb_cdc_transmit_flush_timer;
 			if (t) {
 				usb_cdc_transmit_flush_timer = --t;
 				if (t == 0) usb_serial_flush_callback();
 			}
-#endif
-#ifdef SEREMU_INTERFACE
-			t = usb_seremu_transmit_flush_timer;
-			if (t) {
-				usb_seremu_transmit_flush_timer = --t;
-				if (t == 0) usb_seremu_flush_callback();
-			}
-#endif
-#ifdef MIDI_INTERFACE
-                        usb_midi_flush_output();
-#endif
-#ifdef FLIGHTSIM_INTERFACE
-			usb_flightsim_flush_callback();
 #endif
 		}
 		USB0_ISTAT = USB_INTEN_SOFTOKEN;
