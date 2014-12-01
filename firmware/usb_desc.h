@@ -85,7 +85,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 
 #if defined(USB_SERIAL_FC_DFU)
   #define VENDOR_ID		0x1D50
-  #define PRODUCT_ID		0x6667
+  #define PRODUCT_ID		0x6666
   #define DEVICE_CLASS		0xEF    // Miscellaneous device class
   #define DEVICE_SUBCLASS	0x02    // Interface association descriptor,
   #define DEVICE_PROTOCOL	0x01    // usage defined by descriptor.

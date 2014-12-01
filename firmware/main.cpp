@@ -179,10 +179,6 @@ extern "C" int main()
             animations.begin(flash);
         }
     }
-    else {
-        setStatusLed(20);
-    }
-
 
     serial_begin(BAUD2DIV(115200));
 //    serialReceiver.reset();

@@ -51,14 +51,16 @@ void __libc_init_array(void);
 
 void fault_isr(void)
 {
-	while (1) {
-		// keep polling some communication while in fault
-		// mode, so we don't completely die.
-		if (SIM_SCGC4 & SIM_SCGC4_USBOTG) usb_isr();
-		if (SIM_SCGC4 & SIM_SCGC4_UART0) uart0_status_isr();
-		if (SIM_SCGC4 & SIM_SCGC4_UART1) uart1_status_isr();
-		if (SIM_SCGC4 & SIM_SCGC4_UART2) uart2_status_isr();
-	}
+	while (1);	// die
+
+//	while (1) {
+//		// keep polling some communication while in fault
+//		// mode, so we don't completely die.
+//		if (SIM_SCGC4 & SIM_SCGC4_USBOTG) usb_isr();
+//		if (SIM_SCGC4 & SIM_SCGC4_UART0) uart0_status_isr();
+//		if (SIM_SCGC4 & SIM_SCGC4_UART1) uart1_status_isr();
+//		if (SIM_SCGC4 & SIM_SCGC4_UART2) uart2_status_isr();
+//	}
 }
 
 void unused_isr(void)
