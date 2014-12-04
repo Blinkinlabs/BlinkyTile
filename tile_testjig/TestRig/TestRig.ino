@@ -185,8 +185,6 @@ void dmxSendByte(uint8_t value)
 //    erase Addresses
 //=============================================================================================================
 void eraseAddresses(){
-digitalWrite(failLedPin, HIGH);
-  digitalWrite(passLedPin, LOW);
   Serial.println("Start Program addresses");
   resetPower();
   
@@ -254,8 +252,6 @@ digitalWrite(failLedPin, HIGH);
   
   resetPower();
   Serial.println("Programming END");
-  digitalWrite(failLedPin, LOW);
-  digitalWrite(passLedPin, HIGH);  
 }
 
 //=============================================================================================================
@@ -264,8 +260,6 @@ digitalWrite(failLedPin, HIGH);
 
 // Send programming data
 void programAddresses() { 
-  digitalWrite(failLedPin, HIGH);
-  digitalWrite(passLedPin, LOW);
   Serial.println("Start Program addresses");
   resetPower();
   
@@ -334,8 +328,6 @@ void programAddresses() {
   
   resetPower();
   Serial.println("Programming END");
-  digitalWrite(failLedPin, LOW);
-  digitalWrite(passLedPin, HIGH);
   
 }
 
@@ -522,7 +514,11 @@ void loop() {
       
       if(c == 0x0A) {
         if(bufferPosition <= COMMAND_LENGTH) {
+           digitalWrite(failLedPin, HIGH);
+           digitalWrite(passLedPin, LOW);
            handleCommand(inputBuffer);
+           digitalWrite(failLedPin, LOW);
+           digitalWrite(passLedPin, HIGH);
            inputBuffer[0] = 0;
            inputBuffer[1] = 0;
            inputBuffer[2] = 0;
@@ -545,6 +541,9 @@ void loop() {
   }
   
   if(digitalRead(SWITCH_PIN) == LOW) {
+  digitalWrite(failLedPin, HIGH);
+  digitalWrite(passLedPin, LOW);
+  
     delay(50);
     handleCommand("p");
     delay(50);
@@ -566,6 +565,8 @@ void loop() {
     delay(50);
     handleCommand("t");
     while(digitalRead(SWITCH_PIN) == LOW) {}
+    digitalWrite(failLedPin, LOW);
+    digitalWrite(passLedPin, HIGH);
   }
   
   //===================================================================
@@ -581,16 +582,16 @@ void loop() {
       
       for(int output = 0; output < OUTPUT_COUNT; output++) {
         if(color == 0) {
-          writePixel(output + 1, 10, 0, 0);
+          writePixel(output + 1, 50, 0, 0);
         }
         else if(color == 1) {
-          writePixel(output + 1, 0, 10, 0);
+          writePixel(output + 1, 0, 50, 0);
         }
         else if(color == 2) {
-          writePixel(output + 1, 0, 0, 10);
+          writePixel(output + 1, 0, 0, 50);
         }
         else if(color == 3) {
-          writePixel(output + 1, 10, 10, 10);
+          writePixel(output + 1, 50, 50, 50);
         }
       }
       
