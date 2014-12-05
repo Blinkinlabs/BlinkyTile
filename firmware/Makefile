@@ -39,6 +39,7 @@ C_FILES = \
 CPP_FILES = \
 	main.cpp \
 	jedecflash.cpp \
+	sectordescriptor.cpp \
 	spi4teensy3.cpp \
 	protocol.cpp \
 	blinkytile.cpp \

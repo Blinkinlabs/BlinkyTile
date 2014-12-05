@@ -24,6 +24,9 @@
 #ifndef SECTOR_DESCRIPTOR_H
 #define SECTOR_DESCRIPTOR_H
 
+#include <inttypes.h>
+#include "jedecflash.h"
+
 #define SECTOR_HEADER_SIZE		8 // Size of a sector header (magic number)
 #define MAGIC_NUMBER_SIZE		3 // Size of the magic number
 
@@ -48,10 +51,10 @@ typedef struct {
 
 class FlashStorage {
   private:
-  	winbondFlashClass* flash;
+  	FlashClass* flash;
 
   public:
-    void begin(winbondFlashClass& _flash);
+    void begin(FlashClass& _flash);
 
     // Total number of sectors in the flash memory.
     // return Total number of sectors

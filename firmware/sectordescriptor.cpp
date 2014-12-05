@@ -24,7 +24,7 @@
 #include "sectorDescriptor.h"
 
 
-void FlashStorage::begin(winbondFlashClass& _flash) {
+void FlashStorage::begin(FlashClass& _flash) {
     flash = &_flash;
 }
 
@@ -65,9 +65,9 @@ int FlashStorage::freeSpace() {
 	return freeSectors()*(sectorSize() - SECTOR_HEADER_SIZE);
 }
 
-int findFreeSector(int start);
+int FlashStorage::findFreeSector(int start) {
 	for(int i = start; i < sectors(); i++) {
-		if(isFree(i)) {
+		if(freeSector(i)) {
 			return i;
 		}
 	}
@@ -75,19 +75,24 @@ int findFreeSector(int start);
 	return -1;
 }
 
-int writeSector(int sector, int length, uint8_t* data) {
-	// TODO: Test that data size is ok
+int FlashStorage::writeSector(int sector, int length, uint8_t* data) {
+	if(length != sectorSize()) {
+		return 0;
+	}
 
 	for(int page = 0; page < flash->pages()/flash->sectors(); page++) {
-		flash.setWriteEnable(true);
-    	flash.writePage(
-    		ANIMATIONS_TABLE_ADDRESS,
-    		(uint8_t*) sampleTable
+		int offset = page*256;
+
+		flash->setWriteEnable(true);
+	    	flash->writePage(
+    			sector*sectorSize() + offset,
+    			data + offset
     		);
-    	while(flash.busy()) {
-    		delay(100);
-    	}
-    	flash.setWriteEnable(false); 		
+	    	while(flash->busy()) {
+    			delay(10);
+			// TODO: refresh watchdog
+    		}
+    		flash->setWriteEnable(false); 		
 	}
 
 	return length;
