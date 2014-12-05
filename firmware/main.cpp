@@ -26,17 +26,18 @@
 #include <math.h>
 #include <algorithm>
 #include <stdlib.h>
+#include <stdio.h>
 #include "fc_usb.h"
 #include "arm_math.h"
 //#include "fc_defs.h"
 #include "HardwareSerial.h"
 #include "usb_serial.h"
 
-//#include "matrix.h"
 #include "blinkytile.h"
 #include "animation.h"
 #include "defaultanimation.h"
 #include "jedecflash.h"
+#include "sectordescriptor.h"
 #include "protocol.h"
 #include "dmx.h"
 #include "patterns.h"
@@ -48,6 +49,9 @@
 
 // External flash chip
 FlashSPI flash;
+
+// Flash storage class, works on top of the base flash chip
+FlashStorage flashStorage;
 
 // Animations class
 Animations animations;
@@ -100,19 +104,98 @@ void setupWatchdog() {
     WDOG_TOVALL = (watchdog_timeout)       & 0xFFFF;
 }
 
+
+void singleCharacterHack(char in) {
+    char buffer[100];
+    int bufferSize;
+
+    switch(in) {
+        case 'i':
+            bufferSize = sprintf(buffer, "Sector Count: %i\n", flashStorage.sectors());
+            usb_serial_write(buffer, bufferSize);
+            bufferSize = sprintf(buffer, "Sector Size: %i\n", flashStorage.sectorSize());
+            usb_serial_write(buffer, bufferSize);
+            bufferSize = sprintf(buffer, "Free sectors: %i\n", flashStorage.freeSectors());
+            usb_serial_write(buffer, bufferSize);
+            bufferSize = sprintf(buffer, "Free space: %i\n", flashStorage.freeSpace());
+            usb_serial_write(buffer, bufferSize);
+            bufferSize = sprintf(buffer, "First free sector: %i\n", flashStorage.findFreeSector(0));
+            usb_serial_write(buffer, bufferSize);
+            break;
+        case 'w':
+            {
+                int sector = flashStorage.findFreeSector(0);
+
+                bufferSize = sprintf(buffer, "writing sector: %i...", sector);
+                usb_serial_write(buffer, bufferSize);
+
+                uint8_t data[256];
+                data[0] = (ANIMATION_START >> 24) % 0xff;
+                data[1] = (ANIMATION_START >> 16) % 0xff;
+                data[2] = (ANIMATION_START >>  8) % 0xff;
+                data[3] = (ANIMATION_START >>  0) % 0xff;
+
+                flash.setWriteEnable(true);
+                flash.writePage(sector << 12, data);
+                while(flash.busy()) {
+                    watchdog_refresh();
+                    delay(100);
+                }
+                flash.setWriteEnable(false);
+
+                bufferSize = sprintf(buffer, "done\n");
+                usb_serial_write(buffer, bufferSize);
+            }
+            break;
+	case 'e':
+            bufferSize = sprintf(buffer, "erasing flash...");
+            usb_serial_write(buffer, bufferSize);
+    
+            flash.setWriteEnable(true);
+            flash.eraseAll();
+            while(flash.busy()) {
+            watchdog_refresh();
+                delay(100);
+            }
+            flash.setWriteEnable(false);
+            
+            bufferSize = sprintf(buffer, "done\n");
+            usb_serial_write(buffer, bufferSize);
+	    break;
+        case 'd':
+            {
+                uint8_t buff[4];
+                flash.read(0, buff, 4);
+
+                bufferSize = sprintf(buffer, "data: %02X %02X %02X %02X\n", buff[0], buff[1], buff[2], buff[3]);
+                usb_serial_write(buffer, bufferSize);
+            }
+            break;
+        default:
+            bufferSize = sprintf(buffer, "?\n");
+            usb_serial_write(buffer, bufferSize);
+    }
+}
+
+#define MESSAGE_SHOW_LEDS	0x00
+#define MESSAGE_ERASE_FLASH	0x01
+#define MESSAGE_PROGRAM_PAGE	0x02
+
 // Handle full messages here
 void handleData(uint16_t dataSize, uint8_t* data) {
     switch(data[0]) {
-        case 0x00:  // Display some data on the LEDs
+        case MESSAGE_SHOW_LEDS:  // Display some data on the LEDs
         {
     
             if(dataSize != 1 + LED_COUNT) {
                 return;
             }
-            //memcpy(getPixels(), &data[1], LED_COUNT);
-            //show();
+            memcpy(dmxGetPixels(), &data[1], LED_COUNT);
+            dmxShow();
         }
-        case 0x01:  // Clear the flash
+	    break;
+
+        case MESSAGE_ERASE_FLASH:  // Clear the flash
         {
             if(dataSize != 1) {
                 return;
@@ -127,7 +210,7 @@ void handleData(uint16_t dataSize, uint8_t* data) {
         }
             break;
 
-        case 0x02:  // Program a page of memory
+        case MESSAGE_PROGRAM_PAGE:  // Program a page of memory
         {
             if(dataSize != (1 + 4 + 256)) {
                 return;
@@ -169,15 +252,19 @@ extern "C" int main()
 
     // If the flash initializes successfully, then load the animations table.
     if(flash.begin(FlashClass::autoDetect)) {
+
+	// Connect up the flash storage class
+	flashStorage.begin(flash);
+
         animations.begin(flash);
 
         // If the flash was not set up with an animation, burn one to it.
         // TODO: There's a failure mode here where an undervoltage condition could cause
         // this to wipe the flash.
-        if(!animations.isInitialized()) {
-            makeDefaultAnimation(flash);
-            animations.begin(flash);
-        }
+//        if(!animations.isInitialized()) {
+//            makeDefaultAnimation(flash);
+//            animations.begin(flash);
+//        }
     }
 
     serial_begin(BAUD2DIV(115200));
@@ -272,8 +359,10 @@ extern "C" int main()
         }
 
         if(usb_serial_available() > 0) {
-            serial_mode = true;
-            serial_loop();
+            singleCharacterHack(usb_serial_getchar());
+
+//            serial_mode = true;
+//            serial_loop();
 
 //            if(serialReceiver.parseByte(serial_getchar())) {
 //              uint16_t dataSize = serialReceiver.getPacketSize();

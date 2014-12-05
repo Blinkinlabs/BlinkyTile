@@ -126,6 +126,7 @@ bool FlashClass::checkPartNo(partNumber _partno)
         {
             if((manuf == flashPnList[i].mfr) && (id == flashPnList[i].id))
             {
+                partno = flashPnList[i].pn;
                 return true;
             }
         }
@@ -137,6 +138,7 @@ bool FlashClass::checkPartNo(partNumber _partno)
             if(_partno == flashPnList[i].pn)
             {
                 if((manuf == flashPnList[i].mfr) && (id == flashPnList[i].id)) {
+                    partno = _partno;
                     return true;
                 }
 
@@ -225,7 +227,6 @@ bool FlashClass::begin(partNumber _partno)
     if(!checkPartNo(_partno))
         return false;
 
-    partno = _partno;
     return true;
 }
 

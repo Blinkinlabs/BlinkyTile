@@ -31,8 +31,8 @@
 #define MAGIC_NUMBER_SIZE		3 // Size of the magic number
 
 #define SECTOR_MAGIC_NUMBER   	0x123456
-#define ANIMATION_START      	(SECTOR_MAGIC_NUMBER | 78)
-#define ANIMATION_CONTINUATION	(SECTOR_MAGIC_NUMBER | 79)
+#define ANIMATION_START      	((SECTOR_MAGIC_NUMBER << 8) | 0x01)
+#define ANIMATION_CONTINUATION	((SECTOR_MAGIC_NUMBER << 8) | 0x02)
 
 typedef struct {
 	uint32_t sectorType;		// Sector type, must be ANIMATION_START
@@ -91,7 +91,7 @@ class FlashStorage {
     // param length Length of data to write (must be a multiple of page size)
     // param data Data to write
     // return Length of data written
-    int writeSector(int sector, int length, uint8_t* data);
+//    int writeSector(int sector, int length, uint8_t* data);
 
     // Erase a sector chain.
     // param sector Beginning sector in the chain to erase

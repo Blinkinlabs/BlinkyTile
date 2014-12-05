@@ -43,8 +43,8 @@ bool FlashStorage::freeSector(int sector) {
 
 	bool isFree =
 		(buf[0] != (SECTOR_MAGIC_NUMBER >> 16)%0xFF)
-		| (buf[1] != (SECTOR_MAGIC_NUMBER >>  8)%0xFF)
-		| (buf[2] != (SECTOR_MAGIC_NUMBER >>  0)%0xFF);
+		|| (buf[1] != (SECTOR_MAGIC_NUMBER >>  8)%0xFF)
+		|| (buf[2] != (SECTOR_MAGIC_NUMBER >>  0)%0xFF);
 
 	return isFree;
 }
@@ -75,25 +75,25 @@ int FlashStorage::findFreeSector(int start) {
 	return -1;
 }
 
-int FlashStorage::writeSector(int sector, int length, uint8_t* data) {
-	if(length != sectorSize()) {
-		return 0;
-	}
-
-	for(int page = 0; page < flash->pages()/flash->sectors(); page++) {
-		int offset = page*256;
-
-		flash->setWriteEnable(true);
-	    	flash->writePage(
-    			sector*sectorSize() + offset,
-    			data + offset
-    		);
-	    	while(flash->busy()) {
-    			delay(10);
-			// TODO: refresh watchdog
-    		}
-    		flash->setWriteEnable(false); 		
-	}
-
-	return length;
-}
+//int FlashStorage::writeSector(int sector, int length, uint8_t* data) {
+//	if(length != sectorSize()) {
+//		return 0;
+//	}
+//
+//	for(int page = 0; page < flash->pages()/flash->sectors(); page++) {
+//		int offset = page*256;
+//
+//		flash->setWriteEnable(true);
+//	    	flash->writePage(
+//  			sector*sectorSize() + offset,
+//    			data + offset
+//    		);
+//	    	while(flash->busy()) {
+//    			delay(10);
+//			// TODO: refresh watchdog
+//    		}
+//    		flash->setWriteEnable(false); 		
+//	}
+//
+//	return length;
+//}

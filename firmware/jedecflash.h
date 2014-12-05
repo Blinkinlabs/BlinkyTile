@@ -73,7 +73,7 @@ public:
     // @param buffer Buffer to store data in
     // @param n Number of bytes to read
     // @return Number of bytes read
-    uint16_t read(uint32_t address, uint8_t *buffer, uint16_t n=256);
+    uint16_t read(uint32_t address, uint8_t *buffer, uint16_t n);
 
     // Change the flash write enable status
     // Flash write must be enabled before any write or erase operations.

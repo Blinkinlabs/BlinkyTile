@@ -70,7 +70,7 @@ LDSCRIPT = fcb-app.ld
 LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -T$(LDSCRIPT)
 
 # additional libraries to link
-LIBS = -lm
+LIBS = -lgcc -lc -lm
 
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 

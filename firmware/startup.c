@@ -271,6 +271,15 @@ void (* const gVectors[])(void) =
 //}
 
 
+char *__brkval = (char *)&_ebss;
+
+void * _sbrk(int incr)
+{
+	char *prev = __brkval;
+	__brkval += incr;
+	return prev;
+}
+
 int nvic_execution_priority(void)
 {
 	int priority=256;
