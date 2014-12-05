@@ -46,12 +46,6 @@
 #define FAST_READ       0x0b
 
 #define SR1_BUSY_MASK   0x01
-#define SR1_WEN_MASK    0x02
-
-#define WINBOND_MANUF   0xef
-#define SPANSION_MANUF  0x01
-
-#define DEFAULT_TIMEOUT 200
 
 typedef struct {
     FlashClass::manufacturerId mfr;
@@ -61,9 +55,12 @@ typedef struct {
     uint32_t pages;
     uint16_t sectors;
     uint16_t blocks;
-}winbondPnListType;
-    
-static const winbondPnListType winbondPnList[] = {
+} flashListType;
+
+
+// Note: it's possible we don't care about any of this, and can just read the size
+// based on the JEDEC ID fields.
+static const flashListType flashPnList[] = {
     { FlashClass::Winbond,  FlashClass::W25Q80,    0x4014, 1048576,  4096,  256,  16},
     { FlashClass::Winbond,  FlashClass::W25Q16,    0x4015, 2097152,  8192,  512,  32},
     { FlashClass::Winbond,  FlashClass::W25Q32,    0x4016, 4194304, 16384, 1024,  64},
@@ -125,23 +122,21 @@ bool FlashClass::checkPartNo(partNumber _partno)
     // If it's autodetect mode, search the list of known parts to find a vendor/id match
     if(_partno == autoDetect)
     {
-        for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+        for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
         {
-            if((manuf == winbondPnList[i].mfr) && (id == winbondPnList[i].id))
+            if((manuf == flashPnList[i].mfr) && (id == flashPnList[i].id))
             {
-                partno = winbondPnList[i].pn;
                 return true;
             }
         }
     }
     else {
         // If a specific part id was given, test that the installed part matches vendor/id.
-        for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+        for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
         {
-            if(_partno == winbondPnList[i].pn)
+            if(_partno == flashPnList[i].pn)
             {
-                if((manuf == winbondPnList[i].mfr) && (id == winbondPnList[i].id)) {
-                    partno = _partno;
+                if((manuf == flashPnList[i].mfr) && (id == flashPnList[i].id)) {
                     return true;
                 }
 
@@ -165,20 +160,20 @@ bool FlashClass::busy()
     return false;
 }
 
-void FlashClass::setWriteEnable(bool cmd)
+void FlashClass::setWriteEnable(bool status)
 {
     select();
-    send( cmd ? W_EN : W_DE, true);
+    send( status ? W_EN : W_DE, true);
     deselect();
 }
 
 long FlashClass::bytes()
 {
-    for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+    for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
     {
-        if(partno == winbondPnList[i].pn)
+        if(partno == flashPnList[i].pn)
         {
-            return winbondPnList[i].bytes;
+            return flashPnList[i].bytes;
         }
     }
     return 0;
@@ -186,11 +181,11 @@ long FlashClass::bytes()
 
 uint16_t FlashClass::pages()
 {
-    for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+    for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
     {
-        if(partno == winbondPnList[i].pn)
+        if(partno == flashPnList[i].pn)
         {
-            return winbondPnList[i].pages;
+            return flashPnList[i].pages;
         }
     }
     return 0;
@@ -198,11 +193,11 @@ uint16_t FlashClass::pages()
 
 uint16_t FlashClass::sectors()
 {
-    for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+    for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
     {
-        if(partno == winbondPnList[i].pn)
+        if(partno == flashPnList[i].pn)
         {
-            return winbondPnList[i].sectors;
+            return flashPnList[i].sectors;
         }
     }
     return 0;
@@ -210,11 +205,11 @@ uint16_t FlashClass::sectors()
 
 uint16_t FlashClass::blocks()
 {
-    for(int i=0;i<sizeof(winbondPnList)/sizeof(winbondPnList[0]);i++)
+    for(int i=0;i<sizeof(flashPnList)/sizeof(flashPnList[0]);i++)
     {
-        if(partno == winbondPnList[i].pn)
+        if(partno == flashPnList[i].pn)
         {
-            return winbondPnList[i].blocks;
+            return flashPnList[i].blocks;
         }
     }
     return 0;
@@ -230,6 +225,7 @@ bool FlashClass::begin(partNumber _partno)
     if(!checkPartNo(_partno))
         return false;
 
+    partno = _partno;
     return true;
 }
 
@@ -241,57 +237,57 @@ void FlashClass::end()
     delayMicroseconds(5);  //>3us
 }
 
-uint16_t FlashClass::read(uint32_t addr,uint8_t *buf,uint16_t n)
+uint16_t FlashClass::read(uint32_t address,uint8_t *buffer,uint16_t n)
 {
     if(busy())
         return 0;
     
     select();
     send(READ);
-    send(addr>>16);
-    send(addr>>8);
-    send(addr);
+    send(address>>16);
+    send(address>>8);
+    send(address);
     for(uint16_t i=0;i<n;i++)
     {
-        buf[i] = receive(0x00, i==n-1);
+        buffer[i] = receive(0x00, i==n-1);
     }
     deselect();
     
     return n;
 }
 
-void FlashClass::writePage(uint32_t addr_start,uint8_t *buf)
+void FlashClass::writePage(uint32_t address_start,uint8_t *buffer)
 {
     select();
     send(PAGE_PGM);
-    send(addr_start>>16);
-    send(addr_start>>8);
+    send(address_start>>16);
+    send(address_start>>8);
     send(0x00);
     uint8_t i=0;
     do {
-        send(buf[i], i==255);
+        send(buffer[i], i==255);
         i++;
     }while(i!=0);
     deselect();
 }
 
-void FlashClass::eraseSector(uint32_t addr_start)
+void FlashClass::eraseSector(uint32_t address_start)
 {
     select();
     send(SECTOR_E);
-    send(addr_start>>16);
-    send(addr_start>>8);
-    send(addr_start, true);
+    send(address_start>>16);
+    send(address_start>>8);
+    send(address_start, true);
     deselect();
 }
 
-void FlashClass::erase64kBlock(uint32_t addr_start)
+void FlashClass::erase64kBlock(uint32_t address_start)
 {
     select();
     send(BLK_E_64K);
-    send(addr_start>>16);
-    send(addr_start>>8);
-    send(addr_start, true);
+    send(address_start>>16);
+    send(address_start>>8);
+    send(address_start, true);
     deselect();
 }
 

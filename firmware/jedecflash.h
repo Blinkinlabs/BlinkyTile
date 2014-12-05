@@ -30,14 +30,11 @@
 #include <inttypes.h>
 #include "spi4teensy3.h"
 
-//W25Q64 = 256_bytes_per_page * 16_pages_per_sector * 16_sectors_per_block * 128_blocks_per_chip
-//= 256b*16*16*128 = 8Mbyte = 64MBits
-
 class FlashClass {
 public:  
     enum manufacturerId {
         Spansion = 0x01,
-        Winbond = 0xEF, // todo: testme
+        Winbond = 0xEF,
     };
 
     enum partNumber {
@@ -51,44 +48,63 @@ public:
         S25FL216K,
     };
 
+    // Attempt to initialize and identify the flash memory
+    // @param _partno Part Number (leave unspecified to autodetect)
+    // @return True if the specified flash memory was detected, false otherwise.
     bool begin(partNumber _partno = autoDetect);
+
+    // Power down the flash chip
     void end();
 
+    // Get the size of this flash memory, in bytes
     long bytes();
+
+    // Get the number of 256-byte pages in this flash memory
     uint16_t pages();
+
+    // Get the number of 4096-byte sectors in this flash memory
     uint16_t sectors();
+
+    // Get the number of blocks in this flash memory
     uint16_t blocks();
 
-    uint16_t read(uint32_t addr,uint8_t *buf,uint16_t n=256);
+    // Read some data from the flash
+    // @param address Address to read from
+    // @param buffer Buffer to store data in
+    // @param n Number of bytes to read
+    // @return Number of bytes read
+    uint16_t read(uint32_t address, uint8_t *buffer, uint16_t n=256);
 
-    void setWriteEnable(bool cmd = true);
+    // Change the flash write enable status
+    // Flash write must be enabled before any write or erase operations.
+    // @param status If true, enable flash write, otherwise disable
+    void setWriteEnable(bool status);
     
-    //WE() every time before write or erase
-    inline void WE(bool cmd = true) {setWriteEnable(cmd);}
-    
-    //write a page, sizeof(buf) is 256 bytes  
-    void writePage(uint32_t addr_start,uint8_t *buf);//addr is 8bit-aligned, 0x00ffff00
+    // Write a 256 byte page to flash
+    // @param address Starting address, must be 8-bit aligned (0x00ffff00)
+    // @param buffer 256 byte data buffer to write
+    // Note: The sector containing this page must be erased separately before writing.
+    void writePage(uint32_t address,uint8_t *buffer);
 
-    //erase a sector ( 4096bytes ), return false if error
-    //addr is 12bit-aligned, 0x00fff000
-    void eraseSector(uint32_t addr);
+    // Erase a sector (4096 bytes)
+    // @param address Address of the block, must be 12bit-aligned (0x00fff000)
+    void eraseSector(uint32_t address);
 
-    //erase a 64k block ( 65536b )
-    //addr is 16bit-aligned, 0x00ff0000
-    void erase64kBlock(uint32_t addr);
+    // Erase a 64k block (65536 bytes)
+    // @param address Address of the block, must be 16bit-aligned (0x00ff0000)
+    // Note: This operation might take multiple seconds to complete
+    void erase64kBlock(uint32_t address);
 
-    //chip erase, return true if successfully started, busy()==false -> erase complete
+    // Erase the entire flash memory
+    // Note: This operation might take multiple seconds to complete
     void eraseAll();
 
-
-    // void eraseSuspend();
-    // void eraseResume();
-
+    // Poll the chip to see if an operation is in progress
+    // @return true if busy, false otherwise
     bool busy();
     
     uint8_t  readManufacturer();
     uint16_t readPartID();
-    // uint64_t readUniqueID();
     uint16_t readSR();
 
 private:
