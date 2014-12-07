@@ -110,69 +110,116 @@ void singleCharacterHack(char in) {
     int bufferSize;
 
     switch(in) {
-        case 'i':
-            bufferSize = sprintf(buffer, "Sector Count: %i\n", flashStorage.sectors());
+        case 'i': // Get info about the flash contents
+            bufferSize = sprintf(buffer, "Sector Count: %i\r\n", flashStorage.sectors());
             usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "Sector Size: %i\n", flashStorage.sectorSize());
+            bufferSize = sprintf(buffer, "Free sectors: %i\r\n", flashStorage.countFreeSectors());
             usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "Free sectors: %i\n", flashStorage.freeSectors());
+            bufferSize = sprintf(buffer, "Free space: %i\r\n", flashStorage.freeSpace());
             usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "Free space: %i\n", flashStorage.freeSpace());
+            bufferSize = sprintf(buffer, "First free sector: %i\r\n", flashStorage.findFreeSector(0));
             usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "First free sector: %i\n", flashStorage.findFreeSector(0));
+            bufferSize = sprintf(buffer, "File count: %i\r\n", flashStorage.files());
+            usb_serial_write(buffer, bufferSize);
+            bufferSize = sprintf(buffer, "Largest new file: %i\r\n", flashStorage.largestNewFile());
             usb_serial_write(buffer, bufferSize);
             break;
-        case 'w':
-            {
-                int sector = flashStorage.findFreeSector(0);
-
-                bufferSize = sprintf(buffer, "writing sector: %i...", sector);
+        case 'w': // Create a series of small dummy animations
+            for(int i = 0; i < 10; i++) {
+		// Create a small empty animation of size 
+                bufferSize = sprintf(buffer, "Creating animation...");
                 usb_serial_write(buffer, bufferSize);
 
-                uint8_t data[256];
-                data[0] = (ANIMATION_START >> 24) % 0xff;
-                data[1] = (ANIMATION_START >> 16) % 0xff;
-                data[2] = (ANIMATION_START >>  8) % 0xff;
-                data[3] = (ANIMATION_START >>  0) % 0xff;
+                int sector = flashStorage.createNewFile(FILETYPE_ANIMATION, 256*(1<<i));
 
-                flash.setWriteEnable(true);
-                flash.writePage(sector << 12, data);
-                while(flash.busy()) {
-                    watchdog_refresh();
-                    delay(100);
-                }
-                flash.setWriteEnable(false);
+		if(sector < 0) {
+                	bufferSize = sprintf(buffer, "Error creating file!");
+                	usb_serial_write(buffer, bufferSize);
+		}
+		else {
 
-                bufferSize = sprintf(buffer, "done\n");
-                usb_serial_write(buffer, bufferSize);
+                	bufferSize = sprintf(buffer, "done, wrote to %i\r\n", sector);
+                	usb_serial_write(buffer, bufferSize);
+		}
+
             }
             break;
-	case 'e':
+        case 'd': // delete the first file
+            {
+                int sector = 0;
+                while(flashStorage.checkSectorFree(sector)) {
+                    sector++;
+                }
+                if(sector < flashStorage.sectors()) {
+                    flashStorage.deleteFile(sector);
+                    bufferSize = sprintf(buffer, "deleted file in sector %i\r\n", sector);
+                    usb_serial_write(buffer, bufferSize);
+                }
+                else {
+                    bufferSize = sprintf(buffer, "no files found!\r\n");
+                    usb_serial_write(buffer, bufferSize);
+                }
+            }
+            break;
+	case 'e': // erase the whole flash
             bufferSize = sprintf(buffer, "erasing flash...");
             usb_serial_write(buffer, bufferSize);
     
             flash.setWriteEnable(true);
             flash.eraseAll();
             while(flash.busy()) {
-            watchdog_refresh();
+                watchdog_refresh();
                 delay(100);
             }
             flash.setWriteEnable(false);
+
+            flashStorage.begin(flash);
             
-            bufferSize = sprintf(buffer, "done\n");
+            bufferSize = sprintf(buffer, "done\r\n");
             usb_serial_write(buffer, bufferSize);
 	    break;
-        case 'd':
+        case 'l': // dump some data about each sector
+            {
+                for(int sector = 0; sector < flashStorage.sectors(); sector++) {
+            	    bufferSize = sprintf(buffer, "sector %3i ", sector);
+                    usb_serial_write(buffer, bufferSize);
+                    if(flashStorage.isFile(sector)) {
+                        int fileType = flashStorage.fileType(sector);
+                        int fileSize = flashStorage.fileSize(sector);
+                        int fileSectors = flashStorage.fileSectors(sector);
+            	        bufferSize = sprintf(buffer, "contains a file. Type=%x, Size=%i, Sectors=%i",
+                                                     fileType, fileSize, fileSectors);
+                        usb_serial_write(buffer, bufferSize);
+                        for(int link = 0; link < fileSectors - 1; link++) {
+            	            bufferSize = sprintf(buffer, " %i:%i", link, flashStorage.linkedSector(sector, link));
+                            usb_serial_write(buffer, bufferSize);
+                        }
+            	        bufferSize = sprintf(buffer, "\r\n");
+                        usb_serial_write(buffer, bufferSize);
+                    }
+                    else if(flashStorage.checkSectorFree(sector)) {
+            	        bufferSize = sprintf(buffer, "is free\r\n");
+                        usb_serial_write(buffer, bufferSize);
+                    }
+                    else {
+            	        bufferSize = sprintf(buffer, "contains a linked portion of a file\r\n");
+                        usb_serial_write(buffer, bufferSize);
+                    }
+
+                }
+            }
+            break;
+        case 'm': // dump some data from address 0
             {
                 uint8_t buff[4];
                 flash.read(0, buff, 4);
 
-                bufferSize = sprintf(buffer, "data: %02X %02X %02X %02X\n", buff[0], buff[1], buff[2], buff[3]);
+                bufferSize = sprintf(buffer, "data: %02x %02x %02x %02x\r\n", buff[0], buff[1], buff[2], buff[3]);
                 usb_serial_write(buffer, bufferSize);
             }
             break;
         default:
-            bufferSize = sprintf(buffer, "?\n");
+            bufferSize = sprintf(buffer, "?\r\n");
             usb_serial_write(buffer, bufferSize);
     }
 }

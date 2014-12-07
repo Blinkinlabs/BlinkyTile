@@ -21,81 +21,181 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * This is most certainly Yet Another Filesystem, so let's keep it simple.
+ *
+ * The goal is to store animation data files onto small external flash memories.
+ * Using FAT was considered first but seemed like more work because of the large
+ * sector size and need to write a shim to connect to the flash interface. Don't
+ * bother to use this for a large memory or SD card...
+ *
+ * Designed for use with flash memories with these things in mind:
+ * -Small memory (<16MiB), but large sector size (4KiB)
+ * -Fast enough to just scan the first bytes of each sector, so no file allocation
+ *  table needed
+ * -Files are write-once, and the only chance to remove them is to wipe the whole
+ *  file
+ * -Files are described by a master sector, which contains the length of the file 
+ *  as well as sector address(es) of any continuing data
+ *  
+ * Each file is described in the first page of a starting sector
+ * Sector memory layout
+ * 0x0000: Magic number: [0x12]
+ * 0x0001: Magic number: [0x34]
+ * 0x0002: Magic number: [0x56]
+ * 0x0003: Magic number: [0x78]
+ * 0x0004: File size in bytes >> 24
+ * 0x0005: File size in bytes >> 16
+ * 0x0006: File size in bytes >>  8
+ * 0x0007: File size in bytes >>  0
+ * 0x0008: File type (implementation dependent)
+ * 0x0009: Reserved
+ * 0x000A: Continuation sector number 1 >> 8, if file size > 3840
+ * 0x000B: Continuation sector number 1 >> 0, if file size > 3840
+ * 0x000C: Continuation sector number 2 >> 8, if file size > 7936
+ * 0x000D: Continuation sector number 2 >> 0, if file size > 7936
+ * ... (as required)
+ * 0x00FE: Continuation sector number 123 >> 0, if file size > 503552
+ * 0x00FF: Continuation sector number 123 >> 0, if file size > 503552
+ *
+ * Note: With the restriction that the file table reside in the first page,
+ *  there is only enough storage space to list 123 continuation sectors, so
+ *  the maximum file size is 507648 bytes.
+ */
+
+
 #ifndef SECTOR_DESCRIPTOR_H
 #define SECTOR_DESCRIPTOR_H
 
 #include <inttypes.h>
 #include "jedecflash.h"
 
-#define SECTOR_HEADER_SIZE		8 // Size of a sector header (magic number)
-#define MAGIC_NUMBER_SIZE		3 // Size of the magic number
+#define MAX_SECTORS		512 // Sigh...
 
-#define SECTOR_MAGIC_NUMBER   	0x123456
-#define ANIMATION_START      	((SECTOR_MAGIC_NUMBER << 8) | 0x01)
-#define ANIMATION_CONTINUATION	((SECTOR_MAGIC_NUMBER << 8) | 0x02)
+#define SECTOR_SIZE		4096
+#define PAGE_SIZE		256
 
-typedef struct {
-	uint32_t sectorType;		// Sector type, must be ANIMATION_START
-	uint32_t nextSector;		// If animation size >1 sector, sector number for next sector, otherwise 0xFFFFFFFF
-	uint32_t ledCount;			// Number of LEDS/frame in the animation
-	uint32_t frameCount;		// Number of frames in the animation
-	uint32_t playbackSpeed;		// Playback speed for frames, in ms per frame
-	uint32_t format;			// Animation format, 0xFFFFFFFF=Uncompressed RGB24
-} AnimationStartDescriptor;
+#define FILE_HEADER_SIZE	PAGE_SIZE
+#define SECTOR_HEADER_SIZE	10 // Size of a sector header
+#define MAX_LINKED_SECTORS	((FILE_HEADER_SIZE-SECTOR_HEADER_SIZE)/2)
 
-typedef struct {
-	uint32_t sectorType;		// Sector type, must be ANIMATION_CONTINUATION
-	uint32_t nextSector;		// If animation size >1 sector, sector number for next sector, otherwise 0xFFFFFFFF
-} AnimationContinuationDescriptor;
+#define MAGIC_NUMBER_SIZE	4 // Size of the magic number
+#define SECTOR_MAGIC_NUMBER   	0x12345679
+
+#define SECTOR_TYPE_FREE	0x00
+#define SECTOR_TYPE_START	0x01
+#define SECTOR_TYPE_LINKED	0x02
+
+#define FILETYPE_ANIMATION	0x2C
 
 
 class FlashStorage {
   private:
   	FlashClass* flash;
+	// TODO: Make this a bitfield to save 448b ram
+	uint8_t sectorMap[MAX_SECTORS];	// Map of all sectors and whether they are availabe
+
+    // Rebuild the map of free/used sectors
+    void rebuildSectorMap();
+
+    // Compute the number of linked sectors that a file of the given length requires
+    int linkedSectorsForLength(int length);
 
   public:
     void begin(FlashClass& _flash);
 
+    // Count the amount of free storage space, in bytes. Note that this is just
+    // the unused sector count- to get the largest size file that can be allocated,
+    // use largestNewFile()
+    // @return Free space
+    int freeSpace();
+
+    // Count the number of files stored on the flash
+    // @return number of files found
+    int files();
+
+    // Get the size of the largest file that can be allocated, in bytes. Note that
+    // this will be smaller than freeSpace()
+    int largestNewFile();
+
+    // True if the given sector contains a file start
+    bool isFile(int sector);
+
+    // Get the size of a file, in bytes
+    // @param sector Beginning sector of the file
+    // @return size of the file, in bytes
+    int fileSize(int sector);
+
+    // Get the type of a file, in bytes
+    // @param sector Beginning sector of the file
+    // @return File type
+    uint8_t fileType(int sector);
+
+    // Get the number of sectors that the given file spans across
+    // @param sector Beginning sector of the file
+    // @return Number of sectors used to store this file
+    int fileSectors(int sector);
+
+    // Get the sector number for the nth linked sector in the file
+    // @param sector Beginning sector of file
+    // @param link Linked sector to examine
+    // @return Sector number for this link
+    int linkedSector(int sector, int link);
+
+    // Create a new file.
+    // New file will be in 'write' mode until 
+    // @param type file type (see above list)
+    // @param size amount of data to store in the file, in bytes
+    // @return -1 if file could not be created, starting sector # if successful
+    int createNewFile(uint8_t type, int length);
+
+    // Delete a file
+    // @param sector Beginning sector of the file
+    void deleteFile(int sector);
+
+    // Write a page of data to the file
+    // Note that the data length must equal to PAGE_SIZE!
+    // @param sector Beginning sector of the file
+    // @param offset offset into the file, in bytes. Must be page-aligned
+    // @param data data of length PAGE_SIZE to write to the flash
+    // @return length of data written, in bytes
+    int writePageToFile(int sector, int offset, uint8_t* data);
+
+    // Read data from a file
+    // @param sector Beginning sector of the file
+    // @param offset offset into the file, in bytes
+    // @param data buffer to write file data to
+    // @param length of data to read, in bytes
+    // @return length of data read, in bytes
+    int readFromFile(int sector, int offset, uint8_t* data, int length);
+
+    // Erase a sector chain.
+    // @param sector Beginning sector in the chain to erase
+    void eraseSectorChain(int sector);
+
     // Total number of sectors in the flash memory.
-    // return Total number of sectors
+    // @return Total number of sectors
     int sectors();
 
     // Get the number of bytes in a sector.
     // Note: This is expected to always be 4096
-    // return Number of bytes in a sector
+    // @return Number of bytes in a sector
     int sectorSize();
 
-    // Test if a sector is free.
-    // return True if the sector is free, false otherwise.
-    bool freeSector(int sector);
+    // Check if a sector is free.
+    // @return True if the sector is free, false otherwise.
+    bool checkSectorFree(int sector);
 
     // Count the number of free sectors
-    // return 
-    int freeSectors();
-
-    // Count the amount of free storage space, in bytes. Note that there is an
-    // 8-byte overhead in each sector for the sector header that is not
-    // included.
-  	// return Free space
-    int freeSpace();
+    // @return Number of unused sectors
+    int countFreeSectors();
 
     // Find a free sector, starting at the specified sector location
-    // param start Sector number to start looking at.
-    // return First free sector after the start sector, or -1 if no free
+    // @param start Sector number to start looking at.
+    // @return First free sector after the start sector, or -1 if no free
     // sector found.
     int findFreeSector(int start);
 
-    // Write data to a sector. Data in this sector will be erased before the
-    // write operation commences.
-    // param sector Sector to write to
-    // param length Length of data to write (must be a multiple of page size)
-    // param data Data to write
-    // return Length of data written
-//    int writeSector(int sector, int length, uint8_t* data);
-
-    // Erase a sector chain.
-    // param sector Beginning sector in the chain to erase
-    void eraseSectorChain(int sector);
 };
 
 
