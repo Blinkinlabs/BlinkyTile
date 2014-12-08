@@ -37,7 +37,7 @@
 #include "animation.h"
 #include "defaultanimation.h"
 #include "jedecflash.h"
-#include "sectordescriptor.h"
+#include "nofatstorage.h"
 #include "protocol.h"
 #include "dmx.h"
 #include "patterns.h"
@@ -51,7 +51,7 @@
 FlashSPI flash;
 
 // Flash storage class, works on top of the base flash chip
-FlashStorage flashStorage;
+NoFatStorage flashStorage;
 
 // Animations class
 Animations animations;
@@ -132,7 +132,7 @@ void singleCharacterHack(char in) {
 
 		int animationSize = 256*16*i;
 
-                int sector = flashStorage.createNewFile(FILETYPE_ANIMATION, animationSize);
+                int sector = flashStorage.createNewFile(0xEE, animationSize);
 
 		if(sector < 0) {
                 	bufferSize = sprintf(buffer, "Error creating file!");

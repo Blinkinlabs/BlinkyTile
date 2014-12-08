@@ -22,6 +22,8 @@
  */
 
 /*
+ * NoFAT file system: Store files without a partition map!
+ *
  * This is most certainly Yet Another Filesystem, so let's keep it simple.
  *
  * The goal is to store animation data files onto small external flash memories.
@@ -37,9 +39,17 @@
  *  file
  * -Files are described by a master sector, which contains the length of the file 
  *  as well as sector address(es) of any continuing data
- *  
- * Each file is described in the first page of a starting sector
- * Sector memory layout
+ *
+ * There are three kinds of sector:
+ * -Free Sector: Sector that is not used
+ * -Starting Sector: This sector starts a file. The format of this sector is
+ *  described below. There is one starting sector per file
+ * -Continuation sector: Sector that contains extended data from a file. This sector
+ *  only has data in it. There are 0-n continuation sectors per file.
+ *
+ *
+ * Starting sector layout:
+ *
  * 0x0000: Magic number: [0x12]
  * 0x0001: Magic number: [0x34]
  * 0x0002: Magic number: [0x56]
@@ -64,32 +74,30 @@
  */
 
 
-#ifndef SECTOR_DESCRIPTOR_H
-#define SECTOR_DESCRIPTOR_H
+#ifndef NOFAT_STORAGE_H
+#define NOFAT_STORAGE_H 
 
 #include <inttypes.h>
 #include "jedecflash.h"
 
-#define MAX_SECTORS		512 // Sigh...
+#define MAX_SECTORS		512	// Maximum number of sectors we can manage
 
-#define SECTOR_SIZE		4096
-#define PAGE_SIZE		256
+#define SECTOR_SIZE		4096	// Number of bytes in a sector. This is the smallest unit we can erase
+#define PAGE_SIZE		256	// Number of bytes in a page. This is the smallest unit we can write
 
-#define FILE_HEADER_SIZE	PAGE_SIZE
-#define SECTOR_HEADER_SIZE	10 // Size of a sector header
-#define MAX_LINKED_SECTORS	((FILE_HEADER_SIZE-SECTOR_HEADER_SIZE)/2)
+#define FILE_HEADER_SIZE	PAGE_SIZE	// Size of the file header. There is one header per file
+#define MAX_LINKED_SECTORS	((FILE_HEADER_SIZE-10)/2)	// Maximum number of linked sectors we can store
 
-#define MAGIC_NUMBER_SIZE	4 // Size of the magic number
-#define SECTOR_MAGIC_NUMBER   	0x12345679
+#define MAGIC_NUMBER_SIZE	4	// Size of the magic number
+#define SECTOR_MAGIC_NUMBER   	0x12345679	// Magic number, at the beginning of every starting sector
 
-#define SECTOR_TYPE_FREE	0x00
-#define SECTOR_TYPE_START	0x01
-#define SECTOR_TYPE_LINKED	0x02
+#define SECTOR_TYPE_FREE	0x00	// For the sector map: This sector is free
+#define SECTOR_TYPE_START	0x01	// For the sector map: This sector contains a file start
+#define SECTOR_TYPE_CONTINUATION 0x02	// For the sector map: This sector contains continued data from a file
 
-#define FILETYPE_ANIMATION	0x2C
+#define FLASH_WAIT_DELAY 	2
 
-
-class FlashStorage {
+class NoFatStorage {
   private:
   	FlashClass* flash;
 	// TODO: Make this a bitfield to save 448b ram
