@@ -284,9 +284,9 @@ struct usb_string_descriptor_struct usb_string_product_name_default = {
         PRODUCT_NAME
 };
 struct usb_string_descriptor_struct usb_string_serial_number_default = {
-        12,
+        24,
         3,
-        {0,0,0,0,0,0,0,0,0,0}
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 };
 
 #ifdef CDC_STATUS_INTERFACE
@@ -315,6 +315,7 @@ struct usb_string_descriptor_struct usb_string_dfu_name_default = {
 
 void usb_init_serialnumber(void)
 {
+/*
 	char buf[11];
 	uint32_t i, num;
 
@@ -335,6 +336,45 @@ void usb_init_serialnumber(void)
 		usb_string_serial_number_default.wString[i] = c;
 	}
 	usb_string_serial_number_default.bLength = i * 2 + 2;
+*/
+
+    /*
+     * The CPU has a 128-bit unique serial number. But it seems to encode
+     * some manufacturing information in a way that makes it hard to visually
+     * parse. Distinct devices may have very similar-looking serial numbers.
+     *
+     * To make this more user-friendly, we mix up the serial number using
+     * an FNV hash and alphabetically encode it.
+     */
+
+    usb_string_serial_number.bLength = 2 + 16 * 2;
+    usb_string_serial_number.bDescriptorType = 3;
+
+    union {
+        uint8_t bytes[16];
+        struct {
+            uint32_t a, b, c, d;
+        };
+    } serial;
+
+    unsigned i;
+    uint32_t hash = 0x811c9dc5;
+
+    serial.d = SIM_UIDH;
+    serial.c = SIM_UIDMH;
+    serial.b = SIM_UIDML;
+    serial.a = SIM_UIDL;
+
+    // Initial hash
+    for (i = 0; i < 16; ++i) {
+        hash = (hash ^ serial.bytes[i]) * 0x1000193;
+    }
+
+    // Output letters
+    for (i = 0; i < 16; ++i) {
+        hash = (hash ^ serial.bytes[i]) * 0x1000193;
+        usb_string_serial_number.wString[i] = 'A' + (hash % 26);
+    }
 }
 
 
