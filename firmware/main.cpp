@@ -124,19 +124,36 @@ void singleCharacterHack(char in) {
             bufferSize = sprintf(buffer, "Largest new file: %i\r\n", flashStorage.largestNewFile());
             usb_serial_write(buffer, bufferSize);
             break;
-        case 'w': // Create a series of small dummy animations
-            for(int i = 0; i < 10; i++) {
+	case 'w': // Create a file of some length
+            for(int i = 0; i < 3; i++) {
 		// Create a small empty animation of size 
                 bufferSize = sprintf(buffer, "Creating animation...");
                 usb_serial_write(buffer, bufferSize);
 
-                int sector = flashStorage.createNewFile(FILETYPE_ANIMATION, 256*(1<<i));
+		int animationSize = 256*16*i;
+
+                int sector = flashStorage.createNewFile(FILETYPE_ANIMATION, animationSize);
 
 		if(sector < 0) {
                 	bufferSize = sprintf(buffer, "Error creating file!");
                 	usb_serial_write(buffer, bufferSize);
 		}
 		else {
+			for(int offset = 0; offset < animationSize; offset+=PAGE_SIZE) {
+				uint8_t data[PAGE_SIZE];
+				for(int i = 0; i < PAGE_SIZE; i++)
+					data[i] = (offset >> 8);
+
+				int written = flashStorage.writePageToFile(sector, offset, data);
+				if(written!=PAGE_SIZE) {
+		                	bufferSize = sprintf(buffer, "Error writing to offset %i, wrote %i bytes\r\n", offset, written);
+                			usb_serial_write(buffer, bufferSize);
+				}
+				else {
+		                	bufferSize = sprintf(buffer, "Successfully wrote to offset %i, wrote %i bytes\r\n", offset, written);
+                			usb_serial_write(buffer, bufferSize);
+				}
+			}
 
                 	bufferSize = sprintf(buffer, "done, wrote to %i\r\n", sector);
                 	usb_serial_write(buffer, bufferSize);
@@ -190,8 +207,8 @@ void singleCharacterHack(char in) {
             	        bufferSize = sprintf(buffer, "contains a file. Type=%x, Size=%i, Sectors=%i",
                                                      fileType, fileSize, fileSectors);
                         usb_serial_write(buffer, bufferSize);
-                        for(int link = 0; link < fileSectors - 1; link++) {
-            	            bufferSize = sprintf(buffer, " %i:%i", link, flashStorage.linkedSector(sector, link));
+                        for(int link = 1; link < fileSectors; link++) {
+            	            bufferSize = sprintf(buffer, " %i:%i", link, flashStorage.fileSector(sector, link));
                             usb_serial_write(buffer, bufferSize);
                         }
             	        bufferSize = sprintf(buffer, "\r\n");
@@ -211,11 +228,17 @@ void singleCharacterHack(char in) {
             break;
         case 'm': // dump some data from address 0
             {
-                uint8_t buff[4];
-                flash.read(0, buff, 4);
+		#define READ_SIZE 16
+		for(int offset = 0; offset < SECTOR_SIZE*3; offset += READ_SIZE) {
+                	uint8_t buff[READ_SIZE];
+                	flash.read(0 + offset, buff, READ_SIZE);
 
-                bufferSize = sprintf(buffer, "data: %02x %02x %02x %02x\r\n", buff[0], buff[1], buff[2], buff[3]);
-                usb_serial_write(buffer, bufferSize);
+                	bufferSize = sprintf(buffer, "%08X: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\r\n",
+					offset,
+					buff[0], buff[1], buff[2], buff[3], buff[4], buff[5], buff[6], buff[7],
+					buff[8], buff[9], buff[10], buff[11], buff[12], buff[13], buff[14], buff[15]);
+                	usb_serial_write(buffer, bufferSize);
+		}
             }
             break;
         default:
@@ -317,7 +340,7 @@ extern "C" int main()
     serial_begin(BAUD2DIV(115200));
 //    serialReceiver.reset();
 
-    uint32_t animation = 0;
+    uint32_t animation = 1;
 
     uint32_t frame = 0;                             // current frame to display
     uint32_t nextTime = millis() + animations.getAnimation(animation)->speed; // time to display next frame
@@ -330,7 +353,7 @@ extern "C" int main()
         userButtons.buttonTask();
 
         static int state = 0;
-        #define PATTERN_COUNT 3
+        #define PATTERN_COUNT 4
         static int pattern = 0;
 
         #define BRIGHTNESS_COUNT 5
@@ -380,12 +403,12 @@ extern "C" int main()
                 case 2:
                     count_up_loop();
                     break;
-//                case 3:
-//                    white_loop();
-//                    break;
-//                case 4:
-//                    green_loop();
-//                    break;
+                case 3:
+                    white_loop();
+                    break;
+                case 4:
+                    green_loop();
+                    break;
             }
 
             dmxShow();

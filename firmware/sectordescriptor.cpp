@@ -50,8 +50,8 @@ void FlashStorage::rebuildSectorMap() {
 		sectorMap[sector] = SECTOR_TYPE_START;
 
 		// Mark all linked sectors as well
-		for(int link = 0; link < linkedSectorsForLength(fileSize(sector)); link++) {
-			sectorMap[linkedSector(sector, link)] = SECTOR_TYPE_LINKED;
+		for(int link = 1; link < sectorsForLength(fileSize(sector)); link++) {
+			sectorMap[fileSector(sector, link)] = SECTOR_TYPE_LINKED;
 		}
 	}
 
@@ -59,8 +59,8 @@ void FlashStorage::rebuildSectorMap() {
     }
 }
 
-int FlashStorage::linkedSectorsForLength(int length) {
-    return (length - (SECTOR_SIZE - FILE_HEADER_SIZE) + (SECTOR_SIZE - 1))/SECTOR_SIZE;
+int FlashStorage::sectorsForLength(int length) {
+    return (length - (SECTOR_SIZE - FILE_HEADER_SIZE) + (SECTOR_SIZE - 1))/SECTOR_SIZE + 1;
 }
 
 void FlashStorage::begin(FlashClass& _flash) {
@@ -145,15 +145,18 @@ uint8_t FlashStorage::fileType(int sector) {
 }
 
 int FlashStorage::fileSectors(int sector) {
-	return linkedSectorsForLength(fileSize(sector)) + 1;
+	return sectorsForLength(fileSize(sector));
 }
 
-int FlashStorage::linkedSector(int sector, int link) {
-	if(link>linkedSectorsForLength(fileSize(sector)))
+int FlashStorage::fileSector(int sector, int link) {
+	if(link>sectorsForLength(fileSize(sector)))
 		return -1;
 
+	if(link == 0)
+		return sector;
+
         uint8_t buff[2];
-        flash->read((sector << 12) + 10 + link*2, buff, 2);
+        flash->read((sector << 12) + 8 + link*2, buff, 2);
 
 	return    (buff[0]  << 8)
 		| (buff[1]  << 0);
@@ -170,6 +173,9 @@ int FlashStorage::createNewFile(uint8_t type, int length) {
 
 	// Fill in the header data for this file
 	uint8_t headerData[PAGE_SIZE];
+	for(int i = 0; i < PAGE_SIZE; i++)
+		headerData[i] = 0xFF;
+
 	headerData[0] = (SECTOR_MAGIC_NUMBER >> 24) & 0xFF;
 	headerData[1] = (SECTOR_MAGIC_NUMBER >> 16) & 0xFF;
 	headerData[2] = (SECTOR_MAGIC_NUMBER >>  8) & 0xFF;
@@ -185,7 +191,7 @@ int FlashStorage::createNewFile(uint8_t type, int length) {
 	const int startingSectorNumber = findFreeSector(0);
 
 	// Build a table of linked sectors 
-	int linkedSectorsRequired = linkedSectorsForLength(length);
+	int linkedSectorsRequired = sectorsForLength(length) - 1;
 
 	int linkedSectorNumber = startingSectorNumber;
 	for(int linkedSector = 0; linkedSector < linkedSectorsRequired; linkedSector++) {
@@ -243,20 +249,23 @@ int FlashStorage::writePageToFile(int sector, int offset, uint8_t* data) {
 	if(offset + PAGE_SIZE > fileSize(sector))
 		return 0;
 
-	int outputSector = 0;
-	int outputOffset = 0;
+	// Determine which sector, and what offset, this page should be written to.
+	// First, the sector is determined by calling linkedSectorsPerLength on the offset.
+	int outputSector = sectorsForLength(offset) - 1;
 
-	// If we are writing to data in the first sector, then 
-	if (offset < SECTOR_SIZE - FILE_HEADER_SIZE) {
-		outputSector = sector;
-		outputOffset = offset + FILE_HEADER_SIZE;
-	}
-	else {
-		// TODO: look into the header to find the linked sector to store the data to
-		return 0;
-	}
+	// Now, subtract the size of the output sectors from the file offset to find the sector
+	// offset
+	int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
 
-	flash->writePage((outputSector << 12) + outputOffset, data);
+
+	flash->setWriteEnable(true);
+	flash->writePage((fileSector(sector, outputSector) << 12) + outputOffset, data);
+	while(flash->busy()) {
+    		watchdog_refresh();
+    		delay(100);
+	}
+	flash->setWriteEnable(false);
+
 	return PAGE_SIZE;
 }
 

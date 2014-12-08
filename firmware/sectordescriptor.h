@@ -98,8 +98,8 @@ class FlashStorage {
     // Rebuild the map of free/used sectors
     void rebuildSectorMap();
 
-    // Compute the number of linked sectors that a file of the given length requires
-    int linkedSectorsForLength(int length);
+    // Compute the number of sectors that a file of the given length requires
+    int sectorsForLength(int length);
 
   public:
     void begin(FlashClass& _flash);
@@ -138,9 +138,9 @@ class FlashStorage {
 
     // Get the sector number for the nth linked sector in the file
     // @param sector Beginning sector of file
-    // @param link Linked sector to examine
+    // @param link Linked sector to examine (0=first sector, 1=first linked sector)
     // @return Sector number for this link
-    int linkedSector(int sector, int link);
+    int fileSector(int sector, int link);
 
     // Create a new file.
     // New file will be in 'write' mode until 
