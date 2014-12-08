@@ -1,8 +1,8 @@
 #ifndef DEFAULT_ANIMATION_H
 #define DEFAULT_ANIMATION_H
 
-#include "jedecflash.h"
+#include "nofatstorage.h"
 
-void makeDefaultAnimation(FlashSPI& flash);
+void makeDefaultAnimation(NoFatStorage& storage);
 
 #endif

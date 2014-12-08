@@ -22,12 +22,24 @@
  */
 
 #include "animation.h"
-#include "jedecflash.h"
 //#include "matrix.h"
  #include "blinkytile.h"
 
+void Animation::init(NoFatStorage& storage_, uint32_t fileNumber_) {
+    storage = &storage_;
+    fileNumber = fileNumber_;
+
+    uint32_t buffer[2];
+    storage->readFromFile(fileNumber, 0, (uint8_t*)buffer, 8);
+
+    frameCount      = buffer[0];
+    speed           = buffer[1];
+}
+
+
 void Animation::getFrame(uint32_t frame, uint8_t* buffer) {
-    flash->read(startingAddress + frame*LED_COUNT*BYTES_PER_PIXEL,
+    storage->readFromFile(fileNumber,
+                frame*LED_COUNT*BYTES_PER_PIXEL,
                 buffer,
                 LED_COUNT*BYTES_PER_PIXEL
         );
@@ -38,43 +50,22 @@ bool Animations::isInitialized() {
     return initialized;
 }
 
-void Animations::begin(FlashClass& _flash) {
+void Animations::begin(NoFatStorage& storage_) {
     initialized = false;
-    flash = &_flash;
+    storage = &storage_;
 
-    // Test if the magic number is present
-    uint32_t magicNumber;
-    flash->read(ANIMATIONS_TABLE_ADDRESS,
-                (uint8_t*) &magicNumber,
-                sizeof(uint32_t)
-        );
-
-    if (magicNumber != ANIMATIONS_MAGIC_NUMBER) {
-        return;
-    }
-
-
-    flash->read(ANIMATIONS_TABLE_ADDRESS + sizeof(uint32_t),
-                (uint8_t*) &animationCount,
-                sizeof(uint32_t)
-        );
-
-    if (animationCount > MAX_ANIMATIONS_COUNT) {
-        animationCount = MAX_ANIMATIONS_COUNT;
-    }
-
-    for(uint32_t animation = 0; animation < animationCount; animation++) {
-        uint32_t animationData[ANIMATIONS_TABLE_ENTRY_SIZE];
-
-        flash->read(ANIMATIONS_TABLE_ADDRESS + (2 + animation*ANIMATIONS_TABLE_ENTRY_SIZE)*sizeof(uint32_t),
-                    (uint8_t*) animationData,
-                    ANIMATIONS_TABLE_ENTRY_SIZE*sizeof(uint32_t)
-            );
-
-        animations[animation].flash           = flash;
-        animations[animation].frameCount      = animationData[0];
-        animations[animation].speed           = animationData[1];
-        animations[animation].startingAddress = animationData[2];
+    // Look through the file storage, and make an animation for any animation files
+    // TODO: Drop this for a stoarageless animations class.
+    animationCount = 0;
+    for(int sector = 0; sector < storage->sectors(); sector++) {
+        if(storage->isFile(sector)) {
+            if(storage->fileType(sector) == FILETYPE_ANIMATION) {
+                animations[animationCount].init(*storage, sector);
+                animationCount++;
+            }
+        }
+        if(animationCount == MAX_ANIMATIONS_COUNT)
+            break;
     }
 
     initialized = true;

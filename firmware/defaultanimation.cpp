@@ -1,40 +1,24 @@
 #include "defaultanimation.h"
 #include "animation.h"
-#include "jedecflash.h"
 #include "blinkytile.h"
 
 // Make a default animation, and write it to flash
-void makeDefaultAnimation(FlashSPI& flash) {
-    flash.setWriteEnable(true);
-    flash.eraseAll();
-    while(flash.busy()) {
-        watchdog_refresh();
-        delay(100);
-    }
-    flash.setWriteEnable(false);
+void makeDefaultAnimation(NoFatStorage& storage) {
+    #define SAMPLE_ANIMATION_FRAME_COUNT  6
+    #define SAMPLE_ANIMATION_SPEED        2000
 
-    #define SAMPLE_ANIMATION_ADDRESS 0x00000100
-    #define SAMPLE_ANIMATION_FRAMES  5
+    // Force this to a page size
+//    #define SAMPLE_ANIMATION_SIZE (ANIMATION_HEADER_LENGTH + SAMPLE_ANIMATION_FRAME_COUNT*LED_COUNT*BYTES_PER_PIXEL)
+    #define SAMPLE_ANIMATION_SIZE PAGE_SIZE
 
-    // Program a table!
-    uint32_t sampleTable[64];
-    sampleTable[0] = ANIMATIONS_MAGIC_NUMBER;       // magic number
-    sampleTable[1] = 1;                             // number of animations in table
-    sampleTable[2] = SAMPLE_ANIMATION_FRAMES;       // frames in animation 1
-    sampleTable[3] = 300;                           // speed of animation 1
-    sampleTable[4] = SAMPLE_ANIMATION_ADDRESS;      // flash address of animation 1
-   
-    flash.setWriteEnable(true); 
-    flash.writePage(ANIMATIONS_TABLE_ADDRESS, (uint8_t*) sampleTable);
-    while(flash.busy()) {
-        watchdog_refresh();
-        delay(100);
-    }
-    flash.setWriteEnable(false); 
+    uint8_t sampleAnimation[SAMPLE_ANIMATION_SIZE];
+    for(int i = 0; i < SAMPLE_ANIMATION_SIZE; i++)
+        sampleAnimation[i] = 0xFF;
 
-    uint8_t sampleAnimation[256];
+    ((uint32_t*)sampleAnimation)[0] = SAMPLE_ANIMATION_FRAME_COUNT;
+    ((uint32_t*)sampleAnimation)[1] = SAMPLE_ANIMATION_SPEED;
 
-    for(int frame = 0; frame < SAMPLE_ANIMATION_FRAMES; frame++) {
+    for(int frame = 0; frame < SAMPLE_ANIMATION_FRAME_COUNT; frame++) {
         for(int pixel = 0; pixel < LED_COUNT; pixel++) {
             uint8_t value = 0;
 
@@ -58,17 +42,15 @@ void makeDefaultAnimation(FlashSPI& flash) {
                     value = 8;
                     break;
             }
-            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 0] = 0;     // b
-            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 1] = 0;     // g
-            sampleAnimation[frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 2] = value; // r
+            sampleAnimation[ANIMATION_HEADER_LENGTH + frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 0] = value;     // b
+            sampleAnimation[ANIMATION_HEADER_LENGTH + frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 1] = 0;     // g
+            sampleAnimation[ANIMATION_HEADER_LENGTH + frame*LED_COUNT*BYTES_PER_PIXEL + pixel*BYTES_PER_PIXEL + 2] = 0; // r
         }
     }
 
-    flash.setWriteEnable(true); 
-    flash.writePage(SAMPLE_ANIMATION_ADDRESS, sampleAnimation);
-    while(flash.busy()) {
-        watchdog_refresh();
-        delay(100);
-    }
-    flash.setWriteEnable(false);
+    // TODO: Handle multi-page writes
+    int animationFile = storage.createNewFile(FILETYPE_ANIMATION, SAMPLE_ANIMATION_SIZE);
+    if(animationFile < 0)
+        return;
+    storage.writePageToFile(animationFile, 0, sampleAnimation);
 }

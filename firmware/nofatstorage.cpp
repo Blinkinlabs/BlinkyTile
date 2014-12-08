@@ -307,10 +307,29 @@ int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length
 	if(length > SECTOR_SIZE)
 		return 0;
 
-	// Get the sector that the data starts in
-	// TODO
+	// If all the data fits into the first sector, then we only need to make one read
+	if(sectorsForLength(offset) == sectorsForLength(offset+length)) {
+		int outputSector = sectorsForLength(offset) - 1;
+		int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
 
-	return 0;
+		return flash->read((fileSector(sector, outputSector) << 12) + outputOffset, data, length);
+	}
+	// Otherwise, make two reads
+	else {
+		int readCount = 0;
+
+		int outputSectorA = sectorsForLength(offset) - 1;
+		int outputOffsetA = offset + FILE_HEADER_SIZE - outputSectorA*SECTOR_SIZE;
+		int lengthA = SECTOR_SIZE - outputOffsetA;
+
+		int outputSectorB = outputSectorA + 1;
+		int outputOffsetB = 0;
+		int lengthB = length - lengthA;
+
+		readCount += flash->read((fileSector(sector, outputSectorA) << 12) + outputOffsetA, data, lengthA);
+		readCount += flash->read((fileSector(sector, outputSectorB) << 12) + outputOffsetB, data + lengthA, lengthB);
+		return readCount;
+	}
 }
 
 int NoFatStorage::findFreeSector(int start) {

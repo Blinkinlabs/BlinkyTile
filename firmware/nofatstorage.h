@@ -80,7 +80,7 @@
 #include <inttypes.h>
 #include "jedecflash.h"
 
-#define MAX_SECTORS		512	// Maximum number of sectors we can manage
+#define MAX_SECTORS		64 // Maximum number of sectors we can manage
 
 #define SECTOR_SIZE		4096	// Number of bytes in a sector. This is the smallest unit we can erase
 #define PAGE_SIZE		256	// Number of bytes in a page. This is the smallest unit we can write
@@ -95,13 +95,15 @@
 #define SECTOR_TYPE_START	0x01	// For the sector map: This sector contains a file start
 #define SECTOR_TYPE_CONTINUATION 0x02	// For the sector map: This sector contains continued data from a file
 
-#define FLASH_WAIT_DELAY 	2
+#define FLASH_WAIT_DELAY 	2	// Number of ms to wait between flash status polls
+
+#define FILETYPE_ANIMATION	0x12
 
 class NoFatStorage {
   private:
-  	FlashClass* flash;
-	// TODO: Make this a bitfield to save 448b ram
-	uint8_t sectorMap[MAX_SECTORS];	// Map of all sectors and whether they are availabe
+    FlashClass* flash;
+    // TODO: Make this a bitfield to save 448b ram
+    uint8_t sectorMap[MAX_SECTORS];	// Map of all sectors and whether they are availabe
 
     // Rebuild the map of free/used sectors
     void rebuildSectorMap();

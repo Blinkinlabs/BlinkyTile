@@ -24,54 +24,54 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include "jedecflash.h"
+#include "nofatstorage.h"
 
+#define ANIMATION_HEADER_LENGTH 8
 
 class Animation {
   public:
-    FlashClass* flash;    // Flash chip to read from
+    NoFatStorage* storage;       // Storage container to read from
+    uint32_t fileNumber;         // File number containing this animation
     uint32_t frameCount;         // Number of frames in this animation
     uint32_t speed;              // Speed, in ms between frames
-    uint32_t startingAddress;    // Address in flash of the first animation frame.
 
+    // Initialize the animation using the given file number
+    // @param fileNumber File to read from
+    void init(NoFatStorage& storage_, uint32_t fileNumber_);
+
+    // Retrieve the animation data for the given frame
+    // Reads LED_COUT*BYTES_PER_PIXEL of data.
+    // @param frame Animation frame
+    // @param buffer Buffer to write the data to
     void getFrame(uint32_t frame, uint8_t* buffer);
 };
 
 // Max. number of animations that can be read from the flash (arbitrary)
 #define MAX_ANIMATIONS_COUNT 20
 
-// Address in flash memory of the Animations table
-#define ANIMATIONS_TABLE_ADDRESS    0x00000000
-
-// Number of uint32_t entries per animation in the animation table
-#define ANIMATIONS_TABLE_ENTRY_SIZE 3
-
-#define ANIMATIONS_MAGIC_NUMBER 0x12345679
-
-// Animations table is an array of uint32_t integers, and looks like this:
-// Note that entries are 4 bytes each.
-// 0: magic number (0x12345678)
-// 1: animation count (number of animations in table)
-// 2 + n*3: animation n: frameCount
-// 2 + n*3: animation n: speed
-// 2 + n*3: animation n: flashAddress
+// Each animation file has the following header:
+// 0x00: animation n: frameCount
+// 0x04: speed
 
 class Animations {
   private:
-    FlashClass* flash;
+    NoFatStorage* storage;       // Storage container to read from
 
-    Animation animations[MAX_ANIMATIONS_COUNT];
+    Animation animations[MAX_ANIMATIONS_COUNT];	// Static table of aniimations
     uint32_t animationCount;    // Number of animations in this class
 
-    bool initialized;
+    bool initialized;           // True if initialized correctly
 
   public:
-    void begin(FlashClass& _flash);
+    // Initialize the animations table
+    // @param storage_ Storage container to read from
+    void begin(NoFatStorage& storage_);
 
     // True if the animations table was read correctly from flash
     bool isInitialized();
 
     // Read the number of animations stored in the flash
+    // @return Number of animations stored in the flash
     uint32_t getAnimationCount();
 
     // Get the requested animation

@@ -226,6 +226,48 @@ void singleCharacterHack(char in) {
                 }
             }
             break;
+        case 'r': // read the first file out
+            {
+                int sector = 0;
+                while(!flashStorage.isFile(sector)) {
+                    sector++;
+                }
+                if(sector < flashStorage.sectors()) {
+                    int fileType = flashStorage.fileType(sector);
+                    int fileSize = flashStorage.fileSize(sector);
+                    bufferSize = sprintf(buffer, "Reading file in sector: %i. Type=%i, Size=%i\r\n", sector, fileType, fileSize);
+                    usb_serial_write(buffer, bufferSize);
+
+		    #define READ_SIZE_A 29
+		    for(int offset = 0; offset < fileSize; offset += READ_SIZE_A) {
+                	uint8_t buff[READ_SIZE_A];
+			for(int i = 0; i < READ_SIZE_A; i++)
+				buff[i] = 0xFF;
+
+			int read = 0;
+			read = flashStorage.readFromFile(sector, offset, buff, READ_SIZE_A);
+
+			if(read == READ_SIZE_A) {
+
+                		bufferSize = sprintf(buffer, "%08X: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x, %02x, %02x\r\n",
+						offset,
+						buff[0], buff[1], buff[2], buff[3], buff[4], buff[5], buff[6], buff[7],
+						buff[8], buff[9], buff[10], buff[11], buff[12], buff[13], buff[15], buff[15]);
+			}
+			else {
+				bufferSize = sprintf(buffer, "%08X: Error reading data; expected %i bytes, read %i",
+						offset, READ_SIZE_A, read);
+			}
+                	usb_serial_write(buffer, bufferSize);
+		    }
+
+                }
+                else {
+                    bufferSize = sprintf(buffer, "no files found!\r\n");
+                    usb_serial_write(buffer, bufferSize);
+                }
+            }
+            break;
         case 'm': // dump some data from address 0
             {
 		#define READ_SIZE 16
@@ -240,6 +282,10 @@ void singleCharacterHack(char in) {
                 	usb_serial_write(buffer, bufferSize);
 		}
             }
+            break;
+        case 'a': // add a default animation
+            makeDefaultAnimation(flashStorage);
+            animations.begin(flashStorage);
             break;
         default:
             bufferSize = sprintf(buffer, "?\r\n");
@@ -326,15 +372,7 @@ extern "C" int main()
 	// Connect up the flash storage class
 	flashStorage.begin(flash);
 
-        animations.begin(flash);
-
-        // If the flash was not set up with an animation, burn one to it.
-        // TODO: There's a failure mode here where an undervoltage condition could cause
-        // this to wipe the flash.
-//        if(!animations.isInitialized()) {
-//            makeDefaultAnimation(flash);
-//            animations.begin(flash);
-//        }
+        animations.begin(flashStorage);
     }
 
     serial_begin(BAUD2DIV(115200));
