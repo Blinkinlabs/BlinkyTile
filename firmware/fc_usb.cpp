@@ -54,12 +54,12 @@ void fcBuffers::finalizeFrame()
     handledAnyPacketsThisFrame = false;
 
     if (pendingFinalizeFrame) {
-        finalizeFramebuffer();
+//        finalizeFramebuffer();
         pendingFinalizeFrame = false;
     }
 
     if (pendingFinalizeLUT) {
-        finalizeLUT();
+//        finalizeLUT();
         pendingFinalizeLUT = false;
     }
 
@@ -71,6 +71,10 @@ void fcBuffers::finalizeFrame()
 
 int fcBuffers::handleUSB()
 {
+    // TODO: Re-do this by making a separate buffer chain for unused FC packets
+    // right now, can't handle any packets until the final bit is flipped,
+    // since we don't clear the current packet.
+
     if (!rx_packet) {
         if (!usb_configuration) return -1;
 	rx_packet = usb_rx_no_int(FC_OUT_ENDPOINT);
@@ -79,11 +83,11 @@ int fcBuffers::handleUSB()
 
     unsigned control = rx_packet->buf[0];
     unsigned type = control & TYPE_BITS;
-    unsigned final = control & FINAL_BIT;
-    unsigned index = control & INDEX_BITS;
+//    unsigned final = control & FINAL_BIT;
+//    unsigned index = control & INDEX_BITS;
 
     switch (type) {
-
+/*
         case TYPE_FRAMEBUFFER:
 
             // Framebuffer updates are synchronized; if we're waiting to finalize fbNew,
@@ -93,6 +97,7 @@ int fcBuffers::handleUSB()
             }
 
             fbNew->store(index, rx_packet);
+	    rx_packet = NULL;
             if (final) {
                 pendingFinalizeFrame = true;
             }
@@ -101,18 +106,19 @@ int fcBuffers::handleUSB()
         case TYPE_LUT:
             // LUT accesses are not synchronized
             lutNew.store(index, rx_packet);
+	    rx_packet = NULL;
 
             if (final) {
                 // Finalize the LUT on the main thread, it's less async than doing it in the ISR.
                 pendingFinalizeLUT = true;
             }
             break;
-
+*/
         case TYPE_CONFIG:
             // Config changes take effect immediately.
             flags = rx_packet->buf[1];
-	    rx_packet = NULL;
             usb_free(rx_packet);
+	    rx_packet = NULL;
             break;
 
         default:

@@ -29,7 +29,6 @@
 #include <stdio.h>
 #include "fc_usb.h"
 #include "arm_math.h"
-//#include "fc_defs.h"
 #include "HardwareSerial.h"
 #include "usb_serial.h"
 
@@ -449,11 +448,9 @@ extern "C" int main()
                     break;
             }
 
-//            buffers.finalizeFrame();
 
             dmxShow();
         }
-
         state++;
 
         if(userButtons.isPressed()) {
@@ -467,6 +464,8 @@ extern "C" int main()
                 dmxSetBrightness(brightnessLevels[brightnessStep]);
             }
         }
+
+        buffers.finalizeFrame();
 
         if(usb_serial_available() > 0) {
             singleCharacterHack(usb_serial_getchar());

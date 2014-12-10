@@ -28,8 +28,8 @@
 #define BYTES_PER_PIXEL    3
 
 #define BUTTON_COUNT      2 // Two input buttons
-#define BUTTON_A 		  0 // First button
-#define BUTTON_B 		  1 // First button
+#define BUTTON_A 	  0 // First button
+#define BUTTON_B	  1 // First button
 
 #define BUTTON_A_PIN      5 // Button A: Port D7
 #define BUTTON_B_PIN     20 // Button B: Port D5
@@ -37,6 +37,27 @@
 #define POWER_ENABLE_PIN  6 // Output power enable resistor: Port D4
 #define ADDRESS_P_PIN     9 // Address program pin: Port C3
 #define DATA_OUT_PIN     10 // Data output pin: Port C4
+
+
+
+// Fadecandy interface defines
+
+#define LEDS_PER_STRIP          64
+#define LED_STRIPS              1
+#define LEDS_TOTAL              (LEDS_PER_STRIP * LED_STRIPS)
+#define CHANNELS_TOTAL          (LEDS_TOTAL * 3)
+
+#define LUT_CH_SIZE             257
+#define LUT_TOTAL_SIZE          (LUT_CH_SIZE * 3)
+
+// USB packet layout
+#define PIXELS_PER_PACKET       21
+#define LUTENTRIES_PER_PACKET   31
+#define PACKETS_PER_FRAME        4  // 25
+#define PACKETS_PER_LUT          4  // 25
+
+//#define NUM_USB_BUFFERS         104       // Three full frames (3*25), one LUT buffer (25), a little extra (4)
+
 
 
 // Initialize the board hardware (buttons, status led, LED control pins)

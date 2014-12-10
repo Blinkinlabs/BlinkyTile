@@ -848,8 +848,8 @@ void usb_isr(void)
 
 #ifdef FC_INTERFACE
 //					if(endpoint == FC_OUT_ENDPOINT) {
-//      						// TODO: Handle failure here.
-//      						usb_fc_rx_handler();
+      						// TODO: Handle failure here.
+      						usb_fc_rx_handler();
 //					}
 #endif
 
