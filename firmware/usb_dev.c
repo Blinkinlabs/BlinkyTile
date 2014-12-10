@@ -805,27 +805,36 @@ void usb_isr(void)
 				packet->len = b->desc >> 16;
 				if (packet->len > 0) {
 					packet->index = 0;
-					packet->next = NULL;
-					if (rx_first[endpoint] == NULL) {
-						//serial_print("rx 1st, epidx=");
-						//serial_phex(endpoint);
-						//serial_print(", packet=");
-						//serial_phex32((uint32_t)packet);
-						//serial_print("\n");
-						rx_first[endpoint] = packet;
-					} else {
-						//serial_print("rx Nth, epidx=");
-						//serial_phex(endpoint);
-						//serial_print(", packet=");
-						//serial_phex32((uint32_t)packet);
-						//serial_print("\n");
-						rx_last[endpoint]->next = packet;
+
+					if(endpoint == FC_OUT_ENDPOINT - 1) {
+      						// TODO: Handle failure here.
+      						usb_fc_rx_handler(packet);
 					}
-					rx_last[endpoint] = packet;
-					usb_rx_byte_count_data[endpoint] += packet->len;
-					// TODO: implement a per-endpoint maximum # of allocated packets
-					// so a flood of incoming data on 1 endpoint doesn't starve
-					// the others if the user isn't reading it regularly
+					else {
+
+						packet->next = NULL;
+						if (rx_first[endpoint] == NULL) {
+							//serial_print("rx 1st, epidx=");
+							//serial_phex(endpoint);
+							//serial_print(", packet=");
+							//serial_phex32((uint32_t)packet);
+							//serial_print("\n");
+							rx_first[endpoint] = packet;
+						} else {
+							//serial_print("rx Nth, epidx=");
+							//serial_phex(endpoint);
+							//serial_print(", packet=");
+							//serial_phex32((uint32_t)packet);
+							//serial_print("\n");
+							rx_last[endpoint]->next = packet;
+						}
+						rx_last[endpoint] = packet;
+						usb_rx_byte_count_data[endpoint] += packet->len;
+						// TODO: implement a per-endpoint maximum # of allocated packets
+						// so a flood of incoming data on 1 endpoint doesn't starve
+						// the others if the user isn't reading it regularly
+					}
+
 					packet = usb_malloc();
 					if (packet) {
 						b->addr = packet->buf;

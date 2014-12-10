@@ -86,9 +86,12 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 #if defined(USB_SERIAL_FC_DFU)
   #define VENDOR_ID		0x1D50
   #define PRODUCT_ID		0x6666
-  #define DEVICE_CLASS		0xEF    // Miscellaneous device class
-  #define DEVICE_SUBCLASS	0x02    // Interface association descriptor,
-  #define DEVICE_PROTOCOL	0x01    // usage defined by descriptor.
+  #define DEVICE_VER		0x0010
+
+  #define DEVICE_CLASS          0xEF  // Miscellaneous
+  #define DEVICE_SUBCLASS       0x02  // Common class
+  #define DEVICE_PROTOCOL       0x01  // Interface association descriptor
+
   #define MANUFACTURER_NAME	{'B','l','i','n','k','i','n','l','a','b','s'}
   #define MANUFACTURER_NAME_LEN	11
   #define PRODUCT_NAME		{'L','i','g','h','t','B','u','d','d','y'}

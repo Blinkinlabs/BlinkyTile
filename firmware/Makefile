@@ -47,8 +47,8 @@ CPP_FILES = \
 	patterns.cpp \
 	buttons.cpp \
         animation.cpp \
-        defaultanimation.cpp
-#	fc_usb.cpp \
+        defaultanimation.cpp \
+	fc_usb.cpp
 
 # Headers
 INCLUDES = -I.

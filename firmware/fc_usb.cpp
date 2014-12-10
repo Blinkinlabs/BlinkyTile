@@ -22,6 +22,7 @@
  */
 
 #include "fc_usb.h"
+#include "blinkytile.h"
 #include <algorithm>
 
 // USB protocol definitions
@@ -43,10 +44,10 @@ void fcBuffers::finalizeFrame()
 
     if (flags & CFLAG_NO_ACTIVITY_LED) {
         // LED under manual control
-        digitalWriteFast(LED_BUILTIN, flags & CFLAG_LED_CONTROL);
+        digitalWriteFast(STATUS_LED_PIN, flags & CFLAG_LED_CONTROL);
     } else {
         // Use the built-in LED as a USB activity indicator.
-        digitalWriteFast(LED_BUILTIN, handledAnyPacketsThisFrame);
+        digitalWriteFast(STATUS_LED_PIN, handledAnyPacketsThisFrame);
     }
     handledAnyPacketsThisFrame = false;
 
@@ -61,7 +62,8 @@ void fcBuffers::finalizeFrame()
     }
 
     // Let the USB driver know we may be able to process buffers that were previously deferred
-    usb_rx_resume();
+    // TODO: integrate me
+    //usb_rx_resume();
 }
 
 
@@ -121,7 +123,8 @@ void fcBuffers::finalizeFramebuffer()
     fbPrev = fbNext;
     fbNext = fbNew;
     fbNew = recycle;
-    perf_receivedKeyframeCounter++;
+// TODO: reintegrate me
+//    perf_receivedKeyframeCounter++;
 }
 
 void fcBuffers::finalizeLUT()
