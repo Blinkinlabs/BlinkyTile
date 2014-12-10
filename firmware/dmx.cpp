@@ -56,12 +56,12 @@ void dmxSendByte(uint8_t value)
 }
 
 void dmxSetup() {
-    dmxPort = portOutputRegister(digitalPinToPort(DATA_OUT_PIN));
-    dmxBit = digitalPinToBitMask(DATA_OUT_PIN);
+    dmxPort = portOutputRegister(digitalPinToPort(DATA_PIN));
+    dmxBit = digitalPinToBitMask(DATA_PIN);
 
     dataArray[0] = 0;    // Start bit!
 
-    digitalWrite(DATA_OUT_PIN, HIGH);
+    digitalWrite(DATA_PIN, HIGH);
 
     brightness = 255;
 }
@@ -82,11 +82,11 @@ void dmxShow() {
   
 //  elapsedMicros prefixStartTime;
   
-  digitalWriteFast(DATA_OUT_PIN, LOW);    // Break - 88us
+  digitalWriteFast(DATA_PIN, LOW);    // Break - 88us
 //  while(prefixStartTime < PREFIX_BREAK_TIME) {};
   delayMicroseconds(BREAK_LENGTH);
 
-  digitalWriteFast(DATA_OUT_PIN, HIGH);   // MAB - 8 us
+  digitalWriteFast(DATA_PIN, HIGH);   // MAB - 8 us
 //  while(prefixStartTime < PREFIX_MAB_TIME) {};
   delayMicroseconds(MAB_LENGTH);
 
@@ -99,26 +99,26 @@ void dmxShow() {
     
     //elapsedMicros frameStartTime;
     
-    digitalWriteFast(DATA_OUT_PIN, LOW);    // Start bit
+    digitalWriteFast(DATA_PIN, LOW);    // Start bit
     //while(frameStartTime < FRAME_START_BIT_TIME) {};
     delayMicroseconds(BIT_LENGTH);
     
     for(int bit = 0; bit < 8; bit++) {  // data bits
-      digitalWriteFast(DATA_OUT_PIN, (dataArray[frame] >> bit) & 0x01);
+      digitalWriteFast(DATA_PIN, (dataArray[frame] >> bit) & 0x01);
       //while(frameStartTime < (FRAME_START_BIT_TIME+(bit+1)*BIT_LENGTH)) {};
       delayMicroseconds(BIT_LENGTH);
     }
     
-    digitalWriteFast(DATA_OUT_PIN, HIGH);    // Stop bit
+    digitalWriteFast(DATA_PIN, HIGH);    // Stop bit
     //while(frameStartTime < (FRAME_STOP_BITS_TIME)) {};
     delayMicroseconds(2*BIT_LENGTH);
     
     interrupts();
   }
 
-//  digitalWriteFast(DATA_OUT_PIN, LOW);    // Stop bit
+//  digitalWriteFast(DATA_PIN, LOW);    // Stop bit
 //  delayMicroseconds(20);
-//  digitalWriteFast(DATA_OUT_PIN, HIGH);    // Stop bit  
+//  digitalWriteFast(DATA_PIN, HIGH);    // Stop bit  
   // We're done - MTBP is high, same as the stop bit.
   
 //  interrupts();

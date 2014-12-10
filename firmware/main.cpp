@@ -39,6 +39,7 @@
 #include "nofatstorage.h"
 #include "protocol.h"
 #include "dmx.h"
+#include "addressprogrammer.h"
 #include "patterns.h"
 #include "buttons.h"
 
@@ -109,6 +110,9 @@ void singleCharacterHack(char in) {
     int bufferSize;
 
     switch(in) {
+        case 'p': // program an address
+            programAddress(1);
+            break;
         case 'i': // Get info about the flash contents
             bufferSize = sprintf(buffer, "Sector Count: %i\r\n", flashStorage.sectors());
             usb_serial_write(buffer, bufferSize);

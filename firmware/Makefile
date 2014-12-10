@@ -44,6 +44,7 @@ CPP_FILES = \
 	protocol.cpp \
 	blinkytile.cpp \
 	dmx.cpp \
+	addressprogrammer.cpp \
 	patterns.cpp \
 	buttons.cpp \
         animation.cpp \

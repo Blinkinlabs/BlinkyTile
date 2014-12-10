@@ -1,7 +1,5 @@
 /*
- * Hardware-based DMX engine
- *
- * Outputs DMX on a single channel using 
+ * Program WS2821/WS2822s addresses
  * 
  * Copyright (c) 2014 Matt Mets
  * 
@@ -23,29 +21,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DMX_H
-#define DMX_H
+#ifndef ADDRESSPROGRAMMER_H
+#define ADDRESSPROGRAMMER_H
 
-// Initialize the DMX engine
-void dmxSetup();
-
-// Change the system brightness
-// @param brightness Display brightness scale, from 0 (off) to 255 (fully on)
-void dmxSetBrightness(uint8_t newBrightness);
-
-// Update a single pixel in the array
-// @param pixel int Pixel address
-// @param r uint8_t New red value for the pixel (0 - 255)
-// @param g uint8_t New red value for the pixel (0 - 255)
-// @param b uint8_t New red value for the pixel (0 - 255)
-void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b);
+void programAddress(int address);
 
 
-// Emit the DMX signal
-void dmxShow();
 
-// Get the display pixel buffer
-// @return Pointer to the pixel display buffer, a uint8_t array of size LED_COUNT
-uint8_t* dmxGetPixels();
 
 #endif

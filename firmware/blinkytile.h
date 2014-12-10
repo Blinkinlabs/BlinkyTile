@@ -35,8 +35,8 @@
 #define BUTTON_B_PIN     20 // Button B: Port D5
 #define STATUS_LED_PIN   21 // Status LED: Port D6
 #define POWER_ENABLE_PIN  6 // Output power enable resistor: Port D4
-#define ADDRESS_P_PIN     9 // Address program pin: Port C3
-#define DATA_OUT_PIN     10 // Data output pin: Port C4
+#define ADDRESS_PIN     9 // Address program pin: Port C3
+#define DATA_PIN     10 // Data output pin: Port C4
 
 
 
