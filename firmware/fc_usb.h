@@ -138,7 +138,7 @@ struct fcBuffers
     }
 
     // Interrupt context
-    bool handleUSB(usb_packet_t *packet);
+    int handleUSB();
 
     // Main loop context
     void finalizeFrame();

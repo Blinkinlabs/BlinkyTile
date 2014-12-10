@@ -49,6 +49,7 @@ void usb_init(void);
 void usb_init_serialnumber(void);
 void usb_isr(void);
 usb_packet_t *usb_rx(uint32_t endpoint);
+usb_packet_t *usb_rx_no_int(uint32_t endpoint);
 uint32_t usb_tx_byte_count(uint32_t endpoint);
 uint32_t usb_tx_packet_count(uint32_t endpoint);
 void usb_tx(uint32_t endpoint, usb_packet_t *packet);
@@ -73,7 +74,7 @@ extern void usb_serial_flush_callback(void);
 #endif
 
 #ifdef FC_INTERFACE
-int usb_fc_rx_handler(usb_packet_t *packet);
+int usb_fc_rx_handler();
 #endif
 
 #ifdef DFU_INTERFACE

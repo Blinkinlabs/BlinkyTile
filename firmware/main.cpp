@@ -82,10 +82,10 @@ static void dfu_reboot()
     while (1);
 }
 
-extern "C" int usb_fc_rx_handler(usb_packet_t *packet)
+extern "C" int usb_fc_rx_handler()
 {
     // USB packet interrupt handler. Invoked by the ISR dispatch code in usb_dev.c
-    return buffers.handleUSB(packet);
+    return buffers.handleUSB();
 }
 
 
@@ -449,7 +449,7 @@ extern "C" int main()
                     break;
             }
 
-            buffers.finalizeFrame();
+//            buffers.finalizeFrame();
 
             dmxShow();
         }
@@ -469,16 +469,16 @@ extern "C" int main()
         }
 
         if(usb_serial_available() > 0) {
-//            singleCharacterHack(usb_serial_getchar());
+            singleCharacterHack(usb_serial_getchar());
 
-            serial_mode = true;
-            serial_loop();
+//            serial_mode = true;
+//            serial_loop();
 
-            if(serialReceiver.parseByte(serial_getchar())) {
-              uint16_t dataSize = serialReceiver.getPacketSize();
-              uint8_t* data = serialReceiver.getPacket();
-              handleData(dataSize, data);
-            }
+//            if(serialReceiver.parseByte(serial_getchar())) {
+//              uint16_t dataSize = serialReceiver.getPacketSize();
+//              uint8_t* data = serialReceiver.getPacket();
+//              handleData(dataSize, data);
+//            }
         }
     }
 

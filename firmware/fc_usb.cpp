@@ -23,6 +23,7 @@
 
 #include "fc_usb.h"
 #include "blinkytile.h"
+#include "usb_desc.h"
 #include <algorithm>
 
 // USB protocol definitions
@@ -35,6 +36,7 @@
 #define TYPE_LUT            0x40
 #define TYPE_CONFIG         0x80
 
+static usb_packet_t *rx_packet=NULL;
 
 void fcBuffers::finalizeFrame()
 {
@@ -67,9 +69,15 @@ void fcBuffers::finalizeFrame()
 }
 
 
-bool fcBuffers::handleUSB(usb_packet_t *packet)
+int fcBuffers::handleUSB()
 {
-    unsigned control = packet->buf[0];
+    if (!rx_packet) {
+        if (!usb_configuration) return -1;
+	rx_packet = usb_rx_no_int(FC_OUT_ENDPOINT);
+	if (!rx_packet) return -1;
+    }
+
+    unsigned control = rx_packet->buf[0];
     unsigned type = control & TYPE_BITS;
     unsigned final = control & FINAL_BIT;
     unsigned index = control & INDEX_BITS;
@@ -84,7 +92,7 @@ bool fcBuffers::handleUSB(usb_packet_t *packet)
                 return false;
             }
 
-            fbNew->store(index, packet);
+            fbNew->store(index, rx_packet);
             if (final) {
                 pendingFinalizeFrame = true;
             }
@@ -92,7 +100,7 @@ bool fcBuffers::handleUSB(usb_packet_t *packet)
 
         case TYPE_LUT:
             // LUT accesses are not synchronized
-            lutNew.store(index, packet);
+            lutNew.store(index, rx_packet);
 
             if (final) {
                 // Finalize the LUT on the main thread, it's less async than doing it in the ISR.
@@ -102,12 +110,14 @@ bool fcBuffers::handleUSB(usb_packet_t *packet)
 
         case TYPE_CONFIG:
             // Config changes take effect immediately.
-            flags = packet->buf[1];
-            usb_free(packet);
+            flags = rx_packet->buf[1];
+	    rx_packet = NULL;
+            usb_free(rx_packet);
             break;
 
         default:
-            usb_free(packet);
+            usb_free(rx_packet);
+	    rx_packet = NULL;
             break;
     }
 

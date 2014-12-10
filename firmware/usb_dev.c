@@ -320,7 +320,7 @@ static void usb_setup(void)
 		//serial_print("desc: not found\n");
 		endpoint0_stall();
 		return;
-#if defined(CDC_STATUS_INTERFACE)
+#ifdef CDC_STATUS_INTERFACE
 	  case 0x2221: // CDC_SET_CONTROL_LINE_STATE
 		usb_cdc_line_rtsdtr = setup.wValue;
 		//serial_print("set control line state\n");
@@ -537,6 +537,24 @@ static void usb_control(uint32_t stat)
 
 
 
+usb_packet_t *usb_rx_no_int(uint32_t endpoint)
+{
+	usb_packet_t *ret;
+	endpoint--;
+	if (endpoint >= NUM_ENDPOINTS) return NULL;
+
+	ret = rx_first[endpoint];
+	if (ret) {
+		rx_first[endpoint] = ret->next;
+		usb_rx_byte_count_data[endpoint] -= ret->len;
+	}
+	//serial_print("rx, epidx=");
+	//serial_phex(endpoint);
+	//serial_print(", packet=");
+	//serial_phex32(ret);
+	//serial_print("\n");
+	return ret;
+}
 
 
 
@@ -806,34 +824,34 @@ void usb_isr(void)
 				if (packet->len > 0) {
 					packet->index = 0;
 
-					if(endpoint == FC_OUT_ENDPOINT - 1) {
-      						// TODO: Handle failure here.
-      						usb_fc_rx_handler(packet);
+					packet->next = NULL;
+					if (rx_first[endpoint] == NULL) {
+						//serial_print("rx 1st, epidx=");
+						//serial_phex(endpoint);
+						//serial_print(", packet=");
+						//serial_phex32((uint32_t)packet);
+						//serial_print("\n");
+						rx_first[endpoint] = packet;
+					} else {
+						//serial_print("rx Nth, epidx=");
+						//serial_phex(endpoint);
+						//serial_print(", packet=");
+						//serial_phex32((uint32_t)packet);
+						//serial_print("\n");
+						rx_last[endpoint]->next = packet;
 					}
-					else {
+					rx_last[endpoint] = packet;
+					usb_rx_byte_count_data[endpoint] += packet->len;
+					// TODO: implement a per-endpoint maximum # of allocated packets
+					// so a flood of incoming data on 1 endpoint doesn't starve
+					// the others if the user isn't reading it regularly
 
-						packet->next = NULL;
-						if (rx_first[endpoint] == NULL) {
-							//serial_print("rx 1st, epidx=");
-							//serial_phex(endpoint);
-							//serial_print(", packet=");
-							//serial_phex32((uint32_t)packet);
-							//serial_print("\n");
-							rx_first[endpoint] = packet;
-						} else {
-							//serial_print("rx Nth, epidx=");
-							//serial_phex(endpoint);
-							//serial_print(", packet=");
-							//serial_phex32((uint32_t)packet);
-							//serial_print("\n");
-							rx_last[endpoint]->next = packet;
-						}
-						rx_last[endpoint] = packet;
-						usb_rx_byte_count_data[endpoint] += packet->len;
-						// TODO: implement a per-endpoint maximum # of allocated packets
-						// so a flood of incoming data on 1 endpoint doesn't starve
-						// the others if the user isn't reading it regularly
-					}
+#ifdef FC_INTERFACE
+//					if(endpoint == FC_OUT_ENDPOINT) {
+//      						// TODO: Handle failure here.
+//      						usb_fc_rx_handler();
+//					}
+#endif
 
 					packet = usb_malloc();
 					if (packet) {
