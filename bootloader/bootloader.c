@@ -25,6 +25,7 @@
 
 #include <stdbool.h>
 #include "usb_dev.h"
+#include "dfu.h"
 #include "serial.h"
 //#include "mk20dx128.h"
 #include "mk20dn64.h"
@@ -122,6 +123,12 @@ int main()
 
         // Wait for firmware download
         while (dfu_getstate() != dfuMANIFEST) {
+
+            __disable_irq();
+            fl_state_poll();  // Help push programming forward, since it's dependent on polling
+            __enable_irq();
+            // delay(2)
+
             watchdog_refresh();
         }
 

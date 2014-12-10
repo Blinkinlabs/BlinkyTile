@@ -227,7 +227,7 @@ static bool fl_handle_status(uint8_t fstat, unsigned specificError)
     return false;
 }
 
-static void fl_state_poll()
+void fl_state_poll()
 {
     // Try to advance the state of our own flash programming state machine.
 
