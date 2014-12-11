@@ -49,7 +49,7 @@ class BlinkyTape(object):
 
         self.port = port                # Path of the serial port to connect to
         self.ledCount = ledCount        # Number of LEDs on the BlinkyTape
-        self.buffered = buffered        # If true, buffer output data before sending
+        self.buffered = buffered        # If Frue, buffer output data before sending
         self.buf = ""                   # Color data to send
         self.serial = serial.Serial(port, 115200)
 
@@ -256,7 +256,7 @@ class BlinkyTape(object):
         """Write one page (256 bytes) of data to the specified animation
         """
         if len(data) != 256:
-            return false
+            return False
 
         command = chr(0x19)
         command += chr((sector >>  8) & 0xFF)
@@ -275,7 +275,7 @@ class BlinkyTape(object):
         """Read some data (up to 256 bytes) from a file
         """
         if length > 256:
-            return false
+            return False
 
         command = chr(0x1A)
         command += chr((sector >>  8) & 0xFF)
