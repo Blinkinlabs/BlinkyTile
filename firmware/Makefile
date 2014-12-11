@@ -45,6 +45,7 @@ CPP_FILES = \
 	blinkytile.cpp \
 	dmx.cpp \
 	addressprogrammer.cpp \
+	singlecharacterhack.cpp \
 	patterns.cpp \
 	buttons.cpp \
         animation.cpp \
