@@ -151,8 +151,7 @@ class BlinkyTape(object):
         status = (ret[0] == 'P')
         returnData = ""
 
-        if(ord(ret[1]) > 0):
-            returnData = self.serial.read(ord(ret[1]))
+        returnData = self.serial.read(ord(ret[1]) + 1)
 
         self.serial.flushInput()
         return status, returnData
@@ -234,16 +233,16 @@ class BlinkyTape(object):
 
         return space
 
-    def createAnimation(self, animationLength):
-        """Store an animation into the external flash memory
+    def createFile(self, fileType, fileLength):
+        """Store a file into the external flash memory
         """
 
-        # Try to create a new animation
         command = chr(0x18)
-        command += chr((animationLength >> 24) & 0xFF)       # 4 bytes animation length
-        command += chr((animationLength >> 16) & 0xFF)
-        command += chr((animationLength >>  8) & 0xFF)
-        command += chr(animationLength         & 0xFF)
+        command += chr(fileType           & 0xFF)
+        command += chr((fileLength >> 24) & 0xFF)
+        command += chr((fileLength >> 16) & 0xFF)
+        command += chr((fileLength >>  8) & 0xFF)
+        command += chr(fileLength         & 0xFF)
         status, returnData = self.sendCommand(command)
 
         handle = -1
@@ -252,6 +251,42 @@ class BlinkyTape(object):
             handle += ord(returnData[1]) << 0
 
         return handle
+
+    def writeFileData(self, sector, offset, data):
+        """Write one page (256 bytes) of data to the specified animation
+        """
+        if len(data) != 256:
+            return false
+
+        command = chr(0x19)
+        command += chr((sector >>  8) & 0xFF)
+        command += chr(sector         & 0xFF)
+        command += chr((offset >> 24) & 0xFF)
+        command += chr((offset >> 16) & 0xFF)
+        command += chr((offset >>  8) & 0xFF)
+        command += chr(offset         & 0xFF)
+        command += data
+
+        status, returnData = self.sendCommand(command)
+
+        return status
+
+    def readFileData(self, sector, offset, length):
+        """Read some data (up to 256 bytes) from a file
+        """
+        if length > 256:
+            return false
+
+        command = chr(0x1A)
+        command += chr((sector >>  8) & 0xFF)
+        command += chr(sector         & 0xFF)
+        command += chr((offset >> 24) & 0xFF)
+        command += chr((offset >> 16) & 0xFF)
+        command += chr((offset >>  8) & 0xFF)
+        command += chr(offset         & 0xFF)
+        command += chr(length - 1     & 0xFF)
+
+        return self.sendCommand(command)
 
     def eraseFlash(self):
         """Erase the entire external flash memory

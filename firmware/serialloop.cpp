@@ -35,7 +35,7 @@ void commandLoop();
 
 #define CONTROL_BUFFER_SIZE 300
 uint8_t controlBuffer[CONTROL_BUFFER_SIZE];     // Buffer for receiving command data
-uint8_t controlBufferIndex;     // Current location in the buffer
+int controlBufferIndex;     // Current location in the buffer
 
 
 void serialReset() {
@@ -111,7 +111,9 @@ bool commandProgramAddress(uint8_t* buffer);
 bool commandEraseFlash(uint8_t* buffer);
 bool commandFreeSpace(uint8_t* buffer);
 bool commandLargestFile(uint8_t* buffer);
-bool commandNewAnimation(uint8_t* buffer);
+bool commandNewFile(uint8_t* buffer);
+bool commandWritePage(uint8_t* buffer);
+bool commandReadData(uint8_t* buffer);
 bool commandFileCount(uint8_t* buffer);
 bool commandFirstFreeSector(uint8_t* buffer);
 
@@ -122,14 +124,16 @@ struct Command {
 };
 
 Command commands[] = {
-    {0x01,  3, commandProgramAddress},
-    {0x10,  1, commandFreeSpace},
-    {0x11,  1, commandLargestFile},
-    {0x12,  1, commandFileCount},
-    {0x18,  5, commandNewAnimation},
-    {0x20,  3, commandEraseFlash},
-    {0x21,  1, commandFirstFreeSector},
-    {0xFF,  0, NULL}
+    {0x01,   3, commandProgramAddress},
+    {0x10,   1, commandFreeSpace},
+    {0x11,   1, commandLargestFile},
+    {0x12,   1, commandFileCount},
+    {0x18,   6, commandNewFile},
+    {0x19, 263, commandWritePage},
+    {0x1A,   8, commandReadData},
+    {0x20,   3, commandEraseFlash},
+    {0x21,   1, commandFirstFreeSector},
+    {0xFF,   0, NULL}
 };
 
 
@@ -160,12 +164,11 @@ void commandLoop() {
                 usb_serial_putchar('P');
                 usb_serial_putchar((char)controlBuffer[1]);
 
-                if(controlBuffer[1] > 0) {
-                    usb_serial_write(controlBuffer + 2, controlBuffer[1]);
-                }
+                usb_serial_write(controlBuffer + 2, controlBuffer[1] + 1);
             }
             else {
                 usb_serial_putchar('F');
+                usb_serial_putchar(char(0x00));
                 usb_serial_putchar(char(0x00));
             }
 
@@ -205,7 +208,7 @@ bool commandEraseFlash(uint8_t* buffer) {
 bool commandFirstFreeSector(uint8_t* buffer) {
     int files = flashStorage.findFreeSector(0);
 
-    buffer[0] = 4;
+    buffer[0] = 4 - 1;
     buffer[1] = (files >> 24) & 0xFF;
     buffer[2] = (files >> 16) & 0xFF;
     buffer[3] = (files >>  8) & 0xFF;
@@ -217,7 +220,7 @@ bool commandFirstFreeSector(uint8_t* buffer) {
 bool commandFreeSpace(uint8_t* buffer) {
     int freeSpace = flashStorage.freeSpace();
 
-    buffer[0] = 4;
+    buffer[0] = 4 - 1;
     buffer[1] = (freeSpace >> 24) & 0xFF;
     buffer[2] = (freeSpace >> 16) & 0xFF;
     buffer[3] = (freeSpace >>  8) & 0xFF;
@@ -229,7 +232,7 @@ bool commandFreeSpace(uint8_t* buffer) {
 bool commandFileCount(uint8_t* buffer) {
     int files = flashStorage.files();
 
-    buffer[0] = 4;
+    buffer[0] = 4 - 1;
     buffer[1] = (files >> 24) & 0xFF;
     buffer[2] = (files >> 16) & 0xFF;
     buffer[3] = (files >>  8) & 0xFF;
@@ -241,7 +244,7 @@ bool commandFileCount(uint8_t* buffer) {
 bool commandLargestFile(uint8_t* buffer) {
     int largestFile = flashStorage.largestNewFile();
 
-    buffer[0] = 4;
+    buffer[0] = 4 - 1;
     buffer[1] = (largestFile >> 24) & 0xFF;
     buffer[2] = (largestFile >> 16) & 0xFF;
     buffer[3] = (largestFile >>  8) & 0xFF;
@@ -250,20 +253,47 @@ bool commandLargestFile(uint8_t* buffer) {
     return true;
 }
 
-bool commandNewAnimation(uint8_t* buffer) {
-    int animationSize = 
-        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+bool commandNewFile(uint8_t* buffer) {
+    uint8_t fileType = buffer[0];
+    int fileSize = 
+        (buffer[1] << 24) + (buffer[2] << 16) + (buffer[3] << 8)+ buffer[4];
 
-    int sector = flashStorage.createNewFile(0xEE, animationSize);
+    int sector = flashStorage.createNewFile(fileType, fileSize);
 
-    if(sector < 0) {
+    if(sector < 0)
         return false;
-    }
-    else {
-        buffer[0] = 2;
-        buffer[1] = (sector >> 8) & 0xFF;
-        buffer[2] = (sector     ) & 0xFF;
-    }
 
+    buffer[0] = 2 - 1;
+    buffer[1] = (sector >> 8) & 0xFF;
+    buffer[2] = (sector     ) & 0xFF;
+    return true;
+}
+
+bool commandWritePage(uint8_t* buffer) {
+    uint8_t sector = (buffer[0] << 8) + buffer[1];
+    uint8_t offset =
+        (buffer[2] << 24) + (buffer[3] << 16) + (buffer[4] << 8)+ buffer[5];
+
+    int written = flashStorage.writePageToFile(sector, offset, buffer + 6);
+
+    if(written != 256)
+        return false;
+    
+    buffer[0] = 0;
+    return true;
+}
+
+bool commandReadData(uint8_t* buffer) {
+    int sector = (buffer[0] << 8) + buffer[1];
+    int offset =
+        (buffer[2] << 24) + (buffer[3] << 16) + (buffer[4] << 8)+ buffer[5];
+    int length = buffer[6] + 1;
+
+    int read = flashStorage.readFromFile(sector, offset, buffer + 1, length);
+
+    if(read != length)
+        return false;
+    
+    buffer[0] = length - 1;
     return true;
 }
