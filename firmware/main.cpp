@@ -37,10 +37,10 @@
 #include "defaultanimation.h"
 #include "jedecflash.h"
 #include "nofatstorage.h"
-#include "protocol.h"
 #include "dmx.h"
 #include "addressprogrammer.h"
 #include "patterns.h"
+#include "serialloop.h"
 #include "buttons.h"
 
 // TODO: delete me
@@ -58,9 +58,6 @@ NoFatStorage flashStorage;
 
 // Animations class
 Animations animations;
-
-// Serial programming receiver
-Protocol serialReceiver;
 
 // Button inputs
 Buttons userButtons;
@@ -181,6 +178,7 @@ extern "C" int main()
 
     dmxSetup();
     enableOutputPower();
+    serialReset();
 
     // If the flash initializes successfully, then load the animations table.
     if(flash.begin(FlashClass::autoDetect)) {
@@ -190,9 +188,6 @@ extern "C" int main()
 
         animations.begin(flashStorage);
     }
-
-//    serial_begin(BAUD2DIV(115200));
-//    serialReceiver.reset();
 
     uint32_t animation = 1;
 
@@ -288,13 +283,7 @@ extern "C" int main()
 //            singleCharacterHack(usb_serial_getchar());
 
             serial_mode = true;
-            serial_loop();
-
-//            if(serialReceiver.parseByte(serial_getchar())) {
-//              uint16_t dataSize = serialReceiver.getPacketSize();
-//              uint8_t* data = serialReceiver.getPacket();
-//              handleData(dataSize, data);
-//            }
+            serialLoop();
         }
     }
 

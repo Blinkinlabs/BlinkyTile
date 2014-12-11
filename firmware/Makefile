@@ -47,6 +47,7 @@ CPP_FILES = \
 	addressprogrammer.cpp \
 	singlecharacterhack.cpp \
 	patterns.cpp \
+	serialloop.cpp \
 	buttons.cpp \
         animation.cpp \
         defaultanimation.cpp \

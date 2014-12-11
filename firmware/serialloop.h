@@ -21,12 +21,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef PATTERNS_H
-#define PATTERNS_H
+#ifndef SERIALLOOP_H
+#define SERIALLOOP_H
 
-extern void color_loop();
-extern void white_loop();
-extern void green_loop();
-extern void count_up_loop();
+#define SERIAL_MODE_BLINKYTAPE  0x01
+#define SERIAL_MODE_BLINKYTILE  0x02
+
+extern void serialReset();
+extern void serialLoop();
 
 #endif

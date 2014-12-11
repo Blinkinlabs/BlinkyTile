@@ -1,8 +1,6 @@
 #include "WProgram.h"
-#include "pins_arduino.h"
 #include "blinkytile.h"
 #include "patterns.h"
-#include "usb_serial.h"
 #include "dmx.h"
 
 void color_loop() {  
@@ -57,32 +55,3 @@ void count_up_loop() {
     }
 }
 
-
-void serial_loop() {
-    static int pixelIndex;
-
-        if(usb_serial_available() > 2) {
-
-            uint8_t buffer[3]; // Buffer to store three incoming bytes used to compile a single LED color
-
-            for (uint8_t x=0; x<3; x++) { // Read three incoming bytes
-                uint8_t c = usb_serial_getchar();
-                
-                if (c < 255) {
-                   buffer[x] = c; // Using 255 as a latch semaphore
-                }
-                else {
-                    dmxShow();
-                    pixelIndex = 0;
-                    
-                    break;
-            }
-
-            if (x == 2) {   // If we received three serial bytes
-                if(pixelIndex == LED_COUNT) break; // Prevent overflow by ignoring the pixel data beyond LED_COUNT
-                dmxSetPixel(pixelIndex+1, buffer[0], buffer[1], buffer[2]);
-                pixelIndex++;
-            }
-        }
-    }
-}
