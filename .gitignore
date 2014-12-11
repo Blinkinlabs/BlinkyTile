@@ -4,3 +4,10 @@
 *.d
 *.swp
 *.dfu
+*.pyc
+firmware/blinky-firmware.elf
+firmware/blinky-firmware.hex
+firmware/app-image.hex
+bootloader/blinky-boot.elf
+bootloader/blinky-boot.hex
+bootloader/blinky-boot.bin
