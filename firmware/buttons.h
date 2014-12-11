@@ -7,18 +7,18 @@
 
 
 struct button {
-  uint8_t pin;
-  uint8_t inverted;
+    uint8_t pin;        // Arduino pin number that the button is connected to
+    uint8_t inverted;   // If true, button state is inverted
 };
 
 
 class Buttons {
   private:
-    int pressedButton;  // Stores the button that was pressed
+    int pressedButton;    // Stores the button that was pressed
     int lastPressed;
-    int debounceCount;  // Number of times we've seen the same input
-    #define DEBOUNCE_INTERVAL 500  // Number of times we need s
-    
+    int debounceCount;    // Number of times we've seen the same input
+    #define DEBOUNCE_INTERVAL 500    // Number of times we need s
+        
   public:
     // Initialize the buttons class
     void setup();
@@ -26,10 +26,12 @@ class Buttons {
     // Scan for button presses
     void buttonTask();
     
-    // Returns true if a button is pressed
+    // Check if a button has been pressed
+    // @return True if a button press is waiting, false otherwise
     bool isPressed();
     
-    // If a button is pressed, get it!
+    // Get the last pressed button
+    // @return Identifier of the last button that was pressed
     int getPressed();
 };
 

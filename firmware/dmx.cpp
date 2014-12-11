@@ -7,7 +7,7 @@
 
 #ifdef FAST_DMX
 
-#define BIT_LENGTH               (2)		// This isn't exact, but is much faster!
+#define BIT_LENGTH               (2)            // This isn't exact, but is much faster!
 #define BREAK_LENGTH             (88)
 #define MAB_LENGTH               (8)
 
@@ -34,25 +34,25 @@ static uint8_t dmxBit = 0;
 
 void dmxSendByte(uint8_t value)
 {
-	uint32_t begin, target;
-	uint8_t mask;
+    uint32_t begin, target;
+    uint8_t mask;
 
-	noInterrupts();
-	ARM_DEMCR |= ARM_DEMCR_TRCENA;
-	ARM_DWT_CTRL |= ARM_DWT_CTRL_CYCCNTENA;
-	begin = ARM_DWT_CYCCNT;
-	*dmxPort = 0;
-	target = F_CPU / 250000;
-	while (ARM_DWT_CYCCNT - begin < target) ; // wait, start bit
-	for (mask=1; mask; mask <<= 1) {
-		*dmxPort = (value & mask) ? 1 : 0;
-		target += (F_CPU / 250000);
-		while (ARM_DWT_CYCCNT - begin < target) ; // wait, data bits
-	}
-	*dmxPort = 1;
-	target += (F_CPU / 125000);
-	while (ARM_DWT_CYCCNT - begin < target) ; // wait, 2 stops bits
-	interrupts();
+    noInterrupts();
+    ARM_DEMCR |= ARM_DEMCR_TRCENA;
+    ARM_DWT_CTRL |= ARM_DWT_CTRL_CYCCNTENA;
+    begin = ARM_DWT_CYCCNT;
+    *dmxPort = 0;
+    target = F_CPU / 250000;
+    while (ARM_DWT_CYCCNT - begin < target) ; // wait, start bit
+    for (mask=1; mask; mask <<= 1) {
+        *dmxPort = (value & mask) ? 1 : 0;
+        target += (F_CPU / 250000);
+        while (ARM_DWT_CYCCNT - begin < target) ; // wait, data bits
+    }
+    *dmxPort = 1;
+    target += (F_CPU / 125000);
+    while (ARM_DWT_CYCCNT - begin < target) ; // wait, 2 stops bits
+    interrupts();
 }
 
 void dmxSetup() {
@@ -67,63 +67,44 @@ void dmxSetup() {
 }
 
 void dmxSetBrightness(uint8_t newBrightness) {
-  brightness = newBrightness;
+    brightness = newBrightness;
 }
 
 void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 1] = b*brightness/255;
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 2] = g*brightness/255;
-  dataArray[(pixel-1)*BYTES_PER_PIXEL + 3] = r*brightness/255;
+    dataArray[(pixel-1)*BYTES_PER_PIXEL + 1] = b*brightness/255;
+    dataArray[(pixel-1)*BYTES_PER_PIXEL + 2] = g*brightness/255;
+    dataArray[(pixel-1)*BYTES_PER_PIXEL + 3] = r*brightness/255;
 }
 
 // Send a DMX frame with new data
 void dmxShow() {
-//  noInterrupts();
   
-//  elapsedMicros prefixStartTime;
-  
-  digitalWriteFast(DATA_PIN, LOW);    // Break - 88us
-//  while(prefixStartTime < PREFIX_BREAK_TIME) {};
-  delayMicroseconds(BREAK_LENGTH);
+    digitalWriteFast(DATA_PIN, LOW);    // Break - 88us
+    delayMicroseconds(BREAK_LENGTH);
 
-  digitalWriteFast(DATA_PIN, HIGH);   // MAB - 8 us
-//  while(prefixStartTime < PREFIX_MAB_TIME) {};
-  delayMicroseconds(MAB_LENGTH);
+    digitalWriteFast(DATA_PIN, HIGH);   // MAB - 8 us
+    delayMicroseconds(MAB_LENGTH);
 
   
-  // For each address
-  for(int frame = 0; frame < 1 + LED_COUNT*BYTES_PER_PIXEL; frame++) {    
-    //dmxSendByte(dataArray[frame]);
-
-    noInterrupts();
-    
-    //elapsedMicros frameStartTime;
-    
-    digitalWriteFast(DATA_PIN, LOW);    // Start bit
-    //while(frameStartTime < FRAME_START_BIT_TIME) {};
-    delayMicroseconds(BIT_LENGTH);
-    
-    for(int bit = 0; bit < 8; bit++) {  // data bits
-      digitalWriteFast(DATA_PIN, (dataArray[frame] >> bit) & 0x01);
-      //while(frameStartTime < (FRAME_START_BIT_TIME+(bit+1)*BIT_LENGTH)) {};
-      delayMicroseconds(BIT_LENGTH);
+    // For each address
+    for(int frame = 0; frame < 1 + LED_COUNT*BYTES_PER_PIXEL; frame++) {    
+        __disable_irq();
+        
+        digitalWriteFast(DATA_PIN, LOW);    // Start bit
+        delayMicroseconds(BIT_LENGTH);
+        
+        for(int bit = 0; bit < 8; bit++) {  // data bits
+            digitalWriteFast(DATA_PIN, (dataArray[frame] >> bit) & 0x01);
+            delayMicroseconds(BIT_LENGTH);
+        }
+        
+        digitalWriteFast(DATA_PIN, HIGH);    // Stop bit
+        delayMicroseconds(2*BIT_LENGTH);
+        
+        __enable_irq();
     }
-    
-    digitalWriteFast(DATA_PIN, HIGH);    // Stop bit
-    //while(frameStartTime < (FRAME_STOP_BITS_TIME)) {};
-    delayMicroseconds(2*BIT_LENGTH);
-    
-    interrupts();
-  }
-
-//  digitalWriteFast(DATA_PIN, LOW);    // Stop bit
-//  delayMicroseconds(20);
-//  digitalWriteFast(DATA_PIN, HIGH);    // Stop bit  
-  // We're done - MTBP is high, same as the stop bit.
-  
-//  interrupts();
 }
 
 uint8_t* dmxGetPixels() {
-  return &dataArray[1]; // Return first pixel in the array
+    return &dataArray[1]; // Return first pixel in the array
 }

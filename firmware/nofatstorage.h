@@ -80,30 +80,30 @@
 #include <inttypes.h>
 #include "jedecflash.h"
 
-#define MAX_SECTORS		64 // Maximum number of sectors we can manage
+#define MAX_SECTORS             64 // Maximum number of sectors we can manage
 
-#define SECTOR_SIZE		4096	// Number of bytes in a sector. This is the smallest unit we can erase
-#define PAGE_SIZE		256	// Number of bytes in a page. This is the smallest unit we can write
+#define SECTOR_SIZE             4096    // Number of bytes in a sector. This is the smallest unit we can erase
+#define PAGE_SIZE               256     // Number of bytes in a page. This is the smallest unit we can write
 
-#define FILE_HEADER_SIZE	PAGE_SIZE	// Size of the file header. There is one header per file
-#define MAX_LINKED_SECTORS	((FILE_HEADER_SIZE-10)/2)	// Maximum number of linked sectors we can store
+#define FILE_HEADER_SIZE        PAGE_SIZE       // Size of the file header. There is one header per file
+#define MAX_LINKED_SECTORS      ((FILE_HEADER_SIZE-10)/2)       // Maximum number of linked sectors we can store
 
-#define MAGIC_NUMBER_SIZE	4	// Size of the magic number
-#define SECTOR_MAGIC_NUMBER   	0x12345679	// Magic number, at the beginning of every starting sector
+#define MAGIC_NUMBER_SIZE       4       // Size of the magic number
+#define SECTOR_MAGIC_NUMBER     0x12345679      // Magic number, at the beginning of every starting sector
 
-#define SECTOR_TYPE_FREE	0x00	// For the sector map: This sector is free
-#define SECTOR_TYPE_START	0x01	// For the sector map: This sector contains a file start
-#define SECTOR_TYPE_CONTINUATION 0x02	// For the sector map: This sector contains continued data from a file
+#define SECTOR_TYPE_FREE        0x00    // For the sector map: This sector is free
+#define SECTOR_TYPE_START       0x01    // For the sector map: This sector contains a file start
+#define SECTOR_TYPE_CONTINUATION 0x02   // For the sector map: This sector contains continued data from a file
 
-#define FLASH_WAIT_DELAY 	2	// Number of ms to wait between flash status polls
+#define FLASH_WAIT_DELAY        2       // Number of ms to wait between flash status polls
 
-#define FILETYPE_ANIMATION	0x12
+#define FILETYPE_ANIMATION      0x12
 
 class NoFatStorage {
   private:
     FlashClass* flash;
     // TODO: Make this a bitfield to save 448b ram
-    uint8_t sectorMap[MAX_SECTORS];	// Map of all sectors and whether they are availabe
+    uint8_t sectorMap[MAX_SECTORS];     // Map of all sectors and whether they are availabe
 
     // Rebuild the map of free/used sectors
     void rebuildSectorMap();

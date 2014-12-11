@@ -26,7 +26,7 @@
 
 #include "WProgram.h"
 
-#define MAX_DATA_LENGTH     500  // Maximum length of the data packet we can receive (up to 65534)
+#define MAX_DATA_LENGTH     500     // Maximum length of the data packet we can receive (up to 65534)
 
 #define MODE_HEADER0        0x0     // Expecting the first header byte
 #define MODE_HEADER1        0x1     // Expecting the second header byte
@@ -43,39 +43,39 @@
 // [header (2 bytes)][length (2 bytes)][payload (length bytes)][ibutton crc (1 byte)]
 class Protocol {
 private:
-  uint16_t m_expectedLength;                ///< Number of bytes expected in the current packet  
-  uint8_t m_mode;                           ///< Current operational mode
-  uint8_t m_packetData[MAX_DATA_LENGTH];    ///< Data received in this packet
-  uint16_t m_packetLength;                  ///< Number of bytes received for this packet
-  uint8_t m_crc;                           ///< CRC calculated for this packet
+    uint16_t m_expectedLength;              ///< Number of bytes expected in the current packet    
+    uint8_t m_mode;                         ///< Current operational mode
+    uint8_t m_packetData[MAX_DATA_LENGTH];  ///< Data received in this packet
+    uint16_t m_packetLength;                ///< Number of bytes received for this packet
+    uint8_t m_crc;                          ///< CRC calculated for this packet
 
-  // add a new byte to the CRC
-  void updateCRC(uint8_t data);
+    // add a new byte to the CRC
+    void updateCRC(uint8_t data);
 
-  // store a new byte in the packet
-  void addByte(uint8_t data);
+    // store a new byte in the packet
+    void addByte(uint8_t data);
 public:
-  // Initialize the packet processor
-  void init();
-  
-  // Reset the packet processor state machine
-  void reset();
-  
-  // Read a byte into the packet processor, and handle it as possible.
-  // @param data Data byte to read in
-  // @return true if a payload is ready to read
-  boolean parseByte(uint8_t data);
-  
-  // Get the packet size (in bytes)
-  uint16_t getPacketSize();
-  
-  // If a full packet was received, returns the address to the data and resets the
-  // packet state machine. Otherwise, returns null
-  uint8_t* getPacket();
+    // Initialize the packet processor
+    void init();
+    
+    // Reset the packet processor state machine
+    void reset();
+    
+    // Read a byte into the packet processor, and handle it as possible.
+    // @param data Data byte to read in
+    // @return true if a payload is ready to read
+    boolean parseByte(uint8_t data);
+    
+    // Get the packet size (in bytes)
+    uint16_t getPacketSize();
+    
+    // If a full packet was received, returns the address to the data and resets the
+    // packet state machine. Otherwise, returns null
+    uint8_t* getPacket();
 
-  // If a full packet was received, returns the address to the data as a 16-bit array,
-  // and resets the packet state machine. Otherwise, returns null
-  uint16_t* getPacket16();
+    // If a full packet was received, returns the address to the data as a 16-bit array,
+    // and resets the packet state machine. Otherwise, returns null
+    uint16_t* getPacket16();
 };
 
 #endif

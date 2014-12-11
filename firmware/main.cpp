@@ -109,9 +109,9 @@ void setupWatchdog() {
 
 
 
-#define MESSAGE_SHOW_LEDS	0x00
-#define MESSAGE_ERASE_FLASH	0x01
-#define MESSAGE_PROGRAM_PAGE	0x02
+#define MESSAGE_SHOW_LEDS       0x00
+#define MESSAGE_ERASE_FLASH     0x01
+#define MESSAGE_PROGRAM_PAGE    0x02
 
 // Handle full messages here
 void handleData(uint16_t dataSize, uint8_t* data) {
@@ -125,7 +125,7 @@ void handleData(uint16_t dataSize, uint8_t* data) {
             memcpy(dmxGetPixels(), &data[1], LED_COUNT);
             dmxShow();
         }
-	    break;
+            break;
 
         case MESSAGE_ERASE_FLASH:  // Clear the flash
         {
@@ -185,8 +185,8 @@ extern "C" int main()
     // If the flash initializes successfully, then load the animations table.
     if(flash.begin(FlashClass::autoDetect)) {
 
-	// Connect up the flash storage class
-	flashStorage.begin(flash);
+        // Connect up the flash storage class
+        flashStorage.begin(flash);
 
         animations.begin(flashStorage);
     }
