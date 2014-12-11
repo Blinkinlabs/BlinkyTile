@@ -4,6 +4,17 @@
 #include "usb_serial.h"
 #include "dmx.h"
 #include "addressprogrammer.h"
+#include "nofatstorage.h"
+#include "jedecflash.h"
+#include "defaultanimation.h"
+#include "animation.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+extern FlashSPI flash;
+extern NoFatStorage flashStorage;
+extern Animations animations;
+
 
 // We start in BlinkyTape mode, but if we get the magic escape sequence, we transition
 // to BlinkyTile mode.
@@ -85,7 +96,6 @@ void dataLoop() {
         // If this is the first escape character, refresh the output
         if(escapeRunCount == 1) {
             dmxShow();
-            setStatusLed(0);
         }
         
         if(escapeRunCount > 8) {
@@ -95,26 +105,165 @@ void dataLoop() {
     }
 }
 
-#define COMMAND_PROGRAM_ADDRESS         'p'
-#define COMMAND_PROGRAM_ADDRESS_LENGTH  3
+
+
+bool commandProgramAddress(uint8_t* buffer);
+bool commandEraseFlash(uint8_t* buffer);
+bool commandFreeSpace(uint8_t* buffer);
+bool commandLargestFile(uint8_t* buffer);
+bool commandNewAnimation(uint8_t* buffer);
+bool commandFileCount(uint8_t* buffer);
+bool commandFirstFreeSector(uint8_t* buffer);
+
+struct Command {
+    uint8_t name;
+    int length;
+    bool (*function)(uint8_t*);
+};
+
+Command commands[] = {
+    {0x01,  3, commandProgramAddress},
+    {0x10,  1, commandFreeSpace},
+    {0x11,  1, commandLargestFile},
+    {0x12,  1, commandFileCount},
+    {0x18,  5, commandNewAnimation},
+    {0x20,  3, commandEraseFlash},
+    {0x21,  1, commandFirstFreeSector},
+    {0xFF,  0, NULL}
+};
+
+
 
 void commandLoop() {
     uint8_t c = usb_serial_getchar();
 
-    // If we get extra 0xFF, ignore them
-    if(c == 0xFF)
+    // If we get extra 0xFF bytes before the command byte, ignore them
+    if((controlBufferIndex == 0) && (c == 0xFF))
         return;
 
     controlBuffer[controlBufferIndex++] = c;
 
-    switch(controlBuffer[0]) {
-        case COMMAND_PROGRAM_ADDRESS:
-            if(controlBufferIndex == COMMAND_PROGRAM_ADDRESS_LENGTH) {
-                programAddress((controlBuffer[1] << 8) + controlBuffer[2]);
-                serialReset();
-            }
-            break;
-        default:
+    for(Command *command = commands; 1; command++) {
+        // If the command isn't found in the list, bail
+        if(command->name == 0xFF) {
             serialReset();
+            break;
+        }
+
+        // If this iteration isn't the correct one, keep looking
+        if(command->name != controlBuffer[0])
+            continue;
+
+        // Now we're on to something- have we gotten enough data though?
+        if(controlBufferIndex >= command->length) {
+            if(command->function(controlBuffer + 1)) {
+                usb_serial_putchar('P');
+                usb_serial_putchar((char)controlBuffer[1]);
+
+                if(controlBuffer[1] > 0) {
+                    usb_serial_write(controlBuffer + 2, controlBuffer[1]);
+                }
+            }
+            else {
+                usb_serial_putchar('F');
+                usb_serial_putchar(char(0x00));
+            }
+
+            serialReset();
+        }
+        break;
     }
+}
+
+
+bool commandProgramAddress(uint8_t* buffer) {
+    programAddress((buffer[0] << 8) + buffer[1]);
+
+    buffer[0] = 0;
+    return true;
+}
+
+bool commandEraseFlash(uint8_t* buffer) {
+    if((buffer[0] != 'E') || (buffer[1] != 'e')) {
+        return false;
+    }
+
+    flash.setWriteEnable(true);
+    flash.eraseAll();
+    while(flash.busy()) {
+        watchdog_refresh();
+        delay(100);
+    }
+    flash.setWriteEnable(false);
+
+    flashStorage.begin(flash);
+
+    buffer[0] = 0;
+    return true;
+}
+
+bool commandFirstFreeSector(uint8_t* buffer) {
+    int files = flashStorage.findFreeSector(0);
+
+    buffer[0] = 4;
+    buffer[1] = (files >> 24) & 0xFF;
+    buffer[2] = (files >> 16) & 0xFF;
+    buffer[3] = (files >>  8) & 0xFF;
+    buffer[4] = (files >>  0) & 0xFF;
+
+    return true;
+}
+
+bool commandFreeSpace(uint8_t* buffer) {
+    int freeSpace = flashStorage.freeSpace();
+
+    buffer[0] = 4;
+    buffer[1] = (freeSpace >> 24) & 0xFF;
+    buffer[2] = (freeSpace >> 16) & 0xFF;
+    buffer[3] = (freeSpace >>  8) & 0xFF;
+    buffer[4] = (freeSpace >>  0) & 0xFF;
+
+    return true;
+}
+
+bool commandFileCount(uint8_t* buffer) {
+    int files = flashStorage.files();
+
+    buffer[0] = 4;
+    buffer[1] = (files >> 24) & 0xFF;
+    buffer[2] = (files >> 16) & 0xFF;
+    buffer[3] = (files >>  8) & 0xFF;
+    buffer[4] = (files >>  0) & 0xFF;
+
+    return true;
+}
+
+bool commandLargestFile(uint8_t* buffer) {
+    int largestFile = flashStorage.largestNewFile();
+
+    buffer[0] = 4;
+    buffer[1] = (largestFile >> 24) & 0xFF;
+    buffer[2] = (largestFile >> 16) & 0xFF;
+    buffer[3] = (largestFile >>  8) & 0xFF;
+    buffer[4] = (largestFile >>  0) & 0xFF;
+
+    return true;
+}
+
+bool commandNewAnimation(uint8_t* buffer) {
+    int animationSize = 
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+
+    int sector = flashStorage.createNewFile(0xEE, animationSize);
+
+    if(sector < 0) {
+        return false;
+    }
+    else {
+        buffer[0] = 2;
+        buffer[1] = (sector >> 8) & 0xFF;
+        buffer[2] = (sector     ) & 0xFF;
+    }
+
+    return true;
 }

@@ -104,240 +104,238 @@ int NoFatStorage::files() {
 }
 
 int NoFatStorage::largestNewFile() {
-        int freeSectors = countFreeSectors();
+    int freeSectors = countFreeSectors();
 
-        // If we have 0 free sectors, we can't store anything.
-        if(freeSectors == 0)
-                return 0;
+    // If we have 0 free sectors, we can't store anything.
+    if(freeSectors == 0)
+        return 0;
 
-        // If we have > MAX_LINKED_SECTORS, we unfortunately can't use them all.
-        if(freeSectors > MAX_LINKED_SECTORS + 1)
-                freeSectors = MAX_LINKED_SECTORS + 1;
+    // If we have > MAX_LINKED_SECTORS, we unfortunately can't use them all.
+    if(freeSectors > MAX_LINKED_SECTORS + 1)
+        freeSectors = MAX_LINKED_SECTORS + 1;
 
-        return freeSectors*SECTOR_SIZE - FILE_HEADER_SIZE;
+    return freeSectors*SECTOR_SIZE - FILE_HEADER_SIZE;
 }
 
 bool NoFatStorage::isFile(int sector) {
-        return sectorMap[sector] == SECTOR_TYPE_START;
+    return sectorMap[sector] == SECTOR_TYPE_START;
 }
 
 int NoFatStorage::fileSize(int sector) {
-        if(sectorMap[sector] != SECTOR_TYPE_START)
-                return 0;
+    if(sectorMap[sector] != SECTOR_TYPE_START)
+        return 0;
 
-        uint8_t buff[4];
-        flash->read((sector << 12) + 4, buff, 4);
+    uint8_t buff[4];
+    flash->read((sector << 12) + 4, buff, 4);
 
-        return    (buff[0]  << 24)
-                | (buff[1]  << 16)
-                | (buff[2]  <<  8)
-                | (buff[3]  <<  0);
+    return (buff[0]  << 24)
+         | (buff[1]  << 16)
+         | (buff[2]  <<  8)
+         | (buff[3]  <<  0);
 }
 
 uint8_t NoFatStorage::fileType(int sector) {
-        if(sectorMap[sector] != SECTOR_TYPE_START)
-                return 0;
+    if(sectorMap[sector] != SECTOR_TYPE_START)
+        return 0;
 
-        uint8_t buff[1];
-        flash->read((sector << 12) + 8, buff, 1);
+    uint8_t buff[1];
+    flash->read((sector << 12) + 8, buff, 1);
 
-        return buff[0];
+    return buff[0];
 }
 
 int NoFatStorage::fileSectors(int sector) {
-        return sectorsForLength(fileSize(sector));
+    return sectorsForLength(fileSize(sector));
 }
 
 int NoFatStorage::fileSector(int sector, int link) {
-        if(link>sectorsForLength(fileSize(sector)))
-                return -1;
+    if(link>sectorsForLength(fileSize(sector)))
+        return -1;
 
-        if(link == 0)
-                return sector;
+    if(link == 0)
+        return sector;
 
-        uint8_t buff[2];
-        flash->read((sector << 12) + 8 + link*2, buff, 2);
+    uint8_t buff[2];
+    flash->read((sector << 12) + 8 + link*2, buff, 2);
 
-        return    (buff[0]  << 8)
-                | (buff[1]  << 0);
+    return (buff[0]  << 8) | (buff[1]  << 0);
 }
 
 int NoFatStorage::createNewFile(uint8_t type, int length) {
-        // Length must be page aligned.
-        if((length & 0xFF) != 0)
-                return -1;
 
-        // If the size is too large to fit the flash, bail.
-        if(length > largestNewFile())
-                return -1;
+    // Length must be page aligned.
+    if((length & 0xFF) != 0)
+        return -1;
 
-        // Fill in the header data for this file
-        uint8_t headerData[PAGE_SIZE];
-        for(int i = 0; i < PAGE_SIZE; i++)
-                headerData[i] = 0xFF;
+    // If the size is too large to fit the flash, bail.
+    if(length > largestNewFile())
+        return -1;
 
-        headerData[0] = (SECTOR_MAGIC_NUMBER >> 24) & 0xFF;
-        headerData[1] = (SECTOR_MAGIC_NUMBER >> 16) & 0xFF;
-        headerData[2] = (SECTOR_MAGIC_NUMBER >>  8) & 0xFF;
-        headerData[3] = (SECTOR_MAGIC_NUMBER >>  0) & 0xFF;
-        headerData[4] = (length >> 24) & 0xFF;
-        headerData[5] = (length >> 16) & 0xFF;
-        headerData[6] = (length >>  8) & 0xFF;
-        headerData[7] = (length >>  0) & 0xFF;
-        headerData[8] = type;
-        headerData[9] = 0xFF;
+    // Fill in the header data for this file
+    uint8_t headerData[PAGE_SIZE];
+    for(int i = 0; i < PAGE_SIZE; i++)
+        headerData[i] = 0xFF;
 
-        // Locate a sector to store the file header
-        const int startingSectorNumber = findFreeSector(0);
+    headerData[0] = (SECTOR_MAGIC_NUMBER >> 24) & 0xFF;
+    headerData[1] = (SECTOR_MAGIC_NUMBER >> 16) & 0xFF;
+    headerData[2] = (SECTOR_MAGIC_NUMBER >>  8) & 0xFF;
+    headerData[3] = (SECTOR_MAGIC_NUMBER >>  0) & 0xFF;
+    headerData[4] = (length >> 24) & 0xFF;
+    headerData[5] = (length >> 16) & 0xFF;
+    headerData[6] = (length >>  8) & 0xFF;
+    headerData[7] = (length >>  0) & 0xFF;
+    headerData[8] = type;
+    headerData[9] = 0xFF;
 
-        // Build a table of linked sectors 
-        int linkedSectorNumber = startingSectorNumber;
+    // Locate a sector to store the file header
+    const int startingSectorNumber = findFreeSector(0);
 
-        for(int linkedSector = 1; linkedSector < sectorsForLength(length); linkedSector++) {
-                // Claim the next free sector
-                linkedSectorNumber = findFreeSector(linkedSectorNumber+1);
-                headerData[8 + linkedSector*2    ] = (linkedSectorNumber >> 8) & 0xFF;
-                headerData[8 + linkedSector*2 + 1] = (linkedSectorNumber     ) & 0xFF;
-                
-                // And erase it
-                flash->setWriteEnable(true);
-                flash->eraseSector(linkedSectorNumber << 12);
-                while(flash->busy()) {
-                        watchdog_refresh();
-                        delay(FLASH_WAIT_DELAY);
-                }
-                flash->setWriteEnable(false);
-        }
+    // Build a table of linked sectors 
+    int linkedSectorNumber = startingSectorNumber;
 
-        // Erase the starting sector
+    for(int linkedSector = 1; linkedSector < sectorsForLength(length); linkedSector++) {
+        // Claim the next free sector
+        linkedSectorNumber = findFreeSector(linkedSectorNumber+1);
+        headerData[8 + linkedSector*2    ] = (linkedSectorNumber >> 8) & 0xFF;
+        headerData[8 + linkedSector*2 + 1] = (linkedSectorNumber     ) & 0xFF;
+        
+        // And erase it
         flash->setWriteEnable(true);
-        flash->eraseSector(startingSectorNumber << 12);
+        flash->eraseSector(linkedSectorNumber << 12);
         while(flash->busy()) {
-                watchdog_refresh();
-                delay(FLASH_WAIT_DELAY);
+            watchdog_refresh();
+            delay(FLASH_WAIT_DELAY);
         }
         flash->setWriteEnable(false);
+    }
 
-        // Write the header data to the sector
-        flash->setWriteEnable(true);
-        flash->writePage(startingSectorNumber << 12, headerData);
-        while(flash->busy()) {
-                watchdog_refresh();
-                delay(FLASH_WAIT_DELAY);
-        }
-        flash->setWriteEnable(false);
+    // Erase the starting sector
+    flash->setWriteEnable(true);
+    flash->eraseSector(startingSectorNumber << 12);
+    while(flash->busy()) {
+        watchdog_refresh();
+        delay(FLASH_WAIT_DELAY);
+    }
+    flash->setWriteEnable(false);
 
-        rebuildSectorMap();
+    // Write the header data to the sector
+    flash->setWriteEnable(true);
+    flash->writePage(startingSectorNumber << 12, headerData);
+    while(flash->busy()) {
+        watchdog_refresh();
+        delay(FLASH_WAIT_DELAY);
+    }
+    flash->setWriteEnable(false);
 
-        return startingSectorNumber;
+    rebuildSectorMap();
+
+    return startingSectorNumber;
 }
 
 
 void NoFatStorage::deleteFile(int sector) {
-
-
-        // First, erase all of the linked sectors (by chance they might have data that causes them to be mistaken for a 
-        // starting sector)
-        for(int linkedSector = 1; linkedSector < sectorsForLength(fileSize(sector)); linkedSector++) {
-                flash->setWriteEnable(true);
-                flash->eraseSector(fileSector(sector, linkedSector) << 12);
-                while(flash->busy()) {
-                        watchdog_refresh();
-                        delay(FLASH_WAIT_DELAY);
-                }
-                flash->setWriteEnable(false);
-        }
-
-        // Then erase the starting sector
+    // First, erase all of the linked sectors (by chance they might have data that causes them to be mistaken for a 
+    // starting sector)
+    for(int linkedSector = 1; linkedSector < sectorsForLength(fileSize(sector)); linkedSector++) {
         flash->setWriteEnable(true);
-        flash->eraseSector(sector << 12);
+        flash->eraseSector(fileSector(sector, linkedSector) << 12);
         while(flash->busy()) {
-                watchdog_refresh();
-                delay(FLASH_WAIT_DELAY);
+            watchdog_refresh();
+            delay(FLASH_WAIT_DELAY);
         }
         flash->setWriteEnable(false);
+    }
 
-        rebuildSectorMap();
+    // Then erase the starting sector
+    flash->setWriteEnable(true);
+    flash->eraseSector(sector << 12);
+    while(flash->busy()) {
+        watchdog_refresh();
+        delay(FLASH_WAIT_DELAY);
+    }
+    flash->setWriteEnable(false);
+
+    rebuildSectorMap();
 }
 
 int NoFatStorage::writePageToFile(int sector, int offset, uint8_t* data) {
-        // Check that the page contains the start of a file
-        if(sectorMap[sector] != SECTOR_TYPE_START)
-                return 0;
+    // Check that the page contains the start of a file
+    if(sectorMap[sector] != SECTOR_TYPE_START)
+        return 0;
 
-        // Check that the offset is page-aligned
-        if((offset & 0xFF) != 00)
-                return 0;
+    // Check that the offset is page-aligned
+    if((offset & 0xFF) != 00)
+        return 0;
 
-        // Check that the page fits into the file
-        // TODO: Support files with non-page aligned lengths...
-        if(offset + PAGE_SIZE > fileSize(sector))
-                return 0;
+    // Check that the page fits into the file
+    // TODO: Support files with non-page aligned lengths...
+    if(offset + PAGE_SIZE > fileSize(sector))
+        return 0;
 
-        // Determine which sector, and what offset, this page should be written to.
-        // First, the sector is determined by calling linkedSectorsPerLength on the offset.
-        int outputSector = sectorsForLength(offset) - 1;
+    // Determine which sector, and what offset, this page should be written to.
+    // First, the sector is determined by calling linkedSectorsPerLength on the offset.
+    int outputSector = sectorsForLength(offset) - 1;
 
-        // Now, subtract the size of the output sectors from the file offset to find the sector
-        // offset
-        int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
+    // Now, subtract the size of the output sectors from the file offset to find the sector
+    // offset
+    int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
 
 
-        flash->setWriteEnable(true);
-        flash->writePage((fileSector(sector, outputSector) << 12) + outputOffset, data);
-        while(flash->busy()) {
-                watchdog_refresh();
-                delay(FLASH_WAIT_DELAY);
-        }
-        flash->setWriteEnable(false);
+    flash->setWriteEnable(true);
+    flash->writePage((fileSector(sector, outputSector) << 12) + outputOffset, data);
+    while(flash->busy()) {
+        watchdog_refresh();
+        delay(FLASH_WAIT_DELAY);
+    }
+    flash->setWriteEnable(false);
 
-        return PAGE_SIZE;
+    return PAGE_SIZE;
 }
 
 int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length) {
-        // Check that the page contains the start of a file
-        if(sectorMap[sector] != SECTOR_TYPE_START)
-                return 0;
+    // Check that the page contains the start of a file
+    if(sectorMap[sector] != SECTOR_TYPE_START)
+        return 0;
 
-        // Check that the data is in range
-        if(offset+length > fileSize(sector))
-                return 0;
+    // Check that the data is in range
+    if(offset+length > fileSize(sector))
+        return 0;
 
-        // So we don't span more than two partial sectors
-        if(length > SECTOR_SIZE)
-                return 0;
+    // So we don't span more than two partial sectors
+    if(length > SECTOR_SIZE)
+        return 0;
 
-        // If all the data fits into the first sector, then we only need to make one read
-        if(sectorsForLength(offset) == sectorsForLength(offset+length)) {
-                int outputSector = sectorsForLength(offset) - 1;
-                int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
+    // If all the data fits into the first sector, then we only need to make one read
+    if(sectorsForLength(offset) == sectorsForLength(offset+length)) {
+        int outputSector = sectorsForLength(offset) - 1;
+        int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
 
-                return flash->read((fileSector(sector, outputSector) << 12) + outputOffset, data, length);
-        }
-        // Otherwise, make two reads
-        else {
-                int readCount = 0;
+        return flash->read((fileSector(sector, outputSector) << 12) + outputOffset, data, length);
+    }
+    // Otherwise, make two reads
+    else {
+        int readCount = 0;
 
-                int outputSectorA = sectorsForLength(offset) - 1;
-                int outputOffsetA = offset + FILE_HEADER_SIZE - outputSectorA*SECTOR_SIZE;
-                int lengthA = SECTOR_SIZE - outputOffsetA;
+        int outputSectorA = sectorsForLength(offset) - 1;
+        int outputOffsetA = offset + FILE_HEADER_SIZE - outputSectorA*SECTOR_SIZE;
+        int lengthA = SECTOR_SIZE - outputOffsetA;
 
-                int outputSectorB = outputSectorA + 1;
-                int outputOffsetB = 0;
-                int lengthB = length - lengthA;
+        int outputSectorB = outputSectorA + 1;
+        int outputOffsetB = 0;
+        int lengthB = length - lengthA;
 
-                readCount += flash->read((fileSector(sector, outputSectorA) << 12) + outputOffsetA, data, lengthA);
-                readCount += flash->read((fileSector(sector, outputSectorB) << 12) + outputOffsetB, data + lengthA, lengthB);
-                return readCount;
-        }
+        readCount += flash->read((fileSector(sector, outputSectorA) << 12) + outputOffsetA, data, lengthA);
+        readCount += flash->read((fileSector(sector, outputSectorB) << 12) + outputOffsetB, data + lengthA, lengthB);
+        return readCount;
+    }
 }
 
 int NoFatStorage::findFreeSector(int start) {
-        for(int i = start; i < sectors(); i++) {
-                if(checkSectorFree(i)) {
-                        return i;
-                }
+    for(int i = start; i < sectors(); i++) {
+        if(checkSectorFree(i)) {
+            return i;
         }
+    }
 
-        return -1;
+    return -1;
 }

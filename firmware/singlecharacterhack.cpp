@@ -27,13 +27,7 @@ void singleCharacterHack(char in) {
             usb_serial_write(buffer, bufferSize);
             bufferSize = sprintf(buffer, "Free sectors: %i\r\n", flashStorage.countFreeSectors());
             usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "Free space: %i\r\n", flashStorage.freeSpace());
-            usb_serial_write(buffer, bufferSize);
             bufferSize = sprintf(buffer, "First free sector: %i\r\n", flashStorage.findFreeSector(0));
-            usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "File count: %i\r\n", flashStorage.files());
-            usb_serial_write(buffer, bufferSize);
-            bufferSize = sprintf(buffer, "Largest new file: %i\r\n", flashStorage.largestNewFile());
             usb_serial_write(buffer, bufferSize);
             break;
         case 'w': // Create a file of some length
