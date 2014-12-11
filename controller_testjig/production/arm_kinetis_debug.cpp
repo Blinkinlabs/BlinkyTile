@@ -413,9 +413,10 @@ bool ARMKinetisDebug::ftfl_programLongword(uint32_t address, const uint32_t& lon
         memStoreByte(REG_FTFL_FCCOB5, longWord >> 16) &&
         memStoreByte(REG_FTFL_FCCOB6, longWord >> 8) &&
         memStoreByte(REG_FTFL_FCCOB7, longWord) &&
-        ftfl_launchCommand() &&
-        ftfl_busyWait() &&
-        ftfl_handleCommandStatus("FLASH: Error writing longword! (FSTAT: %08x)");
+        ftfl_launchCommand();
+//        ftfl_launchCommand() &&
+//        ftfl_busyWait() &&
+//        ftfl_handleCommandStatus("FLASH: Error writing longword! (FSTAT: %08x)");
 }
 
 bool ARMKinetisDebug::ftfl_handleCommandStatus(const char *cmdSpecificError)
@@ -511,21 +512,29 @@ bool ARMKinetisDebug::FlashProgrammer::next()
         }
 
     } else {
-        uint32_t address = nextLongword * 4;
+        // TODO: This doesn't help make things faster.
+        int maxSteps = 10;
+        do {
+          uint32_t address = nextLongword * 4;
       
-        if(address%FLASH_SECTOR_SIZE == 0)
-            target.log(LOG_NORMAL, "FLASH: Programming longword at %08x", address);
+          if(address%FLASH_SECTOR_SIZE == 0)
+              target.log(LOG_NORMAL, "FLASH: Programming longword at %08x", address);
+
+          
+          if (!target. ftfl_programLongword(address, image[nextLongword]))
+              return false;
             
-        if (!target. ftfl_programLongword(address, image[nextLongword]))
-            return false;
-        if (++nextLongword == numLongwords) {
-            // Done programming. Another reset! Load new protection flags.
-            if (!(target.reset() && target.debugHalt() && target.peripheralInit()))
-                return false;
+            
+          if (++nextLongword == numLongwords) {
+              // Done programming. Another reset! Load new protection flags.
+              if (!(target.reset() && target.debugHalt() && target.peripheralInit()))
+                  return false;
                 
-            nextSector = 0;
-            isVerifying = true;
+              nextSector = 0;
+              isVerifying = true;
+          }
         }
+        while ((--maxSteps > 0) && !isVerifying);
       
 //        target.log(LOG_NORMAL, "FLASH: Programming sector at %08x", address);
 //
