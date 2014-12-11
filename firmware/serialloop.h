@@ -24,8 +24,8 @@
 #ifndef SERIALLOOP_H
 #define SERIALLOOP_H
 
-#define SERIAL_MODE_BLINKYTAPE  0x01
-#define SERIAL_MODE_BLINKYTILE  0x02
+#define SERIAL_MODE_DATA     0x01
+#define SERIAL_MODE_COMMAND  0x02
 
 extern void serialReset();
 extern void serialLoop();

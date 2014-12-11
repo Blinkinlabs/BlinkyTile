@@ -24,6 +24,8 @@
 #ifndef ADDRESSPROGRAMMER_H
 #define ADDRESSPROGRAMMER_H
 
+// Run an address programming sequence
+// @param address Address to program, starting with 0
 void programAddress(int address);
 
 #endif

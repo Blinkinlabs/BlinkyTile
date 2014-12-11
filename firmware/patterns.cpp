@@ -9,8 +9,8 @@ void color_loop() {
     static int k = 0;
     
     for (uint16_t i = 0; i < LED_COUNT; i+=1) {
-        dmxSetPixel(i+1,
-            128*(1+sin(i/30.0 + j/1.3       )),
+        dmxSetPixel(i,
+            128*(1+sin(i/30.0 + j/1.3)),
             128*(1+sin(i/10.0 + f/2.9)),
             128*(1+sin(i/25.0 + k/5.6))
         );
@@ -23,13 +23,13 @@ void color_loop() {
 
 void white_loop() {
     for (uint16_t i = 0; i < LED_COUNT; i+=1) {
-        dmxSetPixel(i+1, 255, 255, 255);
+        dmxSetPixel(i, 255, 255, 255);
     }
 }
 
 void green_loop() {
     for (uint16_t i = 0; i < LED_COUNT; i+=1) {
-        dmxSetPixel(i+1, 0, 255, 0);
+        dmxSetPixel(i, 0, 255, 0);
     }
 }
 
@@ -41,10 +41,10 @@ void count_up_loop() {
     
     for (uint16_t i = 0; i < LED_COUNT; i+=1) {
         if(pixel == i) {
-            dmxSetPixel(i+1, 255, 255, 255);
+            dmxSetPixel(i, 255, 255, 255);
         }
         else {
-            dmxSetPixel(i+1, 0,0,0);
+            dmxSetPixel(i, 0,0,0);
         }
     }
     
