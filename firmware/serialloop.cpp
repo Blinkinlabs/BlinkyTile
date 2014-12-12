@@ -292,9 +292,9 @@ bool commandFileNew(uint8_t* buffer) {
 }
 
 bool commandFileWritePage(uint8_t* buffer) {
-    uint8_t sector =
+    int sector =
         (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
-    uint8_t offset =
+    int offset =
         (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
 
     int written = flashStorage.writePageToFile(sector, offset, buffer + 8);
@@ -307,9 +307,9 @@ bool commandFileWritePage(uint8_t* buffer) {
 }
 
 bool commandFileRead(uint8_t* buffer) {
-    uint8_t sector =
+    int sector =
         (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
-    uint8_t offset =
+    int offset =
         (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
     int length = buffer[9] + 1;
 

@@ -2,16 +2,6 @@ import blinkytape
 import time
 import random
 
-bt = blinkytape.BlinkyTape()
-
-# first, erase the flash memory
-#bt.flashErase()
-
-print "free space: ", bt.getFreeSpace()
-print "largest file availabe: ", bt.getLargestFile()
-print "file count: ", bt.getFileCount()
-print "first free sector: ", bt.getFirstFreeSector()
-
 
 def dumpSectorHeader(sector):
     address = sector*256*16
@@ -53,12 +43,21 @@ def dumpSector(sector):
             if (byte % 16) == 15:
                 print ""
 
-#for sector in range(0, 8):
-#    dumpSectorHeader(sector)
+
+
+bt = blinkytape.BlinkyTape()
+
+# first, erase the flash memory
+#bt.flashErase()
+
+print "free space: ", bt.getFreeSpace()
+print "largest file availabe: ", bt.getLargestFile()
+print "file count: ", bt.getFileCount()
+print "first free sector: ", bt.getFirstFreeSector()
 
 
 
-pages = 2
+pages = 16*3 - 1
 
 print "making new animation: ",
 status, sector = bt.createFile(0xEF, 256 * pages)
@@ -79,7 +78,9 @@ if sector >= -1:
         if not status:
             exit(1)
 
-    dumpSector(sector)
+#    dumpSector(sector)
+#    dumpSector(sector+1)
+#    dumpSector(sector+2)
 
 
     readData = ""

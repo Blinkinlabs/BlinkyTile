@@ -273,21 +273,19 @@ int NoFatStorage::writePageToFile(int sector, int offset, uint8_t* data) {
         return 0;
 
     // Check that the page fits into the file
-    // TODO: Support files with non-page aligned lengths...
     if(offset + PAGE_SIZE > fileSize(sector))
         return 0;
 
     // Determine which sector, and what offset, this page should be written to.
     // First, the sector is determined by calling linkedSectorsPerLength on the offset.
-    int outputSector = sectorsForLength(offset) - 1;
+    int pageInFile = (offset >> 8) + 1;     // First page is reserved for file info
+    int sectorInFile = pageInFile >> 4;     // Which sector in the file this page is in
 
-    // Now, subtract the size of the output sectors from the file offset to find the sector
-    // offset
-    int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
-
+    int pageInSector = pageInFile & 0xF;    // Offset into that sector
+    int actualSector = fileSector(sector, sectorInFile);
 
     flash->setWriteEnable(true);
-    flash->writePage((fileSector(sector, outputSector) << 12) + outputOffset, data);
+    flash->writePage((actualSector << 12) + (pageInSector << 8), data);
     while(flash->busy()) {
         watchdog_refresh();
         delay(FLASH_WAIT_DELAY);
@@ -309,6 +307,10 @@ int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length
     // So we don't span more than two partial sectors
     if(length > SECTOR_SIZE)
         return 0;
+
+
+    return 0;
+    // TODO: fixme
 
     // If all the data fits into the first sector, then we only need to make one read
     if(sectorsForLength(offset) == sectorsForLength(offset+length)) {
