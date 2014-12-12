@@ -245,14 +245,14 @@ class BlinkyTape(object):
         command += chr(fileLength         & 0xFF)
         status, returnData = self.sendCommand(command)
 
-        handle = -1
+        sector = -1
         if status:
-            handle += ord(returnData[0]) << 8
-            handle += ord(returnData[1]) << 0
+            sector += ord(returnData[0]) << 8
+            sector += ord(returnData[1]) << 0
 
-        return handle
+        return status, sector 
 
-    def writeFileData(self, sector, offset, data):
+    def writeFilePage(self, sector, offset, data):
         """Write one page (256 bytes) of data to the specified animation
         """
         if len(data) != 256:

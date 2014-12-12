@@ -68,8 +68,11 @@ void NoFatStorage::begin(FlashClass& _flash) {
 }
 
 int NoFatStorage::sectors() {
+    return MAX_SECTORS;
+
     if(flash->sectors() > MAX_SECTORS)
         return MAX_SECTORS;
+
     return flash->sectors();
 }
 
@@ -96,7 +99,7 @@ int NoFatStorage::files() {
     int count = 0;
 
     for(int sector = 0; sector < sectors(); sector++) {
-        if(sectorMap[sector] == SECTOR_TYPE_START)
+        if(isFile(sector))
             count++;
     }
 
@@ -118,11 +121,14 @@ int NoFatStorage::largestNewFile() {
 }
 
 bool NoFatStorage::isFile(int sector) {
+    if((sector < 0) || (sector >= sectors()))
+        return false;
+
     return sectorMap[sector] == SECTOR_TYPE_START;
 }
 
 int NoFatStorage::fileSize(int sector) {
-    if(sectorMap[sector] != SECTOR_TYPE_START)
+    if(!isFile(sector))
         return 0;
 
     uint8_t buff[4];
@@ -135,7 +141,7 @@ int NoFatStorage::fileSize(int sector) {
 }
 
 uint8_t NoFatStorage::fileType(int sector) {
-    if(sectorMap[sector] != SECTOR_TYPE_START)
+    if(!isFile(sector))
         return 0;
 
     uint8_t buff[1];
@@ -261,7 +267,7 @@ void NoFatStorage::deleteFile(int sector) {
 
 int NoFatStorage::writePageToFile(int sector, int offset, uint8_t* data) {
     // Check that the page contains the start of a file
-    if(sectorMap[sector] != SECTOR_TYPE_START)
+    if(!isFile(sector))
         return 0;
 
     // Check that the offset is page-aligned
@@ -295,7 +301,7 @@ int NoFatStorage::writePageToFile(int sector, int offset, uint8_t* data) {
 
 int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length) {
     // Check that the page contains the start of a file
-    if(sectorMap[sector] != SECTOR_TYPE_START)
+    if(!isFile(sector))
         return 0;
 
     // Check that the data is in range

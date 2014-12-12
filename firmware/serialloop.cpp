@@ -137,7 +137,6 @@ Command commands[] = {
 };
 
 
-
 void commandLoop() {
     uint8_t c = usb_serial_getchar();
 
@@ -294,6 +293,6 @@ bool commandReadData(uint8_t* buffer) {
     if(read != length)
         return false;
     
-    buffer[0] = length - 1;
+    buffer[0] = read - 1;
     return true;
 }
