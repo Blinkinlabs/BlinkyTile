@@ -165,6 +165,13 @@ class BlinkyTape(object):
 
         self.sendCommand(command)
 
+    def reloadAnimations(self):
+        """Tell the animation system to reload
+        """
+        command = chr(0x02)
+
+        self.sendCommand(command)
+
     def getFreeSpace(self):
         """Get the amount of free space on the flash
         """
@@ -347,8 +354,8 @@ if __name__ == "__main__":
         for pixel in range(0, 12):
             for pos in range(0, 12):
                 if pos == pixel:
-                    bt.sendPixel(255,0,0)
-                else:
                     bt.sendPixel(0,0,255)
+                else:
+                    bt.sendPixel(0,0,0)
             bt.show()
             time.sleep(.5)

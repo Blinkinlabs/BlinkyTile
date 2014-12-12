@@ -61,6 +61,9 @@ Buttons userButtons;
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
 
+// Token to signal that the animation loop should be restarted
+volatile bool reloadAnimations;
+
 static void dfu_reboot()
 {
     // Reboot to the Fadecandy Bootloader
@@ -109,18 +112,14 @@ extern "C" int main()
     userButtons.setup();
 
     dmxSetup();
+
     enableOutputPower();
+
     serialReset();
 
-    // If the flash initializes successfully, then load the animations table.
-    if(flash.begin(FlashClass::autoDetect)) {
+    flash.begin(FlashClass::autoDetect);
 
-        // Connect up the flash storage class
-        flashStorage.begin(flash);
-
-        animations.begin(flashStorage);
-    }
-
+    reloadAnimations = true;
 
     // Application main loop
     while (usb_dfu_state == DFU_appIDLE) {
@@ -130,70 +129,60 @@ extern "C" int main()
         userButtons.buttonTask();
 
         #define BRIGHTNESS_COUNT 5
-        #define PATTERN_COUNT 4
-
-        static int state = 0;
-        static int pattern = 0;
-
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
         static int brightnessStep = 5;
 
-        static bool serial_mode = false;
+        static bool serial_mode;
 
-        static uint32_t animation = 0;          // Flash animation to show
-        static uint32_t frame = 0;              // current frame to display
-        static uint32_t nextTime = 0;           // Time to display next frame
+        static int animation;          // Flash animation to show
+        static int frame;              // current frame to display
+        static uint32_t nextTime;           // Time to display next frame
 
-        // Play a pattern
-        if((state%2000 == 1) & (!serial_mode)) {
-            switch(pattern) {
-                case 0:
-                    
-                    // If the flash wasn't initialized, then skip to the next built-in pattern.
-                    if(animations.getCount() < 1) {
-                        pattern++;
-                        break;
-                    }
+        if(reloadAnimations) {
+            reloadAnimations = false;
+            flashStorage.begin(flash);
+            animations.begin(flashStorage);
 
-
-                    // Flash-based
-                    if(millis() > nextTime) {
-                        animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
-                        frame++;
-                        if(frame >= animations.getAnimation(animation)->frameCount) {
-                            frame = 0;
-                        }
-
-                        nextTime += animations.getAnimation(animation)->speed;
-
-                        // If we've gotten too far ahead of ourselves, reset the animation count
-                        if(millis() > nextTime) {
-                            nextTime = millis() + animations.getAnimation(animation)->speed;
-                        }
-                    }
-                    break;
-
-                case 1:
-                    color_loop();
-                    break;
-                case 2:
-                    count_up_loop();
-                    break;
-                case 3:
-                    white_loop();
-                    break;
-            }
-
-
-            dmxShow();
+            serial_mode = false;
+            animation = 0;
+            frame = 0;
+            nextTime = 0;
         }
-        state++;
+
+        if(!serial_mode) {
+            // If the flash wasn't initialized, show a default flashing pattern
+            if(animations.getCount() == 0) {
+                count_up_loop();
+                dmxShow();
+            }
+            else {
+
+                // Flash-based
+                if(millis() > nextTime) {
+                    animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
+                    frame++;
+                    if(frame >= animations.getAnimation(animation)->frameCount) {
+                        frame = 0;
+                    }
+    
+                    nextTime += animations.getAnimation(animation)->speed;
+    
+                    // If we've gotten too far ahead of ourselves, reset the animation count
+                    if(millis() > nextTime) {
+                        nextTime = millis() + animations.getAnimation(animation)->speed;
+                    }
+    
+                    dmxShow();
+                }
+            }
+        }
 
         if(userButtons.isPressed()) {
             uint8_t button = userButtons.getPressed();
     
             if(button == BUTTON_A) {
-                pattern = (pattern + 1) % PATTERN_COUNT;
+                animation = (animation + 1) % animations.getCount();
+                frame = 0;
             }
             else if(button == BUTTON_B) {
                 brightnessStep = (brightnessStep + 1) % BRIGHTNESS_COUNT;

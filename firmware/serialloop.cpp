@@ -12,8 +12,7 @@
 
 extern FlashSPI flash;
 extern NoFatStorage flashStorage;
-extern Animations animations;
-
+extern bool reloadAnimations;
 
 // We start in BlinkyTape mode, but if we get the magic escape sequence, we transition
 // to BlinkyTile mode.
@@ -107,6 +106,7 @@ void dataLoop() {
 
 
 bool commandProgramAddress(uint8_t* buffer);
+bool commandReloadAnimations(uint8_t* buffer);
 bool commandFreeSpace(uint8_t* buffer);
 bool commandLargestFile(uint8_t* buffer);
 bool commandFileNew(uint8_t* buffer);
@@ -125,6 +125,7 @@ struct Command {
 
 Command commands[] = {
     {0x01,   3, commandProgramAddress},     // LED routines
+    {0x02,   1, commandReloadAnimations},
     {0x10,   1, commandFreeSpace},          // NoFat filesystem routines
     {0x11,   1, commandLargestFile},
     {0x12,   1, commandFileCount},
@@ -183,6 +184,11 @@ bool commandProgramAddress(uint8_t* buffer) {
     programAddress((buffer[0] << 8) + buffer[1]);
 
     buffer[0] = 0;
+    return true;
+}
+
+bool commandReloadAnimations(uint8_t* buffer) {
+    reloadAnimations = true;
     return true;
 }
 
