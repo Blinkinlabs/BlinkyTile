@@ -121,10 +121,6 @@ extern "C" int main()
         animations.begin(flashStorage);
     }
 
-    uint32_t animation = 1;
-
-    uint32_t frame = 0;                             // current frame to display
-    uint32_t nextTime = millis() + animations.getAnimation(animation)->speed; // time to display next frame
 
     // Application main loop
     while (usb_dfu_state == DFU_appIDLE) {
@@ -133,25 +129,32 @@ extern "C" int main()
         // TODO: put this in an ISR? Make the buttons do pin change interrupts?
         userButtons.buttonTask();
 
-        static int state = 0;
+        #define BRIGHTNESS_COUNT 5
         #define PATTERN_COUNT 4
+
+        static int state = 0;
         static int pattern = 0;
 
-        #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
         static int brightnessStep = 5;
 
         static bool serial_mode = false;
 
+        static uint32_t animation = 0;          // Flash animation to show
+        static uint32_t frame = 0;              // current frame to display
+        static uint32_t nextTime = 0;           // Time to display next frame
+
         // Play a pattern
         if((state%2000 == 1) & (!serial_mode)) {
             switch(pattern) {
                 case 0:
+                    
                     // If the flash wasn't initialized, then skip to the next built-in pattern.
                     if(animations.getCount() < 1) {
                         pattern++;
                         break;
                     }
+
 
                     // Flash-based
                     if(millis() > nextTime) {
@@ -159,7 +162,6 @@ extern "C" int main()
                         frame++;
                         if(frame >= animations.getAnimation(animation)->frameCount) {
                             frame = 0;
-
                         }
 
                         nextTime += animations.getAnimation(animation)->speed;

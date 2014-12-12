@@ -29,8 +29,8 @@ void Animation::init(NoFatStorage& storage_, uint32_t fileNumber_) {
     storage = &storage_;
     fileNumber = fileNumber_;
 
-    uint32_t buffer[ANIMATION_HEADER_LENGTH];
-    storage->readFromFile(fileNumber, 0, (uint8_t*)buffer, ANIMATION_HEADER_LENGTH);
+    uint8_t buffer[ANIMATION_HEADER_LENGTH];
+    storage->readFromFile(fileNumber, 0, buffer, ANIMATION_HEADER_LENGTH);
 
     ledCount =
         (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
@@ -65,8 +65,8 @@ void Animations::begin(NoFatStorage& storage_) {
     storage = &storage_;
 
     // Look through the file storage, and make an animation for any animation files
-    // TODO: Drop this for a stoarageless animations class.
     animationCount = 0;
+
     for(int sector = 0; sector < storage->sectors(); sector++) {
         if(storage->isFile(sector)) {
             if(storage->fileType(sector) == FILETYPE_ANIMATION) {

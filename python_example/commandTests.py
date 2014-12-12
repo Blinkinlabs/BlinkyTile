@@ -55,7 +55,7 @@ print "largest file availabe: ", bt.getLargestFile()
 print "file count: ", bt.getFileCount()
 print "first free sector: ", bt.getFirstFreeSector()
 
-for sector in range(0,32):
+for sector in range(0,10):
     dumpSectorHeader(sector)
 
 dumpSector(0)

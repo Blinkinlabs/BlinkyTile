@@ -70,10 +70,11 @@ void NoFatStorage::begin(FlashClass& _flash) {
 int NoFatStorage::sectors() {
     return MAX_SECTORS;
 
-    if(flash->sectors() > MAX_SECTORS)
-        return MAX_SECTORS;
+    int sectors = flash->sectors();
+    if(sectors > MAX_SECTORS)
+        sectors = MAX_SECTORS;
 
-    return flash->sectors();
+    return sectors;
 }
 
 bool NoFatStorage::checkSectorFree(int sector) {
