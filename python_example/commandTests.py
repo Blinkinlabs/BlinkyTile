@@ -55,7 +55,12 @@ print "largest file availabe: ", bt.getLargestFile()
 print "file count: ", bt.getFileCount()
 print "first free sector: ", bt.getFirstFreeSector()
 
+for sector in range(0,32):
+    dumpSectorHeader(sector)
 
+dumpSector(0)
+
+exit(1)
 
 pages = 1983
 length = 256*pages

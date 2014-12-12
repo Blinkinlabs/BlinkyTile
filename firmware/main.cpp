@@ -100,70 +100,6 @@ void setupWatchdog() {
     WDOG_TOVALL = (watchdog_timeout)       & 0xFFFF;
 }
 
-
-
-#define MESSAGE_SHOW_LEDS       0x00
-#define MESSAGE_ERASE_FLASH     0x01
-#define MESSAGE_PROGRAM_PAGE    0x02
-
-// Handle full messages here
-void handleData(uint16_t dataSize, uint8_t* data) {
-    switch(data[0]) {
-        case MESSAGE_SHOW_LEDS:  // Display some data on the LEDs
-        {
-    
-            if(dataSize != 1 + LED_COUNT) {
-                return;
-            }
-            memcpy(dmxGetPixels(), &data[1], LED_COUNT);
-            dmxShow();
-        }
-            break;
-
-        case MESSAGE_ERASE_FLASH:  // Clear the flash
-        {
-            if(dataSize != 1) {
-                return;
-            }
-            flash.setWriteEnable(true);
-            flash.eraseAll();
-            while(flash.busy()) {
-                watchdog_refresh();
-                delay(100);
-            }
-            flash.setWriteEnable(false);
-        }
-            break;
-
-        case MESSAGE_PROGRAM_PAGE:  // Program a page of memory
-        {
-            if(dataSize != (1 + 4 + 256)) {
-                return;
-            }
-
-            uint32_t address =
-                  (data[1] << 24)
-                + (data[2] << 16)
-                + (data[3] <<  8)
-                + (data[4]      );
-
-            flash.setWriteEnable(true); 
-            flash.writePage(address, (uint8_t*) &data[5]);
-            while(flash.busy()) {
-                delay(10);
-                watchdog_refresh();
-            }
-            flash.setWriteEnable(false); 
-        }
-            break;
-
-        default:
-            break;
-    }
-}
-
-
-
 extern "C" int main()
 {
     setupWatchdog();
@@ -220,17 +156,10 @@ extern "C" int main()
                     // Flash-based
                     if(millis() > nextTime) {
                         animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
-                        dmxShow();
-
                         frame++;
                         if(frame >= animations.getAnimation(animation)->frameCount) {
                             frame = 0;
 
-                            // increment through
-                            animation++;
-                            if(animation >= animations.getCount()) {
-                                animation = 0;
-                            }
                         }
 
                         nextTime += animations.getAnimation(animation)->speed;
