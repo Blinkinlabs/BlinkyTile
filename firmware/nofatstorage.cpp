@@ -308,33 +308,24 @@ int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length
     if(length > SECTOR_SIZE)
         return 0;
 
+    // Compute the starting file offset and sector
+    int startingOffsetInFile = 256 + offset;
+    int startingSectorInFile = startingOffsetInFile >> 12;
 
-    return 0;
-    // TODO: fixme
+    int endingOffsetInFile = 256 + offset + length - 1;
+    int endingSectorInFile = endingOffsetInFile >> 12;
 
-    // If all the data fits into the first sector, then we only need to make one read
-    if(sectorsForLength(offset) == sectorsForLength(offset+length)) {
-        int outputSector = sectorsForLength(offset) - 1;
-        int outputOffset = offset + FILE_HEADER_SIZE - outputSector*SECTOR_SIZE;
+    int startingActualSector = fileSector(sector, startingSectorInFile);
+    int startingActualOffset = (startingActualSector << 12) + (startingOffsetInFile & 0x0FFF);
 
-        return flash->read((fileSector(sector, outputSector) << 12) + outputOffset, data, length);
+    int count = 0;
+    // Test if all of the data falls in one sector
+    if(startingSectorInFile == endingSectorInFile) {
+        count += flash->read(startingActualOffset, data, length);
     }
-    // Otherwise, make two reads
     else {
-        int readCount = 0;
-
-        int outputSectorA = sectorsForLength(offset) - 1;
-        int outputOffsetA = offset + FILE_HEADER_SIZE - outputSectorA*SECTOR_SIZE;
-        int lengthA = SECTOR_SIZE - outputOffsetA;
-
-        int outputSectorB = outputSectorA + 1;
-        int outputOffsetB = 0;
-        int lengthB = length - lengthA;
-
-        readCount += flash->read((fileSector(sector, outputSectorA) << 12) + outputOffsetA, data, lengthA);
-        readCount += flash->read((fileSector(sector, outputSectorB) << 12) + outputOffsetB, data + lengthA, lengthB);
-        return readCount;
     }
+    return count;
 }
 
 int NoFatStorage::findFreeSector(int start) {

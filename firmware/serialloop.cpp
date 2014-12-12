@@ -311,7 +311,7 @@ bool commandFileRead(uint8_t* buffer) {
         (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
     int offset =
         (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
-    int length = buffer[9] + 1;
+    int length = buffer[8] + 1;
 
     int read = flashStorage.readFromFile(sector, offset, buffer + 1, length);
 

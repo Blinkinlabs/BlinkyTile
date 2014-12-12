@@ -57,25 +57,26 @@ print "first free sector: ", bt.getFirstFreeSector()
 
 
 
-pages = 16*3 - 1
+pages = 22
+length = 256*pages
 
 print "making new animation: ",
-status, sector = bt.createFile(0xEF, 256 * pages)
+status, sector = bt.createFile(0xEF, length)
 if not status:
     print "could not create file"
     exit(1)
 
-print "created animation of length %i in sector %i"%(256*pages, sector)
+print "created animation of length %i in sector %i"%(length, sector)
 
 if sector >= -1:
     data = ""
-    for i in range(0,256 * pages):
+    for i in range(0,length):
         data += chr(random.randint(0,255))
 
-    for i in range(0, pages):
-        status = bt.writeFilePage(sector, i*256, data[i*256:(i+1)*256])
-        print "writing page %i to animation: %r"%(i, status)
+    for page in range(0, pages):
+        status = bt.writeFilePage(sector, page*256, data[page*256:(page+1)*256])
         if not status:
+            print "Error writing page %i to animation: %r"%(page, status)
             exit(1)
 
 #    dumpSector(sector)
@@ -83,21 +84,42 @@ if sector >= -1:
 #    dumpSector(sector+2)
 
 
+#    readData = ""
+#    print "reading data back in pages: "
+#    for page in range(0, pages):
+#        status, returnData = bt.readFileData(sector, page*256, 256)
+#        if (not status) or (len(returnData) != 256):
+#            print "Error reading page %i: status %r got %i"%(page, status, len(returnData))
+#            exit(1)
+#
+#        readData += returnData
+#
+#    for position in range(0, length):
+#        if data[position] != readData[position]:
+#            print "got bad data at %i, expected %X, got %X"%(position, ord(data[position]), ord(returnData[position]))
+#            exit(1)
+
+
     readData = ""
-    print "reading data back in pages: "
-    for i in range(0, pages):
-        status, returnData = bt.readFileData(sector, i*256, 256)
-        print "read page %i: status %r got %i"%(i, status, len(returnData))
-        if not status:
+    print "reading data back in random-sized chunks: "
+    position = 0
+    while position < length:
+        readLength = random.randint(1,256)
+        if (readLength + position) > length:
+            readLength = length - position
+
+        status, returnData = bt.readFileData(sector, position, readLength)
+        print "Reading %i bytes of data from %08X: status %r got %i"%(readLength, position, status, len(returnData))
+        if (not status) or (len(returnData) != readLength):
+            print "Error reading %i bytes of data from %08X: status %r got %i"%(readLength, position, status, len(returnData))
             exit(1)
 
         readData += returnData
+        position += readLength
 
-    print "got", len(readData)
-    print "comparing data:"
-
-    for i in range(0, pages*256):
-        if data[i] != readData[i]:
-            print "got bad data at %i, expected %X, got %X"%(i, ord(data[i]), ord(returnData[i]))
+    for position in range(0, length):
+        if data[position] != readData[position]:
+            print "got bad data at %i, expected %X, got %X"%(position, ord(data[position]), ord(returnData[position]))
             exit(1)
-    print "write successful!"
+
+    print "test successful!"
