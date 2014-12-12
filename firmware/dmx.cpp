@@ -39,9 +39,9 @@ void dmxSetBrightness(uint8_t newBrightness) {
 }
 
 void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-    dataArray[pixel*BYTES_PER_PIXEL + 1] = b*brightness/255;
-    dataArray[pixel*BYTES_PER_PIXEL + 2] = g*brightness/255;
-    dataArray[pixel*BYTES_PER_PIXEL + 3] = r*brightness/255;
+    dataArray[pixel*BYTES_PER_PIXEL + 1] = r;
+    dataArray[pixel*BYTES_PER_PIXEL + 2] = g;
+    dataArray[pixel*BYTES_PER_PIXEL + 3] = b;
 }
 
 void dmxSendByteDelay(uint8_t data) {
@@ -96,7 +96,7 @@ void dmxShow() {
   
     // For each address
     for(int frame = 0; frame < 1 + LED_COUNT*BYTES_PER_PIXEL; frame++) {    
-        dmxSendByte(dataArray[frame]);
+        dmxSendByte(dataArray[frame]*(brightness/255.0));
     }
 }
 

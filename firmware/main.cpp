@@ -167,7 +167,7 @@ extern "C" int main()
     
                     nextTime += animations.getAnimation(animation)->speed;
     
-                    // If we've gotten too far ahead of ourselves, reset the animation count
+                    // If we've gotten too far ahead of ourselves, reset the counter
                     if(millis() > nextTime) {
                         nextTime = millis() + animations.getAnimation(animation)->speed;
                     }
@@ -181,7 +181,7 @@ extern "C" int main()
             uint8_t button = userButtons.getPressed();
     
             if(button == BUTTON_A) {
-                animation = (animation + 1) % animations.getCount();
+                animation = (animation + 1)%animations.getCount();
                 frame = 0;
             }
             else if(button == BUTTON_B) {

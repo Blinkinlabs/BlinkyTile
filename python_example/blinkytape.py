@@ -240,6 +240,39 @@ class BlinkyTape(object):
 
         return sector
 
+    def getIsFile(self, sector):
+        """Tests if the file exists, and gets the type if it does
+        """
+
+        command = chr(0x14)
+        command += chr((sector >> 24) & 0xFF)
+        command += chr((sector >> 16) & 0xFF)
+        command += chr((sector >>  8) & 0xFF)
+        command += chr((sector      ) & 0xFF)
+        status, returnData = self.sendCommand(command)
+
+        fileType = 0
+        if status:
+            fileType += ord(returnData[0]) << 24
+            fileType += ord(returnData[1]) << 16
+            fileType += ord(returnData[2]) << 8
+            fileType += ord(returnData[3]) << 0
+
+        return status, fileType
+
+    def deleteFile(self, sector):
+        """Delete a file
+        """
+
+        command = chr(0x15)
+        command += chr((sector >> 24) & 0xFF)
+        command += chr((sector >> 16) & 0xFF)
+        command += chr((sector >>  8) & 0xFF)
+        command += chr((sector      ) & 0xFF)
+        status, returnData = self.sendCommand(command)
+
+        return status
+
     def createFile(self, fileType, fileLength):
         """Store a file into the external flash memory
         """

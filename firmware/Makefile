@@ -32,7 +32,6 @@ C_FILES = \
 	usb_dev.c \
 	usb_mem.c \
 	usb_serial.c \
-	serial1.c \
 	nonstd.c \
 	yield.c
 

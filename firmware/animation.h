@@ -28,6 +28,9 @@
 
 #define ANIMATION_HEADER_LENGTH 12
 
+// Max. number of animations that can be read from the flash (arbitrary)
+#define MAX_ANIMATIONS_COUNT 100
+
 class Animation {
   public:
     NoFatStorage* storage;       // Storage container to read from
@@ -47,12 +50,6 @@ class Animation {
     void getFrame(uint32_t frame, uint8_t* buffer);
 };
 
-// Max. number of animations that can be read from the flash (arbitrary)
-#define MAX_ANIMATIONS_COUNT 20
-
-// Each animation file has the following header:
-// 0x00: animation n: frameCount
-// 0x04: speed
 
 class Animations {
   private:

@@ -143,7 +143,7 @@ int NoFatStorage::fileSize(int sector) {
 
 uint8_t NoFatStorage::fileType(int sector) {
     if(!isFile(sector))
-        return 0;
+        return 0xFF;
 
     uint8_t buff[1];
     flash->read((sector << 12) + 8, buff, 1);
@@ -239,7 +239,10 @@ int NoFatStorage::createNewFile(uint8_t type, int length) {
 }
 
 
-void NoFatStorage::deleteFile(int sector) {
+bool NoFatStorage::deleteFile(int sector) {
+    if(!isFile(sector))
+        return false;
+
     // First, erase all of the linked sectors (by chance they might have data that causes them to be mistaken for a 
     // starting sector)
     for(int linkedSector = 1; linkedSector < sectorsForLength(fileSize(sector)); linkedSector++) {
@@ -262,6 +265,7 @@ void NoFatStorage::deleteFile(int sector) {
     flash->setWriteEnable(false);
 
     rebuildSectorMap();
+    return true;
 }
 
 int NoFatStorage::writePageToFile(int sector, int offset, uint8_t* data) {

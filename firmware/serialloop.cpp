@@ -35,7 +35,6 @@ void commandLoop();
 uint8_t controlBuffer[CONTROL_BUFFER_SIZE];     // Buffer for receiving command data
 int controlBufferIndex;     // Current location in the buffer
 
-
 void serialReset() {
     serialMode = SERIAL_MODE_DATA;
 
@@ -114,6 +113,8 @@ bool commandFileWritePage(uint8_t* buffer);
 bool commandFileRead(uint8_t* buffer);
 bool commandFileCount(uint8_t* buffer);
 bool commandFirstFreeSector(uint8_t* buffer);
+bool commandFileGetType(uint8_t* buffer);
+bool commandFileDelete(uint8_t* buffer);
 bool commandFlashErase(uint8_t* buffer);
 bool commandFlashRead(uint8_t* buffer);
 
@@ -130,6 +131,8 @@ Command commands[] = {
     {0x11,   1, commandLargestFile},
     {0x12,   1, commandFileCount},
     {0x13,   1, commandFirstFreeSector},
+    {0x14,   5, commandFileGetType},
+    {0x15,   5, commandFileDelete},
     {0x18,   6, commandFileNew},
     {0x19, 265, commandFileWritePage},
     {0x1A,  10, commandFileRead},
@@ -228,6 +231,33 @@ bool commandFlashRead(uint8_t* buffer) {
     
     buffer[0] = read - 1;
     return true;
+}
+
+bool commandFileGetType(uint8_t* buffer) {
+    int sector =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+
+    if(!flashStorage.isFile(sector)) {
+        buffer[0] = 0;
+        return false;
+    }
+
+    int type = flashStorage.fileType(sector);
+    buffer[0] = 4 - 1;
+    buffer[1] = (type >> 24) & 0xFF;
+    buffer[2] = (type >> 16) & 0xFF;
+    buffer[3] = (type >>  8) & 0xFF;
+    buffer[4] = (type >>  0) & 0xFF;
+
+    return true;
+}
+
+bool commandFileDelete(uint8_t* buffer) {
+    int sector =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+
+    buffer[0] = 0;
+    return flashStorage.deleteFile(sector);
 }
 
 bool commandFirstFreeSector(uint8_t* buffer) {

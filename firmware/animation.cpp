@@ -74,8 +74,6 @@ void Animations::begin(NoFatStorage& storage_) {
                 animationCount++;
             }
         }
-        if(animationCount == MAX_ANIMATIONS_COUNT)
-            break;
     }
 
     initialized = true;

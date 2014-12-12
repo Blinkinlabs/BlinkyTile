@@ -160,7 +160,8 @@ class NoFatStorage {
 
     // Delete a file
     // @param sector Beginning sector of the file
-    void deleteFile(int sector);
+    // @return True if a file existed and was deleted
+    bool deleteFile(int sector);
 
     // Write a page of data to the file
     // Note that the data length must equal to PAGE_SIZE!
@@ -204,8 +205,6 @@ class NoFatStorage {
     // @return First free sector after the start sector, or -1 if no free
     // sector found.
     int findFreeSector(int start);
-
 };
-
 
 #endif
