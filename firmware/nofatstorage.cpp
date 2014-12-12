@@ -312,18 +312,25 @@ int NoFatStorage::readFromFile(int sector, int offset, uint8_t* data, int length
     int startingOffsetInFile = 256 + offset;
     int startingSectorInFile = startingOffsetInFile >> 12;
 
-    int endingOffsetInFile = 256 + offset + length - 1;
-    int endingSectorInFile = endingOffsetInFile >> 12;
+    int lastCharacterOffsetInFile = 256 + offset + length - 1;
+    int lastCharacterSectorInFile = lastCharacterOffsetInFile >> 12;
 
     int startingActualSector = fileSector(sector, startingSectorInFile);
     int startingActualOffset = (startingActualSector << 12) + (startingOffsetInFile & 0x0FFF);
 
     int count = 0;
     // Test if all of the data falls in one sector
-    if(startingSectorInFile == endingSectorInFile) {
+    if(startingSectorInFile == lastCharacterSectorInFile) {
         count += flash->read(startingActualOffset, data, length);
     }
     else {
+        int endingActualLength = (lastCharacterOffsetInFile +1) & 0x0FFF;
+        int endingActualOffset = fileSector(sector, lastCharacterSectorInFile) << 12;
+        int startingActualLength = length - endingActualLength;
+
+        count += flash->read(startingActualOffset, data, startingActualLength);
+        count += flash->read(endingActualOffset, data + startingActualLength, endingActualLength);
+        
     }
     return count;
 }

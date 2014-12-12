@@ -145,7 +145,7 @@ class BlinkyTape(object):
         self.serial.flush()
 
         # give a small pause and wait for data to be returned
-        time.sleep(.1)
+        time.sleep(.01)
         ret = self.serial.read(2)
 
         status = (ret[0] == 'P')
