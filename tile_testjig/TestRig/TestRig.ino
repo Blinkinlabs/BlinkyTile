@@ -7,8 +7,8 @@
 
 #define SWITCH_PIN    9
 
+#define MAX_OUTPUTS  50     // Number of address outputs available
 
-#define MAX_OUTPUTS  14     // Number of address outputs available
 #define OUTPUT_COUNT 14     // Number of address outputs enabled
 
 
@@ -23,7 +23,7 @@
 #define FRAME_STOP_BITS_TIME     (FRAME_START_BIT_TIME + 8*BIT_LENGTH + 2*BIT_LENGTH)
 
 
-#define GROUPS        2    // These should equal the MAX_OUTPUTS
+#define GROUPS        2
 #define GROUP_SIZE    7
 
 //// Programmer pins
@@ -50,7 +50,7 @@ int bufferPosition = 0;
 uint8_t dataArray[1 + MAX_OUTPUTS*BYTES_PER_PIXEL];    // Storage for DMX output (0 is the start frame)
 
 // Address pin connections
-const int addressPins[MAX_OUTPUTS] = {
+const int addressPins[OUTPUT_COUNT] = {
   21,      // 1
   20,      // 2
   19,      // 3
@@ -68,28 +68,45 @@ const int addressPins[MAX_OUTPUTS] = {
 };
 
 // Output addresses to program
-const int addresses[MAX_OUTPUTS] = {
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14
+//int addresses[OUTPUT_COUNT] = {
+//  1,
+//  2,
+//  3,
+//  4,
+//  5,
+//  6,
+//  7,
+//  8,
+//  9,
+//  10,
+//  11,
+//  12,
+//  13,
+//  14
+//};
+
+int addresses[OUTPUT_COUNT] = {
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28
 };
 
 // Data table of bytes we need to send to program the addresses
 // Note that this table needs to be initialized by a call to 
 // makeAddressTable() before using.
 #define PROGRAM_ADDRESS_FRAMES 4
-int addressProgrammingData[MAX_OUTPUTS][PROGRAM_ADDRESS_FRAMES];
+int addressProgrammingData[OUTPUT_COUNT][PROGRAM_ADDRESS_FRAMES];
 
 
 void writePixel(int pixel, int r, int g, int b) {
@@ -131,7 +148,7 @@ uint8_t flipEndianness(uint8_t input) {
 
 // Make a table of the values we have to send to program the addressess
 void makeAddressTable() {
-  for(int address = 0; address < MAX_OUTPUTS; address++) {
+  for(int address = 0; address < OUTPUT_COUNT; address++) {
     // WS2822S (from datasheet)
     int channel = (addresses[address]-1)*3+1;
     addressProgrammingData[address][0] = 0;
@@ -193,7 +210,7 @@ void eraseAddresses(){
   
   
   // Set address pins to outputs
-  for(int i = 0; i < MAX_OUTPUTS; i++) {
+  for(int i = 0; i < OUTPUT_COUNT; i++) {
     pinMode(addressPins[i], OUTPUT);
     digitalWrite(addressPins[i], HIGH);
   }
@@ -268,7 +285,7 @@ void programAddresses() {
   
   
   // Set address pins to outputs
-  for(int i = 0; i < MAX_OUTPUTS; i++) {
+  for(int i = 0; i < OUTPUT_COUNT; i++) {
     pinMode(addressPins[i], OUTPUT);
     digitalWrite(addressPins[i], HIGH);
   }
@@ -350,7 +367,7 @@ void draw() {
   while(prefixStartTime < PREFIX_MAB_TIME) {};
   
   // For each address
-  for(int frame = 0; frame < 1 + OUTPUT_COUNT*BYTES_PER_PIXEL; frame++) {    
+  for(int frame = 0; frame < 1 + MAX_OUTPUTS*BYTES_PER_PIXEL; frame++) {    
     dmxSendByte(dataArray[frame]);
   }
   
@@ -458,7 +475,7 @@ void handleCommand(char* commandBuffer) {
     Serial.print("Identify pixel: ");
     Serial.println(parameter, DEC);
      
-    for(int output = 0; output < OUTPUT_COUNT; output++) {
+    for(int output = 0; output < MAX_OUTPUTS; output++) {
       if(output + 1 == parameter) {
         writePixel(output + 1, 255, 0, 0);
       }
@@ -475,7 +492,7 @@ void handleCommand(char* commandBuffer) {
     Serial.print("Sending DMX frame, color: ");
     Serial.println(parameter);
     
-    for(int output = 0; output < OUTPUT_COUNT; output++) {
+    for(int output = 0; output < MAX_OUTPUTS; output++) {
 
       if(parameter == 0) {
         writePixel(output + 1, 50, 0, 0);
@@ -548,11 +565,12 @@ void loop() {
     handleCommand("p");
     delay(50);
     inputBuffer[0] = 'i';
-    for(int tile=1; tile<=14; tile++){
+    for(int outAddress=0; outAddress<14; outAddress++){
+      int tile = addresses[outAddress];
       if(tile <= 9)
         inputBuffer[1] = tile + '0';
       else{
-        inputBuffer[1] = '1';
+        inputBuffer[1] = '0'+ tile/10;
         inputBuffer[2] = '0'+ tile%10;
       }
       handleCommand(inputBuffer);
@@ -563,7 +581,7 @@ void loop() {
     inputBuffer[2] = 0;
     bufferPosition = 0;
     delay(50);
-    handleCommand("t");
+//    handleCommand("t");
     while(digitalRead(SWITCH_PIN) == LOW) {}
     digitalWrite(failLedPin, LOW);
     digitalWrite(passLedPin, HIGH);
@@ -580,7 +598,7 @@ void loop() {
     if(counts > countsPerChange) {
       counts = 0;
       
-      for(int output = 0; output < OUTPUT_COUNT; output++) {
+      for(int output = 0; output < MAX_OUTPUTS; output++) {
         if(color == 0) {
           writePixel(output + 1, 50, 0, 0);
         }
