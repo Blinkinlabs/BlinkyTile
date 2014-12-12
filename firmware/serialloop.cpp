@@ -108,31 +108,33 @@ void dataLoop() {
 
 
 bool commandProgramAddress(uint8_t* buffer);
-bool commandEraseFlash(uint8_t* buffer);
 bool commandFreeSpace(uint8_t* buffer);
 bool commandLargestFile(uint8_t* buffer);
-bool commandNewFile(uint8_t* buffer);
-bool commandWritePage(uint8_t* buffer);
-bool commandReadData(uint8_t* buffer);
+bool commandFileNew(uint8_t* buffer);
+bool commandFileWritePage(uint8_t* buffer);
+bool commandFileRead(uint8_t* buffer);
 bool commandFileCount(uint8_t* buffer);
 bool commandFirstFreeSector(uint8_t* buffer);
+bool commandFlashErase(uint8_t* buffer);
+bool commandFlashRead(uint8_t* buffer);
 
 struct Command {
-    uint8_t name;
-    int length;
+    uint8_t name;   // Command identifier
+    int length;     // Command length (number of bytes to read)
     bool (*function)(uint8_t*);
 };
 
 Command commands[] = {
-    {0x01,   3, commandProgramAddress},
-    {0x10,   1, commandFreeSpace},
+    {0x01,   3, commandProgramAddress},     // LED routines
+    {0x10,   1, commandFreeSpace},          // NoFat filesystem routines
     {0x11,   1, commandLargestFile},
     {0x12,   1, commandFileCount},
-    {0x18,   6, commandNewFile},
-    {0x19, 263, commandWritePage},
-    {0x1A,   8, commandReadData},
-    {0x20,   3, commandEraseFlash},
-    {0x21,   1, commandFirstFreeSector},
+    {0x13,   1, commandFirstFreeSector},
+    {0x18,   6, commandFileNew},
+    {0x19, 265, commandFileWritePage},
+    {0x1A,  10, commandFileRead},
+    {0x20,   3, commandFlashErase},         // Low-level flash routines
+    {0x21,   9, commandFlashRead},
     {0xFF,   0, NULL}
 };
 
@@ -185,7 +187,7 @@ bool commandProgramAddress(uint8_t* buffer) {
     return true;
 }
 
-bool commandEraseFlash(uint8_t* buffer) {
+bool commandFlashErase(uint8_t* buffer) {
     if((buffer[0] != 'E') || (buffer[1] != 'e')) {
         return false;
     }
@@ -204,14 +206,33 @@ bool commandEraseFlash(uint8_t* buffer) {
     return true;
 }
 
+bool commandFlashRead(uint8_t* buffer) {
+    int address =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+
+    int length =
+        (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
+
+    if(length > 256)
+        return false;
+
+    int read = flash.read(address, buffer + 1, length);
+
+    if(read != length)
+        return false;
+    
+    buffer[0] = read - 1;
+    return true;
+}
+
 bool commandFirstFreeSector(uint8_t* buffer) {
-    int files = flashStorage.findFreeSector(0);
+    int sector= flashStorage.findFreeSector(0);
 
     buffer[0] = 4 - 1;
-    buffer[1] = (files >> 24) & 0xFF;
-    buffer[2] = (files >> 16) & 0xFF;
-    buffer[3] = (files >>  8) & 0xFF;
-    buffer[4] = (files >>  0) & 0xFF;
+    buffer[1] = (sector >> 24) & 0xFF;
+    buffer[2] = (sector >> 16) & 0xFF;
+    buffer[3] = (sector >>  8) & 0xFF;
+    buffer[4] = (sector >>  0) & 0xFF;
 
     return true;
 }
@@ -252,7 +273,7 @@ bool commandLargestFile(uint8_t* buffer) {
     return true;
 }
 
-bool commandNewFile(uint8_t* buffer) {
+bool commandFileNew(uint8_t* buffer) {
     uint8_t fileType = buffer[0];
     int fileSize = 
         (buffer[1] << 24) + (buffer[2] << 16) + (buffer[3] << 8)+ buffer[4];
@@ -262,18 +283,21 @@ bool commandNewFile(uint8_t* buffer) {
     if(sector < 0)
         return false;
 
-    buffer[0] = 2 - 1;
-    buffer[1] = (sector >> 8) & 0xFF;
-    buffer[2] = (sector     ) & 0xFF;
+    buffer[0] = 4 - 1;
+    buffer[1] = (sector >> 24) & 0xFF;
+    buffer[2] = (sector >> 16) & 0xFF;
+    buffer[3] = (sector >>  8) & 0xFF;
+    buffer[4] = (sector >>  0) & 0xFF;
     return true;
 }
 
-bool commandWritePage(uint8_t* buffer) {
-    uint8_t sector = (buffer[0] << 8) + buffer[1];
+bool commandFileWritePage(uint8_t* buffer) {
+    uint8_t sector =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
     uint8_t offset =
-        (buffer[2] << 24) + (buffer[3] << 16) + (buffer[4] << 8)+ buffer[5];
+        (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
 
-    int written = flashStorage.writePageToFile(sector, offset, buffer + 6);
+    int written = flashStorage.writePageToFile(sector, offset, buffer + 8);
 
     if(written != 256)
         return false;
@@ -282,11 +306,12 @@ bool commandWritePage(uint8_t* buffer) {
     return true;
 }
 
-bool commandReadData(uint8_t* buffer) {
-    int sector = (buffer[0] << 8) + buffer[1];
-    int offset =
-        (buffer[2] << 24) + (buffer[3] << 16) + (buffer[4] << 8)+ buffer[5];
-    int length = buffer[6] + 1;
+bool commandFileRead(uint8_t* buffer) {
+    uint8_t sector =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8)+ buffer[3];
+    uint8_t offset =
+        (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8)+ buffer[7];
+    int length = buffer[9] + 1;
 
     int read = flashStorage.readFromFile(sector, offset, buffer + 1, length);
 

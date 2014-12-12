@@ -80,7 +80,7 @@
 #include <inttypes.h>
 #include "jedecflash.h"
 
-#define MAX_SECTORS             64 // Maximum number of sectors we can manage
+#define MAX_SECTORS             512 // Maximum number of sectors we can manage
 
 #define SECTOR_SIZE             4096    // Number of bytes in a sector. This is the smallest unit we can erase
 #define PAGE_SIZE               256     // Number of bytes in a page. This is the smallest unit we can write

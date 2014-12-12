@@ -168,8 +168,6 @@ int NoFatStorage::fileSector(int sector, int link) {
 }
 
 int NoFatStorage::createNewFile(uint8_t type, int length) {
-
-
     // Length must be page aligned.
     if((length & 0xFF) != 0)
         return -1;

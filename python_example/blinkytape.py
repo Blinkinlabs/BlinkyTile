@@ -220,18 +220,18 @@ class BlinkyTape(object):
         """Get the first free sector in the flash
         """
 
-        command = chr(0x21)
+        command = chr(0x13)
 
         status, returnData = self.sendCommand(command)
 
-        space = 0
+        sector = 0
         if status:
-            space += ord(returnData[0]) << 24
-            space += ord(returnData[1]) << 16
-            space += ord(returnData[2]) << 8
-            space += ord(returnData[3]) << 0
+            sector += ord(returnData[0]) << 24
+            sector += ord(returnData[1]) << 16
+            sector += ord(returnData[2]) << 8
+            sector += ord(returnData[3]) << 0
 
-        return space
+        return sector
 
     def createFile(self, fileType, fileLength):
         """Store a file into the external flash memory
@@ -242,13 +242,15 @@ class BlinkyTape(object):
         command += chr((fileLength >> 24) & 0xFF)
         command += chr((fileLength >> 16) & 0xFF)
         command += chr((fileLength >>  8) & 0xFF)
-        command += chr(fileLength         & 0xFF)
+        command += chr((fileLength      ) & 0xFF)
         status, returnData = self.sendCommand(command)
 
-        sector = -1
+        sector = 0
         if status:
-            sector += ord(returnData[0]) << 8
-            sector += ord(returnData[1]) << 0
+            sector += ord(returnData[0]) << 24
+            sector += ord(returnData[1]) << 16
+            sector += ord(returnData[2]) << 8
+            sector += ord(returnData[3]) << 0
 
         return status, sector 
 
@@ -259,12 +261,14 @@ class BlinkyTape(object):
             return False
 
         command = chr(0x19)
+        command += chr((sector >> 24) & 0xFF)
+        command += chr((sector >> 16) & 0xFF)
         command += chr((sector >>  8) & 0xFF)
-        command += chr(sector         & 0xFF)
+        command += chr((sector      ) & 0xFF)
         command += chr((offset >> 24) & 0xFF)
         command += chr((offset >> 16) & 0xFF)
         command += chr((offset >>  8) & 0xFF)
-        command += chr(offset         & 0xFF)
+        command += chr((offset      ) & 0xFF)
         command += data
 
         status, returnData = self.sendCommand(command)
@@ -278,17 +282,19 @@ class BlinkyTape(object):
             return False
 
         command = chr(0x1A)
+        command += chr((sector >> 24) & 0xFF)
+        command += chr((sector >> 16) & 0xFF)
         command += chr((sector >>  8) & 0xFF)
-        command += chr(sector         & 0xFF)
+        command += chr((sector      ) & 0xFF)
         command += chr((offset >> 24) & 0xFF)
         command += chr((offset >> 16) & 0xFF)
         command += chr((offset >>  8) & 0xFF)
-        command += chr(offset         & 0xFF)
+        command += chr((offset      ) & 0xFF)
         command += chr(length - 1     & 0xFF)
 
         return self.sendCommand(command)
 
-    def eraseFlash(self):
+    def flashErase(self):
         """Erase the entire external flash memory
         """
         command = chr(0x20)
@@ -296,6 +302,22 @@ class BlinkyTape(object):
         command += 'e'
 
         self.sendCommand(command)
+
+    def flashRead(self, address, length):
+        """Read a page of data from the flash
+        """
+        
+        command = chr(0x21)
+        command += chr((address >> 24) & 0xFF)
+        command += chr((address >> 16) & 0xFF)
+        command += chr((address >>  8) & 0xFF)
+        command += chr((address >>  0) & 0xFF)
+        command += chr((length >> 24) & 0xFF)
+        command += chr((length >> 16) & 0xFF)
+        command += chr((length >>  8) & 0xFF)
+        command += chr((length >>  0) & 0xFF)
+
+        return self.sendCommand(command)
 
     def close(self):
         """Safely closes the serial port."""
