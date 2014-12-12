@@ -29,19 +29,27 @@ void Animation::init(NoFatStorage& storage_, uint32_t fileNumber_) {
     storage = &storage_;
     fileNumber = fileNumber_;
 
-    uint32_t buffer[2];
-    storage->readFromFile(fileNumber, 0, (uint8_t*)buffer, 8);
+    uint32_t buffer[ANIMATION_HEADER_LENGTH];
+    storage->readFromFile(fileNumber, 0, (uint8_t*)buffer, ANIMATION_HEADER_LENGTH);
 
-    frameCount      = buffer[0];
-    speed           = buffer[1];
+    ledCount =
+        (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
+    frameCount =
+        (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7];
+    speed = 
+        (buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11];
 }
 
 
 void Animation::getFrame(uint32_t frame, uint8_t* buffer) {
+    int readLength = ledCount;
+    if(readLength > LED_COUNT)
+        readLength = LED_COUNT;
+
     storage->readFromFile(fileNumber,
-                frame*LED_COUNT*BYTES_PER_PIXEL,
+                ANIMATION_HEADER_LENGTH + frame*ledCount*BYTES_PER_PIXEL,
                 buffer,
-                LED_COUNT*BYTES_PER_PIXEL
+                readLength*BYTES_PER_PIXEL
         );
 }
 
@@ -71,7 +79,7 @@ void Animations::begin(NoFatStorage& storage_) {
     initialized = true;
 }
 
-uint32_t Animations::getAnimationCount() {
+uint32_t Animations::getCount() {
     return animationCount;
 }
 

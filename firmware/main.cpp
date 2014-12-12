@@ -34,7 +34,6 @@
 
 #include "blinkytile.h"
 #include "animation.h"
-#include "defaultanimation.h"
 #include "jedecflash.h"
 #include "nofatstorage.h"
 #include "dmx.h"
@@ -42,9 +41,6 @@
 #include "patterns.h"
 #include "serialloop.h"
 #include "buttons.h"
-
-// TODO: delete me
-extern void singleCharacterHack(char in);
 
 // USB data buffers
 static fcBuffers buffers;
@@ -216,8 +212,8 @@ extern "C" int main()
             switch(pattern) {
                 case 0:
                     // If the flash wasn't initialized, then skip to the next built-in pattern.
-                    if(!animations.isInitialized()) {
-//                        pattern++;
+                    if(animations.getCount() < 1) {
+                        pattern++;
                         break;
                     }
 
@@ -232,7 +228,7 @@ extern "C" int main()
 
                             // increment through
                             animation++;
-                            if(animation >= animations.getAnimationCount()) {
+                            if(animation >= animations.getCount()) {
                                 animation = 0;
                             }
                         }
@@ -255,9 +251,6 @@ extern "C" int main()
                 case 3:
                     white_loop();
                     break;
-                case 4:
-                    green_loop();
-                    break;
             }
 
 
@@ -277,11 +270,11 @@ extern "C" int main()
             }
         }
 
+        // Handle fadecandy status messages
         buffers.finalizeFrame();
 
+        // Check for serial data
         if(usb_serial_available() > 0) {
-//            singleCharacterHack(usb_serial_getchar());
-
             serial_mode = true;
             serialLoop();
         }

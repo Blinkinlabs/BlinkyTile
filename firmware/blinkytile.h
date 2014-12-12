@@ -24,7 +24,7 @@
 #ifndef BLINKYTILE_H
 #define BLINKYTILE_H
 
-#define LED_COUNT           14  // Number of LEDs we are controlling
+#define LED_COUNT           170  // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL     3
 
 #define BUTTON_COUNT        2   // Two input buttons
@@ -37,6 +37,10 @@
 #define POWER_ENABLE_PIN    6   // Output power enable resistor: Port D4
 #define ADDRESS_PIN         9   // Address program pin: Port C3
 #define DATA_PIN            10  // Data output pin: Port C4
+
+
+// File types
+#define FILETYPE_ANIMATION      0x12
 
 
 // Fadecandy interface defines

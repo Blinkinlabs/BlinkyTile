@@ -41,16 +41,13 @@ CPP_FILES = \
 	jedecflash.cpp \
 	nofatstorage.cpp \
 	spi4teensy3.cpp \
-	protocol.cpp \
 	blinkytile.cpp \
 	dmx.cpp \
 	addressprogrammer.cpp \
-	singlecharacterhack.cpp \
 	patterns.cpp \
 	serialloop.cpp \
 	buttons.cpp \
         animation.cpp \
-        defaultanimation.cpp \
 	fc_usb.cpp
 
 # Headers

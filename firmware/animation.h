@@ -26,12 +26,13 @@
 
 #include "nofatstorage.h"
 
-#define ANIMATION_HEADER_LENGTH 8
+#define ANIMATION_HEADER_LENGTH 12
 
 class Animation {
   public:
     NoFatStorage* storage;       // Storage container to read from
     uint32_t fileNumber;         // File number containing this animation
+    uint32_t ledCount;           // Number of LEDs controlled by this animation
     uint32_t frameCount;         // Number of frames in this animation
     uint32_t speed;              // Speed, in ms between frames
 
@@ -72,7 +73,7 @@ class Animations {
 
     // Read the number of animations stored in the flash
     // @return Number of animations stored in the flash
-    uint32_t getAnimationCount();
+    uint32_t getCount();
 
     // Get the requested animation
     Animation* getAnimation(uint32_t animation);

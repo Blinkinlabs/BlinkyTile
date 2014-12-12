@@ -6,7 +6,6 @@
 #include "addressprogrammer.h"
 #include "nofatstorage.h"
 #include "jedecflash.h"
-#include "defaultanimation.h"
 #include "animation.h"
 #include <stdlib.h>
 #include <stdio.h>

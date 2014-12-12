@@ -97,7 +97,6 @@
 
 #define FLASH_WAIT_DELAY        2       // Number of ms to wait between flash status polls
 
-#define FILETYPE_ANIMATION      0x12
 
 class NoFatStorage {
   private:

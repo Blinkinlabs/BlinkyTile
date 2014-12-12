@@ -27,20 +27,11 @@ void white_loop() {
     }
 }
 
-void green_loop() {
-    for (uint16_t i = 0; i < LED_COUNT; i+=1) {
-        dmxSetPixel(i, 0, 255, 0);
-    }
-}
-
 void count_up_loop() {
-    #define MAX_COUNT 2
-  
-    static int counts = 0;
     static int pixel = 0;
     
     for (uint16_t i = 0; i < LED_COUNT; i+=1) {
-        if(pixel == i) {
+        if(pixel == (i%12)) {
             dmxSetPixel(i, 255, 255, 255);
         }
         else {
@@ -48,10 +39,6 @@ void count_up_loop() {
         }
     }
     
-    counts++;
-    if(counts>MAX_COUNT) {
-        counts = 0;
-        pixel = (pixel+1)%LED_COUNT;
-    }
+    pixel = (pixel+1)%12;
 }
 
