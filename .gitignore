@@ -3,11 +3,10 @@
 *.o
 *.d
 *.swp
-*.dfu
+firmware/*.dfu
+firmware/*.hex
+firmware/*.elf
+bootloader/*.elf
+bootloader/*.hex
+bootloader/*.bin
 *.pyc
-firmware/blinky-firmware.elf
-firmware/blinky-firmware.hex
-firmware/app-image.hex
-bootloader/blinky-boot.elf
-bootloader/blinky-boot.hex
-bootloader/blinky-boot.bin

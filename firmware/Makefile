@@ -11,7 +11,7 @@ OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
 
 # Bootloader to include in whole-chip .hex image
-FCBOOT_IMAGE = ../bootloader/blinky-boot.hex
+FCBOOT_IMAGE = ../bin/lightbuddy-boot-v100.hex
 
 # Configuration options
 OPTIONS += -DF_CPU=48000000 -D__MK20DN64__ -DUSB_SERIAL_FC_DFU

@@ -76,7 +76,7 @@ void dataLoop() {
 
             // Prevent overflow by ignoring any pixel data beyond LED_COUNT
             if(pixelIndex < LED_COUNT) {
-                dmxSetPixel(pixelIndex, buffer[0], buffer[1], buffer[2]);
+                dmxSetPixel(pixelIndex, buffer[2], buffer[1], buffer[0]);
                 pixelIndex++;
             }
         }

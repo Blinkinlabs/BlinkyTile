@@ -38,6 +38,8 @@ void Animation::init(NoFatStorage& storage_, uint32_t fileNumber_) {
         (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7];
     speed = 
         (buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11];
+    type = 
+        (buffer[12] << 24) + (buffer[13] << 16) + (buffer[14] << 8) + buffer[15];
 
     // TODO: Sanity check the values
 }

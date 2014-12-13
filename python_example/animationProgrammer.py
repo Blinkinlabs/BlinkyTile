@@ -2,8 +2,14 @@ import blinkytape
 import time
 import random
 
-def createAnimation(ledCount, frameCount, speed, colorData):
-    animationSize = 12 + 3*ledCount*frameCount
+def loadAnimation(animation):
+    ledCount = animation[0]
+    frameCount = animation[1]
+    speed = animation[2]
+    colorData = animation[3]
+    animationType = 0 #BGR uncompressed
+
+    animationSize = 16 + 3*ledCount*frameCount
     
     data = ""
     data += chr((ledCount >> 24) & 0xFF)
@@ -18,10 +24,14 @@ def createAnimation(ledCount, frameCount, speed, colorData):
     data += chr((speed >> 16) & 0xFF)
     data += chr((speed >>  8) & 0xFF)
     data += chr((speed      ) & 0xFF)
+    data += chr((animationType >> 24) & 0xFF)
+    data += chr((animationType >> 16) & 0xFF)
+    data += chr((animationType >>  8) & 0xFF)
+    data += chr((animationType      ) & 0xFF)
     data += colorData
 
     if len(data) != animationSize:
-        print "color data size incorrect, expected %i, got %i"%(animationSize - 12, len(colorData))
+        print "color data size incorrect, expected %i, got %i"%(animationSize - 16, len(colorData))
         return
 
     # Pad the file size to a page size
@@ -43,18 +53,13 @@ def createAnimation(ledCount, frameCount, speed, colorData):
             exit(1)
 
 
-bt = blinkytape.BlinkyTape()
-
-# first, erase the flash memory
-# bt.flashErase()
-
-print "free space: ", bt.getFreeSpace()
-print "largest file availabe: ", bt.getLargestFile()
-print "file count: ", bt.getFileCount()
-print "first free sector: ", bt.getFirstFreeSector()
-
-for sector in range(0, 50):
-    bt.deleteFile(sector)
+# Note! color order is b,g,r!
+def makePixel(r,g,b):
+    data = ''
+    data += chr(b)
+    data += chr(g)
+    data += chr(r)
+    return data
 
 
 ledCount = 12*3
@@ -64,15 +69,12 @@ data = ''
 for frame in range(0, frameCount):
     for led in range(0, ledCount):
         if (led % frameCount) == frame:
-            data+= chr(255)
-            data+= chr(0)
-            data+= chr(0)
+            data += makePixel(0,0,255)
         else:
-            data+= chr(0)
-            data+= chr(0)
-            data+= chr(0)
+            data += makePixel(0,0,0)
 
-createAnimation(ledCount, frameCount, speed, data)
+shadowAnimation = [ledCount, frameCount, speed, data]
+
 
 ledCount = 12*3
 frameCount = 100
@@ -81,26 +83,37 @@ data = ''
 for frame in range(0, frameCount):
     for led in range(0, ledCount):
         if (frame % 4) == 0:
-            data+= chr(255);
-            data+= chr(0);
-            data+= chr(0);
+            data += makePixel(255,0,0)
         if (frame % 4) == 1:
-            data+= chr(0);
-            data+= chr(255);
-            data+= chr(0);
+            data += makePixel(0,255,0)
         if (frame % 4) == 2:
-            data+= chr(0);
-            data+= chr(0);
-            data+= chr(255);
+            data += makePixel(0,0,255)
         if (frame % 4) == 3:
-            data+= chr(255);
-            data+= chr(255);
-            data+= chr(255);
+            data += makePixel(255,255,255)
 
-createAnimation(ledCount, frameCount, speed, data)
+rgbAnimation = [ledCount, frameCount, speed, data]
 
-for sector in range(0, 50):
-    status, fileType = bt.getIsFile(sector)
-    print "%3i: %r(%i)"%(sector, status, fileType)
 
-bt.reloadAnimations()
+while True:
+    print "press enter to start..."
+    a = raw_input()
+
+    bt = blinkytape.BlinkyTape()
+
+    # first, erase the flash memory
+    # bt.flashErase()
+    
+    for sector in range(0, 50):
+        bt.deleteFile(sector)
+    
+    #print "free space: ", bt.getFreeSpace()
+    #print "largest file availabe: ", bt.getLargestFile()
+    print "file count: ", bt.getFileCount()
+    #print "first free sector: ", bt.getFirstFreeSector()
+    
+    
+    loadAnimation(shadowAnimation)
+    loadAnimation(rgbAnimation)
+
+    bt.reloadAnimations()
+    bt.close()

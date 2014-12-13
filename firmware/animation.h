@@ -26,7 +26,7 @@
 
 #include "nofatstorage.h"
 
-#define ANIMATION_HEADER_LENGTH 12
+#define ANIMATION_HEADER_LENGTH 16
 
 // Max. number of animations that can be read from the flash (arbitrary)
 #define MAX_ANIMATIONS_COUNT 100
@@ -38,6 +38,7 @@ class Animation {
     uint32_t ledCount;           // Number of LEDs controlled by this animation
     uint32_t frameCount;         // Number of frames in this animation
     uint32_t speed;              // Speed, in ms between frames
+    uint32_t type;               // Type, 0x0000 = BGR uncompressed
 
     // Initialize the animation using the given file number
     // @param fileNumber File to read from
