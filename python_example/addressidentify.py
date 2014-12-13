@@ -7,7 +7,7 @@ while True:
     address = input("enter an address to identify:")
     address = int(address) - 1
     
-    for pos in range(0, 14):
+    for pos in range(0, 150):
         if pos == address:
             bt.sendPixel(100,100,100)
         else:

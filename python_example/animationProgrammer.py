@@ -57,13 +57,13 @@ for sector in range(0, 50):
     bt.deleteFile(sector)
 
 
-ledCount = 12
+ledCount = 12*3
 frameCount = 12
 speed = 30
 data = ''
 for frame in range(0, frameCount):
     for led in range(0, ledCount):
-        if led == frame:
+        if (led % frameCount) == frame:
             data+= chr(255)
             data+= chr(0)
             data+= chr(0)
@@ -74,8 +74,8 @@ for frame in range(0, frameCount):
 
 createAnimation(ledCount, frameCount, speed, data)
 
-ledCount = 12
-frameCount = 400
+ledCount = 12*3
+frameCount = 100
 speed = 100
 data = ''
 for frame in range(0, frameCount):
