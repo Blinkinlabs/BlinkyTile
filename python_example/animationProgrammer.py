@@ -1,6 +1,8 @@
 import blinkytape
 import time
 import random
+import shimmer
+import colorloop
 
 def loadAnimation(animation):
     ledCount = animation[0]
@@ -62,36 +64,54 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 12*3
+ledCount = 14
+
+
 frameCount = 12
 speed = 30
 data = ''
 for frame in range(0, frameCount):
     for led in range(0, ledCount):
         if (led % frameCount) == frame:
-            data += makePixel(0,0,255)
+            data += makePixel(100,0,255)
+        elif ((led + frameCount/2) % frameCount) == frame:
+            data += makePixel(255,0,100)
         else:
             data += makePixel(0,0,0)
 
 shadowAnimation = [ledCount, frameCount, speed, data]
 
 
-ledCount = 12*3
-frameCount = 100
+frameCount = 750
+speed = 50
+data = ''
+
+shim = shimmer.shimmer(ledCount)
+for frame in range(0, frameCount):
+    data += shim.getData()
+
+shimmerAnimation = [ledCount, frameCount, speed, data]
+
+
+frameCount = 985
+speed = 105
+data = ''
+
+colors = colorloop.colorloop(ledCount,1,1,1)
+for frame in range(0, frameCount):
+    data += colors.getData()
+
+colorAnimation = [ledCount, frameCount, speed, data]
+
+
+frameCount = 1
 speed = 100
 data = ''
 for frame in range(0, frameCount):
     for led in range(0, ledCount):
-        if (frame % 4) == 0:
-            data += makePixel(255,0,0)
-        if (frame % 4) == 1:
-            data += makePixel(0,255,0)
-        if (frame % 4) == 2:
-            data += makePixel(0,0,255)
-        if (frame % 4) == 3:
-            data += makePixel(255,255,255)
+        data += makePixel(255,255,255)
 
-rgbAnimation = [ledCount, frameCount, speed, data]
+flashlightAnimation = [ledCount, frameCount, speed, data]
 
 
 while True:
@@ -103,7 +123,7 @@ while True:
     # first, erase the flash memory
     # bt.flashErase()
     
-    for sector in range(0, 50):
+    for sector in range(0, 100):
         bt.deleteFile(sector)
     
     #print "free space: ", bt.getFreeSpace()
@@ -113,7 +133,9 @@ while True:
     
     
     loadAnimation(shadowAnimation)
-    loadAnimation(rgbAnimation)
+    loadAnimation(shimmerAnimation)
+    loadAnimation(colorAnimation)
+    loadAnimation(flashlightAnimation)
 
     bt.reloadAnimations()
     bt.close()
