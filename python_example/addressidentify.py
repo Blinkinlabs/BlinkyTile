@@ -3,6 +3,10 @@ import time
 
 bt = blinkytape.BlinkyTape()
 
+print "file count: ", bt.getFileCount()
+print "free space: ", bt.getFreeSpace()
+
+
 while True:
     address = input("enter an address to identify:")
     address = int(address) - 1
