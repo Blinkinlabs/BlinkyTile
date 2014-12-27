@@ -1,3 +1,5 @@
+#Shimmer example by @Dat, originally written for BlinkyTape
+
 import random
 
 # Note! color order is b,g,r!
