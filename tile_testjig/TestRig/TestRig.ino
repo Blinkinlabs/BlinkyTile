@@ -2,12 +2,16 @@
 #define COMMAND_PROGRAM_ADDRESSES     'p'    // Run the program address routine
 #define COMMAND_OUTPUT_COLOR          's'    // Set all outputs to a specific color (0=red, 1=green, 2=blue)
 #define COMMAND_OUTPUT_IDENTIFY       'i'    // Identify one output 
-#define COMMAND_ERASE_ADDRESSES       'e'    // Erase address routine
-#define COMMAND_TEST_COLOR            't'    // Test color routine 
+#define COMMAND_ERASE_ADDRESSES       'e'    // Erase address routine ??
+#define COMMAND_TEST_COLOR            't'    // Test color routine
+#define COMMAND_SET_ADDRESS_RANGE     'r'    // Change range of programmed addresses
+
+int startingAddress = 1;    // Address of the first tile. Others are assigned sequentially (1,2,3,4,5,6,etc)
+
 
 #define SWITCH_PIN    9
 
-#define MAX_OUTPUTS  50     // Number of address outputs available
+#define MAX_OUTPUTS  170     // Number of address outputs available
 
 #define OUTPUT_COUNT 14     // Number of address outputs enabled
 
@@ -42,7 +46,7 @@ const int passLedPin = 23;
 static volatile uint8_t *dmxPort;
 static uint8_t dmxBit = 0;
 
-#define COMMAND_LENGTH  3
+#define COMMAND_LENGTH  4
 char inputBuffer[COMMAND_LENGTH];
 int bufferPosition = 0;
 
@@ -64,60 +68,12 @@ const int addressPins[OUTPUT_COUNT] = {
   6,       // 11
   5,       // 12
   4,       // 13
-  3       // 14
+  3        // 14
 };
 
-// Output addresses to program
-//int addresses[OUTPUT_COUNT] = {
-//  1,
-//  2,
-//  3,
-//  4,
-//  5,
-//  6,
-//  7,
-//  8,
-//  9,
-//  10,
-//  11,
-//  12,
-//  13,
-//  14
-//};
+//// Output addresses to program
+int addresses[OUTPUT_COUNT];
 
-//int addresses[OUTPUT_COUNT] = {
-//  15,
-//  16,
-//  17,
-//  18,
-//  19,
-//  20,
-//  21,
-//  22,
-//  23,
-//  24,
-//  25,
-//  26,
-//  27,
-//  28
-//};
-
-int addresses[OUTPUT_COUNT] = {
-  29,
-  30,
-  31,
-  32,
-  33,
-  34,
-  35,
-  36,
-  37,
-  38,
-  39,
-  40,
-  41,
-  42
-};
 
 // Data table of bytes we need to send to program the addresses
 // Note that this table needs to be initialized by a call to 
@@ -138,7 +94,7 @@ void setAddresses(int level, int offset, int count) {
   for(int i = 0; i < count; i++) {
     int address = i + offset;
     digitalWriteFast(addressPins[address], level);
-  }
+  }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 }
 
 
@@ -166,8 +122,11 @@ uint8_t flipEndianness(uint8_t input) {
 // Make a table of the values we have to send to program the addressess
 void makeAddressTable() {
   for(int address = 0; address < OUTPUT_COUNT; address++) {
+    addresses[address] = startingAddress + address;
+
     // WS2822S (from datasheet)
     int channel = (addresses[address]-1)*3+1;
+
     addressProgrammingData[address][0] = 0;
     addressProgrammingData[address][1] = flipEndianness(channel%256);
     addressProgrammingData[address][2] = flipEndianness(240 - (channel/256)*15);
@@ -328,11 +287,11 @@ void programAddresses() {
       
       setAddresses(LOW, group*GROUP_SIZE, GROUP_SIZE);    // Start bit
       while(addressFrameStartTime < FRAME_START_BIT_TIME) {};
-    
+      
       for(int bit = 0; bit < 8; bit++) {  // data bits
         for(int address = 0; address < GROUP_SIZE; address++) {
           int groupAddress = address + group*GROUP_SIZE;
-          
+
           digitalWriteFast(addressPins[groupAddress],
                       (addressProgrammingData[groupAddress][frame] >> bit) & 0x01);
         }
@@ -471,29 +430,24 @@ void setup() {
 
 void handleCommand(char* commandBuffer) {
   char command = commandBuffer[0];
-  char p = commandBuffer[1];
-  char q = commandBuffer[2];
-  int parameter = 0;
+  
+  // Make a number from the buffer, up to 3 characters long
+  unsigned int param = 0;
+  for(int i = 1; i < 4; i++) {
+    if(commandBuffer[i] >= '0' && commandBuffer[i]) {
+      param = param*10 + (commandBuffer[i] - '0');
+    }
+    else {
+      break;
+    }
+  }
 
   if(command == COMMAND_OUTPUT_IDENTIFY) {
-      if(q >= '0' && q<= '9')
-      {
-        parameter = q - '0';
-        if(p >= '0' && p<= '9')
-           parameter += 10*(p - '0');
-      }
-      else if(p >= '0' && p<= '9')
-      {
-           parameter = p - '0';
-      }
-      else
-        Serial.println("Unknow value");
-   
     Serial.print("Identify pixel: ");
-    Serial.println(parameter, DEC);
+    Serial.println(param, DEC);
      
     for(int output = 0; output < MAX_OUTPUTS; output++) {
-      if(output + 1 == parameter) {
+      if(output + 1 == param) {
         writePixel(output + 1, 255, 0, 0);
       }
       else {
@@ -503,21 +457,19 @@ void handleCommand(char* commandBuffer) {
     draw();
   }
   
-  if(command == COMMAND_OUTPUT_COLOR) {
-    int parameter = p - '0';
-    
+  else if(command == COMMAND_OUTPUT_COLOR) {
     Serial.print("Sending DMX frame, color: ");
-    Serial.println(parameter);
+    Serial.println(param);
     
     for(int output = 0; output < MAX_OUTPUTS; output++) {
 
-      if(parameter == 0) {
+      if(param == 0) {
         writePixel(output + 1, 50, 0, 0);
       }
-      else if(parameter == 1) {
+      else if(param == 1) {
         writePixel(output + 1, 0, 50, 0);
       }
-      else if(parameter == 2) {
+      else if(param == 2) {
         writePixel(output + 1, 0, 0, 50);
       }
       else {
@@ -527,14 +479,22 @@ void handleCommand(char* commandBuffer) {
     draw();
 
   }
-  if(command == COMMAND_PROGRAM_ADDRESSES) {
+  else if(command == COMMAND_PROGRAM_ADDRESSES) {
     programAddresses();
   }
-  if(command == COMMAND_ERASE_ADDRESSES) {
+  else if(command == COMMAND_ERASE_ADDRESSES) {
     eraseAddresses();
   }
-  if(command == COMMAND_TEST_COLOR){
+  else if(command == COMMAND_TEST_COLOR){
     test_color();
+  }
+  
+  else if(command == COMMAND_SET_ADDRESS_RANGE) {
+    Serial.print("Setting first address to: ");
+    Serial.println(param, DEC);
+    
+    startingAddress = param;
+    makeAddressTable();
   }
 }
 
@@ -556,6 +516,7 @@ void loop() {
            inputBuffer[0] = 0;
            inputBuffer[1] = 0;
            inputBuffer[2] = 0;
+           inputBuffer[3] = 0;
         }
         else {
           Serial.print("Malformed command, length:");
@@ -584,14 +545,11 @@ void loop() {
     inputBuffer[0] = 'i';
     for(int outAddress=0; outAddress<14; outAddress++){
       int tile = addresses[outAddress];
-      if(tile <= 9)
-        inputBuffer[1] = tile + '0';
-      else{
-        inputBuffer[1] = '0'+ tile/10;
-        inputBuffer[2] = '0'+ tile%10;
-      }
+      inputBuffer[1] = '0'+ (tile/100)%10;
+      inputBuffer[2] = '0'+ (tile/10 )%10;
+      inputBuffer[3] = '0'+ (tile    )%10;
       handleCommand(inputBuffer);
-      delay(250);
+      delay(150);
     }
     inputBuffer[0] = 0;
     inputBuffer[1] = 0;
