@@ -35,6 +35,7 @@
 #include "usb_dev.h"
 #include "usb_mem.h"
 
+
 // buffer descriptor table
 
 typedef struct {
@@ -535,6 +536,13 @@ static void usb_control(uint32_t stat)
 	USB0_CTL = USB_CTL_USBENSOFEN; // clear TXSUSPENDTOKENBUSY bit
 }
 
+bool usb_rx_available(uint32_t endpoint)
+{
+	endpoint--;
+	if (endpoint >= NUM_ENDPOINTS) return false;
+
+	return rx_first[endpoint] != NULL;
+}
 
 
 usb_packet_t *usb_rx_no_int(uint32_t endpoint)
@@ -846,12 +854,6 @@ void usb_isr(void)
 					// so a flood of incoming data on 1 endpoint doesn't starve
 					// the others if the user isn't reading it regularly
 
-#ifdef FC_INTERFACE
-//					if(endpoint == FC_OUT_ENDPOINT) {
-      						// TODO: Handle failure here.
-      						usb_fc_rx_handler();
-//					}
-#endif
 
 					packet = usb_malloc();
 					if (packet) {
@@ -867,6 +869,14 @@ void usb_isr(void)
 				} else {
 					b->desc = BDT_DESC(64, ((uint32_t)b & 8) ? DATA1 : DATA0);
 				}
+
+#ifdef FC_INTERFACE
+				//if(endpoint == FC_OUT_ENDPOINT) {
+      					// Handle as many FC packets as possible
+					// TODO: Do this asyncronously?
+      					while(usb_rx_available(FC_OUT_ENDPOINT) && usb_fc_rx_handler()) {}
+				//}
+#endif
 			}
 
 
@@ -937,6 +947,7 @@ void usb_isr(void)
 		//serial_print("sleep\n");
 		USB0_ISTAT = USB_ISTAT_SLEEP;
 	}
+
 
 }
 

@@ -54,14 +54,16 @@ void fcBuffers::finalizeFrame()
     handledAnyPacketsThisFrame = false;
 
     if (pendingFinalizeFrame) {
-//        finalizeFramebuffer();
+        finalizeFramebuffer();
         pendingFinalizeFrame = false;
+        active = true;
     }
-
+/*
     if (pendingFinalizeLUT) {
-//        finalizeLUT();
+        finalizeLUT();
         pendingFinalizeLUT = false;
     }
+*/
 
     // Let the USB driver know we may be able to process buffers that were previously deferred
     // TODO: integrate me
@@ -83,11 +85,10 @@ int fcBuffers::handleUSB()
 
     unsigned control = rx_packet->buf[0];
     unsigned type = control & TYPE_BITS;
-//    unsigned final = control & FINAL_BIT;
-//    unsigned index = control & INDEX_BITS;
+    unsigned final = control & FINAL_BIT;
+    unsigned index = control & INDEX_BITS;
 
     switch (type) {
-/*
         case TYPE_FRAMEBUFFER:
 
             // Framebuffer updates are synchronized; if we're waiting to finalize fbNew,
@@ -102,7 +103,7 @@ int fcBuffers::handleUSB()
                 pendingFinalizeFrame = true;
             }
             break;
-
+/*
         case TYPE_LUT:
             // LUT accesses are not synchronized
             lutNew.store(index, rx_packet);
@@ -141,6 +142,11 @@ void fcBuffers::finalizeFramebuffer()
     fbNew = recycle;
 // TODO: reintegrate me
 //    perf_receivedKeyframeCounter++;
+}
+
+bool fcBuffers::isActive()
+{
+    return active;
 }
 
 void fcBuffers::finalizeLUT()

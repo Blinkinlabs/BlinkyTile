@@ -143,6 +143,9 @@ struct fcBuffers
     // Main loop context
     void finalizeFrame();
 
+    // True if the device is receiving data through Fadecandy
+    bool isActive();
+
 private:
     void finalizeFramebuffer();
     void finalizeLUT();
@@ -151,4 +154,6 @@ private:
     bool handledAnyPacketsThisFrame;
     bool pendingFinalizeFrame;
     bool pendingFinalizeLUT;
+
+    bool active;
 };
