@@ -64,7 +64,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 14*3
+ledCount = 150
 
 
 frameCount = 12
@@ -129,7 +129,7 @@ while True:
     bt = blinkytape.BlinkyTape()
 
     # first, erase the flash memory
-    # bt.flashErase()
+    bt.flashErase()
     
     #for sector in range(0, 100):
     #    bt.deleteFile(sector)

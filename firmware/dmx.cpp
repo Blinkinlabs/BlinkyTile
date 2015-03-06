@@ -44,23 +44,6 @@ void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
     dataArray[pixel*BYTES_PER_PIXEL + 3] = b;
 }
 
-void dmxSendByteDelay(uint8_t data) {
-    noInterrupts();
-    
-    digitalWriteFast(DATA_PIN, LOW);    // Start bit
-    delayMicroseconds(BIT_LENGTH);
-    
-    for(int bit = 0; bit < 8; bit++) {  // data bits
-        digitalWriteFast(DATA_PIN, (data >> bit) & 0x01);
-        delayMicroseconds(BIT_LENGTH);
-    }
-    
-    digitalWriteFast(DATA_PIN, HIGH);        // Stop bit
-    delayMicroseconds(2*BIT_LENGTH);
-    
-    interrupts();
-}
-
 void dmxSendByte(uint8_t value)
 {
     uint32_t begin, target;

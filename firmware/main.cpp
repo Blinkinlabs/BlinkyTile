@@ -130,13 +130,15 @@ extern "C" int main()
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
-        static int brightnessStep = 5;
+        static int brightnessStep = BRIGHTNESS_COUNT-1;
 
         static bool streaming_mode;
 
         static int animation;          // Flash animation to show
         static int frame;              // current frame to display
         static uint32_t nextTime;           // Time to display next frame
+
+        dmxSetBrightness(brightnessLevels[brightnessStep]);
 
         if(reloadAnimations) {
             reloadAnimations = false;
@@ -177,6 +179,47 @@ extern "C" int main()
             }
         }
 
+        // Handle fadecandy status messages
+        if(buffers.finalizeFrame()) {
+	    streaming_mode = true;
+            for(int i = 0; i <  LED_COUNT; i++) {
+                dmxSetPixel(i, *(buffers.fbNext->pixel(i)+2),
+                               *(buffers.fbNext->pixel(i)+1),
+                               *(buffers.fbNext->pixel(i)));
+            }
+            dmxShow();
+        }
+
+/*
+	// Check for fadecandy data
+	if(buffers.isActive()) {
+	    streaming_mode = true;
+
+            if(millis() > nextTime) {
+                for(int i = 0; i <  LED_COUNT; i++) {
+                    dmxSetPixel(i, *(buffers.fbNext->pixel(i)+2),
+                                   *(buffers.fbNext->pixel(i)+1),
+                                   *(buffers.fbNext->pixel(i)));
+                }
+    
+                nextTime += 200;	// Redraw at 30fps
+    
+                // If we've gotten too far ahead of ourselves, reset the counter
+                if(millis() > nextTime) {
+                    nextTime = millis() + animations.getAnimation(animation)->speed;
+                }
+    
+                dmxShow();
+            }
+        }
+*/
+
+        // Check for serial data
+        if(usb_serial_available() > 0) {
+            streaming_mode = true;
+            serialLoop();
+        }
+
         if(userButtons.isPressed()) {
             uint8_t button = userButtons.getPressed();
     
@@ -190,26 +233,6 @@ extern "C" int main()
             }
         }
 
-        // Handle fadecandy status messages
-        buffers.finalizeFrame();
-
-	// Check for fadecandy data
-	if(buffers.isActive()) {
-	    streaming_mode = true;
-           
-            for(int i = 0; i <  LED_COUNT; i++) {
-                dmxSetPixel(i, *(buffers.fbPrev->pixel(i)+2),
-                               *(buffers.fbPrev->pixel(i)+1),
-                               *(buffers.fbPrev->pixel(i)));
-            }
-            dmxShow();
-        }
-
-        // Check for serial data
-        if(usb_serial_available() > 0) {
-            streaming_mode = true;
-            serialLoop();
-        }
     }
 
     // Reboot into DFU bootloader

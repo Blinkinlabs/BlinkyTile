@@ -536,6 +536,11 @@ static void usb_control(uint32_t stat)
 	USB0_CTL = USB_CTL_USBENSOFEN; // clear TXSUSPENDTOKENBUSY bit
 }
 
+void process_fc_buffer() {
+	while(usb_rx_available(FC_OUT_ENDPOINT) && usb_fc_rx_handler()) {
+	}
+}
+
 bool usb_rx_available(uint32_t endpoint)
 {
 	endpoint--;
@@ -874,7 +879,7 @@ void usb_isr(void)
 				//if(endpoint == FC_OUT_ENDPOINT) {
       					// Handle as many FC packets as possible
 					// TODO: Do this asyncronously?
-      					while(usb_rx_available(FC_OUT_ENDPOINT) && usb_fc_rx_handler()) {}
+                                        process_fc_buffer();
 				//}
 #endif
 			}

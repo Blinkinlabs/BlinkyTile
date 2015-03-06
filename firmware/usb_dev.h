@@ -77,6 +77,7 @@ extern void usb_serial_flush_callback(void);
 #endif
 
 #ifdef FC_INTERFACE
+extern void process_fc_buffer();
 int usb_fc_rx_handler();
 #endif
 
