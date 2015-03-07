@@ -33,34 +33,40 @@ uint8_t brightness;
 //static uint8_t dmxBit = 0;
 
 // TCD0 writes DMX channel data to the UART 
-void setupTCD0(uint8_t* source, int minorLoopSize, int majorLoops) {
-  DMA_TCD0_SADDR = source;                                        // Address to read from
-  DMA_TCD0_SOFF = 1;                                              // Bytes to increment source register between writes 
-  DMA_TCD0_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-
-  DMA_TCD0_DADDR = &UART1_D;                                      // Address to write to
-  DMA_TCD0_DOFF = 0;                                              // Bytes to increment destination register between write
-  DMA_TCD0_DLASTSGA = 0;                                          // Address of next TCD (N/A)
-
-  DMA_TCD0_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
-  DMA_TCD0_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD0_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
-  DMA_TCD0_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
-
-  // Timer DMA channel:
-  // Configure DMAMUX to trigger DMA0 from FTM1_CH0
-  DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
-  DMAMUX0_CHCFG0 = DMAMUX_SOURCE_UART1_TX | DMAMUX_ENABLE;
-  DMA_TCD0_CSR = DMA_TCD_CSR_DREQ;
-  // TODO: Interrupt on complete
+void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
+    // Set up the DMA peripheral
+    SIM_SCGC6 |= SIM_SCGC6_DMAMUX;  // Enable clocks
+    SIM_SCGC7 |= SIM_SCGC7_DMA;
+ 
+    DMA_TCD0_SADDR = source;                                        // Address to read from
+    DMA_TCD0_SOFF = 1;                                              // Bytes to increment source register between writes 
+    DMA_TCD0_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
+ 
+    DMA_TCD0_DADDR = &UART1_D;                                      // Address to write to
+    DMA_TCD0_DOFF = 0;                                              // Bytes to increment destination register between write
+    DMA_TCD0_DLASTSGA = 0;                                          // Address of next TCD (N/A)
+ 
+    DMA_TCD0_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
+    DMA_TCD0_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
+    DMA_TCD0_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
+    DMA_TCD0_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
+ 
+    // Timer DMA channel:
+    // Configure DMAMUX to trigger DMA0 from FTM1_CH0
+    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
+    DMAMUX0_CHCFG0 = DMAMUX_SOURCE_UART1_TX | DMAMUX_ENABLE;
+    DMA_TCD0_CSR = DMA_TCD_CSR_DREQ | DMA_TCD_CSR_START;       // Start the transaction
+    DMA_SERQ = DMA_SERQ_SERQ(0);
+    // TODO: Interrupt on complete
 }
 
 void scheduleDMA(uint8_t* source, int length) {
-  DMA_TCD0_SADDR = source;                                        // Address to read from
-  DMA_TCD0_NBYTES_MLNO = 1;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD0_CITER_ELINKNO = length;                            // Number of major loops to complete
-  DMA_TCD0_BITER_ELINKNO = length;                            // Reset value for CITER (must be equal to CITER)
-  DMA_TCD0_CSR |= DMA_TCD_CSR_START;				  // Start the transaction
+    DMA_TCD0_SADDR = source;                                    // Address to read from
+    DMA_TCD0_NBYTES_MLNO = 1;                                   // Number of bytes to transfer in the minor loop
+    DMA_TCD0_CITER_ELINKNO = length;                            // Number of major loops to complete
+    DMA_TCD0_BITER_ELINKNO = length;                            // Reset value for CITER (must be equal to CITER)
+    DMA_TCD0_CSR = DMA_TCD_CSR_DREQ | DMA_TCD_CSR_START;       // Start the transaction
+    DMA_SERQ = DMA_SERQ_SERQ(0);
 }
 
 void setupUart() {
@@ -68,16 +74,22 @@ void setupUart() {
 
     SIM_SCGC4 |= SIM_SCGC4_UART1;	// turn on clock
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(3);	// Configure TX Pin
+
+    UART1_C2 = 0;	// disable transmitter
+
     UART1_BDH = (divisor >> 13) & 0x1F;  // baud rate
     UART1_BDL = (divisor >> 5) & 0xFF;
     UART1_C4 = divisor & 0x1F;
-    UART1_C1 = 0;
-    UART1_TWFIFO = 1;	// Set the watermark to 1 byte
 
-    UART1_C2 = 0;
-    UART1_C2 = UART_C2_TE;
+    UART1_C1 = 0;
     UART1_S2 = 0;
     UART1_C3 = 0;
+    UART1_C5 = (uint8_t)(0x80); // TDMAS
+
+    UART1_PFIFO = UART_PFIFO_TXFE;
+    UART1_TWFIFO = 0;	// Set the watermark to 0 byte
+
+    UART1_C2 = UART_C2_TIE | UART_C2_TE;
 }
 
 void dmxSetup() {
@@ -85,15 +97,12 @@ void dmxSetup() {
 //    dmxBit = digitalPinToBitMask(DATA_PIN);
 //    digitalWrite(DATA_PIN, HIGH);
 
-    // Set up the DMA peripheral
-    SIM_SCGC7 |= SIM_SCGC7_DMA;    // Enable clocks
-    SIM_SCGC6 |= SIM_SCGC6_DMAMUX;
     
     // Set up the UART
     setupUart();
 
     // Configure TX DMA
-    setupTCD0(dataArray, OUTPUT_BYTES, 1);
+    setupDMA(dataArray, OUTPUT_BYTES, 1);
 
     dataArray[0] = 0;    // DMX start frame!
     brightness = 255;
