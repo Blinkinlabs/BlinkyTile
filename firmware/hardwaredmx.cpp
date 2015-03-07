@@ -7,7 +7,7 @@
 
 #define BAUD_RATE                250000	// TODO
 
-#define BIT_LENGTH               2            // This isn't exact, but is much faster!
+#define FRAME_SPACING            4000         // uS between frames
 #define BREAK_LENGTH             88
 #define MAB_LENGTH               8
 
@@ -15,7 +15,7 @@
 
 #define BAUD_RATE                250000
 
-#define BIT_LENGTH               4
+#define FRAME_SPACING            4000         // uS between frames
 #define BREAK_LENGTH             100
 #define MAB_LENGTH               8
 
@@ -26,7 +26,11 @@
 
 #define OUTPUT_BYTES             1 + LED_COUNT*BYTES_PER_PIXEL
 
-uint8_t dataArray[OUTPUT_BYTES];    // Storage for DMX output (0 is the start frame)
+uint8_t dmaBuffer[2][OUTPUT_BYTES];
+uint8_t* frontBuffer;
+uint8_t* backBuffer;
+bool swapBuffers;
+
 uint8_t brightness;
 
 //static volatile uint8_t *dmxPort;
@@ -56,8 +60,10 @@ void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
     DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
     DMAMUX0_CHCFG0 = DMAMUX_SOURCE_UART1_TX | DMAMUX_ENABLE;
     DMA_TCD0_CSR = DMA_TCD_CSR_DREQ | DMA_TCD_CSR_START;       // Start the transaction
-    DMA_SERQ = DMA_SERQ_SERQ(0);
-    // TODO: Interrupt on complete
+
+    // Enable interrupt on major completion for DMX data
+    DMA_TCD0_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
+    NVIC_ENABLE_IRQ(IRQ_DMA_CH0);         // Enable interrupt request
 }
 
 void scheduleDMA(uint8_t* source, int length) {
@@ -65,7 +71,6 @@ void scheduleDMA(uint8_t* source, int length) {
     DMA_TCD0_NBYTES_MLNO = 1;                                   // Number of bytes to transfer in the minor loop
     DMA_TCD0_CITER_ELINKNO = length;                            // Number of major loops to complete
     DMA_TCD0_BITER_ELINKNO = length;                            // Reset value for CITER (must be equal to CITER)
-    DMA_TCD0_CSR = DMA_TCD_CSR_DREQ | DMA_TCD_CSR_START;       // Start the transaction
     DMA_SERQ = DMA_SERQ_SERQ(0);
 }
 
@@ -81,9 +86,9 @@ void setupUart() {
     UART1_BDL = (divisor >> 5) & 0xFF;
     UART1_C4 = divisor & 0x1F;
 
-    UART1_C1 = 0;
+    UART1_C1 = UART_C1_M;
     UART1_S2 = 0;
-    UART1_C3 = 0;
+    UART1_C3 = (uint8_t)(0x40);  // 9th data bit as faux stop bit
     UART1_C5 = (uint8_t)(0x80); // TDMAS
 
     UART1_PFIFO = UART_PFIFO_TXFE;
@@ -92,64 +97,14 @@ void setupUart() {
     UART1_C2 = UART_C2_TIE | UART_C2_TE;
 }
 
-void dmxSetup() {
-//    dmxPort = portOutputRegister(digitalPinToPort(DATA_PIN));
-//    dmxBit = digitalPinToBitMask(DATA_PIN);
-//    digitalWrite(DATA_PIN, HIGH);
-
-    
-    // Set up the UART
-    setupUart();
-
-    // Configure TX DMA
-    setupDMA(dataArray, OUTPUT_BYTES, 1);
-
-    dataArray[0] = 0;    // DMX start frame!
-    brightness = 255;
-}
-
-void dmxSetBrightness(uint8_t newBrightness) {
-    brightness = newBrightness;
-}
-
-void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-    dataArray[pixel*BYTES_PER_PIXEL + 1] = r;
-    dataArray[pixel*BYTES_PER_PIXEL + 2] = g;
-    dataArray[pixel*BYTES_PER_PIXEL + 3] = b;
-}
-
-void dmxSendByte(uint8_t value)
-{
-    UART1_D = value;
-    delayMicroseconds(100); // Should wait for a flag, etc.
-
-/*
-    uint32_t begin, target;
-    uint8_t mask;
-
-    noInterrupts();
-    ARM_DEMCR |= ARM_DEMCR_TRCENA;
-    ARM_DWT_CTRL |= ARM_DWT_CTRL_CYCCNTENA;
-    begin = ARM_DWT_CYCCNT;
-    *dmxPort = 0;
-    target = F_CPU / 250000;
-    while (ARM_DWT_CYCCNT - begin < target) ; // wait, start bit
-    for (mask=1; mask; mask <<= 1) {
-        *dmxPort = (value & mask) ? 1 : 0;
-        target += (F_CPU / 250000);
-        while (ARM_DWT_CYCCNT - begin < target) ; // wait, data bits
-    }
-    *dmxPort = 1;
-    target += (F_CPU / 125000);
-    while (ARM_DWT_CYCCNT - begin < target) ; // wait, 2 stops bits
-    interrupts();
-*/
-}
-
 // Send a DMX frame with new data
-void dmxShow() {
-  
+void dmxTransmit() {
+    // TODO: Use the break hardware here?
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
+
+    // TODO: Do this with a timer instead of hard delay here?
+    digitalWriteFast(DATA_PIN, HIGH);    // Break - 88us
+    delayMicroseconds(FRAME_SPACING);
 
     digitalWriteFast(DATA_PIN, LOW);    // Break - 88us
     delayMicroseconds(BREAK_LENGTH);
@@ -158,16 +113,65 @@ void dmxShow() {
     delayMicroseconds(MAB_LENGTH);
 
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(3);	// Configure TX Pin for UART
- 
-    // Set up a TCD and kick off the DMA engine
-    scheduleDMA(dataArray, OUTPUT_BYTES);
 
-    // For each address
-//    for(int frame = 0; frame < OUTPUT_BYTES; frame++) {    
-//        dmxSendByte(dataArray[frame]*(brightness/255.0));
-//    }
+    delayMicroseconds(4000);
+    delayMicroseconds(4000);
+    delayMicroseconds(4000);
+
+    // Set up a TCD and kick off the DMA engine
+    scheduleDMA(frontBuffer, OUTPUT_BYTES);
+}
+
+void dmxSetup() {
+    // Set up the UART
+    setupUart();
+
+    // Configure TX DMA
+    setupDMA(frontBuffer, OUTPUT_BYTES, 1);
+
+    frontBuffer = dmaBuffer[0];
+    backBuffer = dmaBuffer[1];
+    swapBuffers = false;
+
+    // Clear the display
+    memset(backBuffer, 0, OUTPUT_BYTES);
+    memset(frontBuffer, 0, OUTPUT_BYTES);
+
+    brightness = 255;
+
+    dmxTransmit();
+}
+
+
+// At the end of the DMX frame, start it again
+void dma_ch0_isr(void) {
+    DMA_CINT = DMA_CINT_CINT(0);
+
+    if(swapBuffers) {
+        uint8_t* lastBuffer = frontBuffer;
+        frontBuffer = backBuffer;
+        backBuffer = lastBuffer;
+        swapBuffers = false;
+    }
+  
+    dmxTransmit();
+}
+
+void dmxShow() {
+    swapBuffers = true;
 }
 
 uint8_t* dmxGetPixels() {
-    return &dataArray[1]; // Return first pixel in the array
+    return &backBuffer[1]; // Return first pixel in the array
 }
+
+void dmxSetBrightness(uint8_t newBrightness) {
+    brightness = newBrightness;
+}
+
+void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
+    backBuffer[pixel*BYTES_PER_PIXEL + 1] = r;
+    backBuffer[pixel*BYTES_PER_PIXEL + 2] = g;
+    backBuffer[pixel*BYTES_PER_PIXEL + 3] = b;
+}
+
