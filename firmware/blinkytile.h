@@ -54,9 +54,6 @@
 #define PACKETS_PER_FRAME        9  // 170 / 21
 #define PACKETS_PER_LUT          1  // originally 25
 
-//#define NUM_USB_BUFFERS         104       // Three full frames (3*25), one LUT buffer (25), a little extra (4)
-
-
 
 // Initialize the board hardware (buttons, status led, LED control pins)
 extern void initBoard();

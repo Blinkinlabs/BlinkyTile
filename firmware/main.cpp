@@ -182,37 +182,16 @@ extern "C" int main()
         // Handle fadecandy status messages
         if(buffers.finalizeFrame()) {
 	    streaming_mode = true;
-            for(int i = 0; i <  LED_COUNT; i++) {
-                dmxSetPixel(i, *(buffers.fbNext->pixel(i)+2),
-                               *(buffers.fbNext->pixel(i)+1),
-                               *(buffers.fbNext->pixel(i)));
-            }
-            dmxShow();
-        }
 
-/*
-	// Check for fadecandy data
-	if(buffers.isActive()) {
-	    streaming_mode = true;
-
-            if(millis() > nextTime) {
+            if(!dmxWaiting()) {
                 for(int i = 0; i <  LED_COUNT; i++) {
                     dmxSetPixel(i, *(buffers.fbNext->pixel(i)+2),
                                    *(buffers.fbNext->pixel(i)+1),
                                    *(buffers.fbNext->pixel(i)));
                 }
-    
-                nextTime += 200;	// Redraw at 30fps
-    
-                // If we've gotten too far ahead of ourselves, reset the counter
-                if(millis() > nextTime) {
-                    nextTime = millis() + animations.getAnimation(animation)->speed;
-                }
-    
                 dmxShow();
             }
         }
-*/
 
         // Check for serial data
         if(usb_serial_available() > 0) {

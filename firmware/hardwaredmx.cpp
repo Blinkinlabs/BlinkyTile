@@ -72,6 +72,8 @@ void scheduleDMA(uint8_t* source, int length) {
     DMA_TCD0_CITER_ELINKNO = length;                            // Number of major loops to complete
     DMA_TCD0_BITER_ELINKNO = length;                            // Reset value for CITER (must be equal to CITER)
     DMA_SERQ = DMA_SERQ_SERQ(0);
+
+    PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(3);	// Configure TX Pin for UART
 }
 
 void setupUart() {
@@ -94,7 +96,8 @@ void setupUart() {
     UART1_PFIFO = UART_PFIFO_TXFE;
     UART1_TWFIFO = 0;	// Set the watermark to 0 byte
 
-    UART1_C2 = UART_C2_TIE | UART_C2_TE;
+    //UART1_C2 = UART_C2_TIE | UART_C2_TE;
+    UART1_C2 = UART_C2_TE;
 }
 
 // Send a DMX frame with new data
@@ -112,14 +115,10 @@ void dmxTransmit() {
     digitalWriteFast(DATA_PIN, HIGH);   // MAB - 8 us
     delayMicroseconds(MAB_LENGTH);
 
-    PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(3);	// Configure TX Pin for UART
-
-    delayMicroseconds(4000);
-    delayMicroseconds(4000);
-    delayMicroseconds(4000);
-
     // Set up a TCD and kick off the DMA engine
     scheduleDMA(frontBuffer, OUTPUT_BYTES);
+
+    UART1_C2 |= UART_C2_TIE;
 }
 
 void dmxSetup() {
@@ -137,6 +136,9 @@ void dmxSetup() {
     memset(backBuffer, 0, OUTPUT_BYTES);
     memset(frontBuffer, 0, OUTPUT_BYTES);
 
+    backBuffer[0] = 0x0;
+    frontBuffer[0] = 0x0;
+
     brightness = 255;
 
     dmxTransmit();
@@ -146,6 +148,7 @@ void dmxSetup() {
 // At the end of the DMX frame, start it again
 void dma_ch0_isr(void) {
     DMA_CINT = DMA_CINT_CINT(0);
+    UART1_C2 &= ~UART_C2_TIE;
 
     if(swapBuffers) {
         uint8_t* lastBuffer = frontBuffer;
@@ -155,6 +158,10 @@ void dma_ch0_isr(void) {
     }
   
     dmxTransmit();
+}
+
+bool dmxWaiting() {
+    return swapBuffers;
 }
 
 void dmxShow() {
