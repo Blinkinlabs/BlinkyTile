@@ -31,6 +31,8 @@
 #ifndef _usb_dev_h_
 #define _usb_dev_h_
 
+#include <stdbool.h>
+
 #if F_CPU >= 20000000
 
 // This header is NOT meant to be included when compiling
@@ -48,6 +50,7 @@ extern "C" {
 void usb_init(void);
 void usb_init_serialnumber(void);
 void usb_isr(void);
+bool usb_rx_available(uint32_t endpoint);
 usb_packet_t *usb_rx(uint32_t endpoint);
 usb_packet_t *usb_rx_no_int(uint32_t endpoint);
 uint32_t usb_tx_byte_count(uint32_t endpoint);
@@ -74,6 +77,7 @@ extern void usb_serial_flush_callback(void);
 #endif
 
 #ifdef FC_INTERFACE
+extern void process_fc_buffer();
 int usb_fc_rx_handler();
 #endif
 

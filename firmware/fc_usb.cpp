@@ -24,6 +24,7 @@
 #include "fc_usb.h"
 #include "blinkytile.h"
 #include "usb_desc.h"
+#include "usb_dev.h"
 #include <algorithm>
 
 // USB protocol definitions
@@ -38,8 +39,10 @@
 
 static usb_packet_t *rx_packet=NULL;
 
-void fcBuffers::finalizeFrame()
+bool fcBuffers::finalizeFrame()
 {
+    bool newFrame = false;
+
     // Called in main loop context.
     // Finalize any frames received during the course of this loop iteration,
     // and update the status LED.
@@ -54,27 +57,27 @@ void fcBuffers::finalizeFrame()
     handledAnyPacketsThisFrame = false;
 
     if (pendingFinalizeFrame) {
-//        finalizeFramebuffer();
+        finalizeFramebuffer();
         pendingFinalizeFrame = false;
+        active = true;
+        newFrame = true;
     }
-
+/*
     if (pendingFinalizeLUT) {
-//        finalizeLUT();
+        finalizeLUT();
         pendingFinalizeLUT = false;
     }
+*/
 
     // Let the USB driver know we may be able to process buffers that were previously deferred
-    // TODO: integrate me
-    //usb_rx_resume();
+    //process_fc_buffer();
+
+    return newFrame;
 }
 
 
 int fcBuffers::handleUSB()
 {
-    // TODO: Re-do this by making a separate buffer chain for unused FC packets
-    // right now, can't handle any packets until the final bit is flipped,
-    // since we don't clear the current packet.
-
     if (!rx_packet) {
         if (!usb_configuration) return -1;
 	rx_packet = usb_rx_no_int(FC_OUT_ENDPOINT);
@@ -83,11 +86,10 @@ int fcBuffers::handleUSB()
 
     unsigned control = rx_packet->buf[0];
     unsigned type = control & TYPE_BITS;
-//    unsigned final = control & FINAL_BIT;
-//    unsigned index = control & INDEX_BITS;
+    unsigned final = control & FINAL_BIT;
+    unsigned index = control & INDEX_BITS;
 
     switch (type) {
-/*
         case TYPE_FRAMEBUFFER:
 
             // Framebuffer updates are synchronized; if we're waiting to finalize fbNew,
@@ -102,7 +104,7 @@ int fcBuffers::handleUSB()
                 pendingFinalizeFrame = true;
             }
             break;
-
+/*
         case TYPE_LUT:
             // LUT accesses are not synchronized
             lutNew.store(index, rx_packet);
@@ -139,8 +141,11 @@ void fcBuffers::finalizeFramebuffer()
     fbPrev = fbNext;
     fbNext = fbNew;
     fbNew = recycle;
-// TODO: reintegrate me
-//    perf_receivedKeyframeCounter++;
+}
+
+bool fcBuffers::isActive()
+{
+    return active;
 }
 
 void fcBuffers::finalizeLUT()

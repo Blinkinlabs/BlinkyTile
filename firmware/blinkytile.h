@@ -24,7 +24,8 @@
 #ifndef BLINKYTILE_H
 #define BLINKYTILE_H
 
-#define LED_COUNT           130  // Number of LEDs we are controlling
+#define LED_COUNT           170  // Number of LEDs we are controlling
+//#define LED_COUNT           40 // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL     3
 
 #define BUTTON_COUNT        2   // Two input buttons
@@ -44,23 +45,14 @@
 
 
 // Fadecandy interface defines
-
-#define LEDS_PER_STRIP          64
-#define LED_STRIPS              1
-#define LEDS_TOTAL              (LEDS_PER_STRIP * LED_STRIPS)
-#define CHANNELS_TOTAL          (LEDS_TOTAL * 3)
-
 #define LUT_CH_SIZE             257
 #define LUT_TOTAL_SIZE          (LUT_CH_SIZE * 3)
 
 // USB packet layout
-#define PIXELS_PER_PACKET       21
+#define PIXELS_PER_PACKET       21  // 63 / 3
 #define LUTENTRIES_PER_PACKET   31
-#define PACKETS_PER_FRAME        4  // originally 25
-#define PACKETS_PER_LUT          4  // originally 25
-
-//#define NUM_USB_BUFFERS         104       // Three full frames (3*25), one LUT buffer (25), a little extra (4)
-
+#define PACKETS_PER_FRAME        9  // 170 / 21
+#define PACKETS_PER_LUT          1  // originally 25
 
 
 // Initialize the board hardware (buttons, status led, LED control pins)

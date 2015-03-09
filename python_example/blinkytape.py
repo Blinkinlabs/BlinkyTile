@@ -380,12 +380,13 @@ if __name__ == "__main__":
 
     bt = BlinkyTape(port)
 
-    bt.programAddress(2)
-    time.sleep(2)
+
+    LED_COUNT = 40
 
     while True:
-        for pixel in range(0, 12):
-            for pos in range(0, 12):
+        for pixel in range(0, LED_COUNT):
+            print pixel
+            for pos in range(0, LED_COUNT):
                 if pos == pixel:
                     bt.sendPixel(0,0,255)
                 else:

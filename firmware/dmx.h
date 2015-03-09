@@ -48,4 +48,6 @@ void dmxShow();
 // @return Pointer to the pixel display buffer, a uint8_t array of size LED_COUNT
 uint8_t* dmxGetPixels();
 
+bool dmxWaiting();
+
 #endif
