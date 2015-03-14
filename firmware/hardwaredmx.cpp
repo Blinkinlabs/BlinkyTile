@@ -24,17 +24,16 @@
 #define BAUD2DIV(baud)  (((F_CPU * 2) + ((baud) >> 1)) / (baud))
 
 
+#define INPUT_BYTES              LED_COUNT*BYTES_PER_PIXEL
 #define OUTPUT_BYTES             1 + LED_COUNT*BYTES_PER_PIXEL
 
-uint8_t dmaBuffer[2][OUTPUT_BYTES];
+uint8_t drawBuffer[INPUT_BYTES];        // Buffer for the user to draw into
+uint8_t dmaBuffer[2][OUTPUT_BYTES];     // Double-buffered output for the DMA engine
 uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
 uint8_t brightness;
-
-//static volatile uint8_t *dmxPort;
-//static uint8_t dmxBit = 0;
 
 // TCD0 writes DMX channel data to the UART 
 void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
@@ -133,7 +132,7 @@ void dmxSetup() {
     swapBuffers = false;
 
     // Clear the display
-    memset(backBuffer, 0, OUTPUT_BYTES);
+    memset(drawBuffer, 0, INPUT_BYTES);
     memset(frontBuffer, 0, OUTPUT_BYTES);
 
     backBuffer[0] = 0x0;
@@ -165,11 +164,18 @@ bool dmxWaiting() {
 }
 
 void dmxShow() {
+    // If a draw is already pending, skip the new frame
+    if(swapBuffers == true) {
+        return;
+    }
+
+    // For DMX, just copy the channel data with an offset of 1
+    memcpy(backBuffer + 1, drawBuffer, INPUT_BYTES);
     swapBuffers = true;
 }
 
 uint8_t* dmxGetPixels() {
-    return &backBuffer[1]; // Return first pixel in the array
+    return drawBuffer;
 }
 
 void dmxSetBrightness(uint8_t newBrightness) {
@@ -177,8 +183,8 @@ void dmxSetBrightness(uint8_t newBrightness) {
 }
 
 void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-    backBuffer[pixel*BYTES_PER_PIXEL + 1] = r;
-    backBuffer[pixel*BYTES_PER_PIXEL + 2] = g;
-    backBuffer[pixel*BYTES_PER_PIXEL + 3] = b;
+    drawBuffer[pixel*BYTES_PER_PIXEL + 0] = r;
+    drawBuffer[pixel*BYTES_PER_PIXEL + 1] = g;
+    drawBuffer[pixel*BYTES_PER_PIXEL + 2] = b;
 }
 
