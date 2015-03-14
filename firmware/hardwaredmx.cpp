@@ -169,8 +169,10 @@ void dmxShow() {
         return;
     }
 
-    // For DMX, just copy the channel data with an offset of 1
-    memcpy(backBuffer + 1, drawBuffer, INPUT_BYTES);
+    // Copy the data, but scale it based on the system brightness
+    for(int i = 0; i < INPUT_BYTES; i++) {
+        backBuffer[i + 1] = (drawBuffer[i]*brightness)/255;
+    }
     swapBuffers = true;
 }
 
