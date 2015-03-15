@@ -2,6 +2,7 @@
 #include "pins_arduino.h"
 #include "dmx.h"
 #include "blinkytile.h"
+#include "brightness_table.h"
 
 #ifdef FAST_DMX
 
@@ -171,7 +172,7 @@ void dmxShow() {
 
     // Copy the data, but scale it based on the system brightness
     for(int i = 0; i < INPUT_BYTES; i++) {
-        backBuffer[i + 1] = (drawBuffer[i]*brightness)/255;
+        backBuffer[i + 1] = brightnessTable[(drawBuffer[i]*brightness)/255];
     }
     swapBuffers = true;
 }

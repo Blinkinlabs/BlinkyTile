@@ -129,7 +129,7 @@ extern "C" int main()
         userButtons.buttonTask();
 
         #define BRIGHTNESS_COUNT 5
-        static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
+        static int brightnessLevels[BRIGHTNESS_COUNT] = {30,60,100,150,255};
         static int brightnessStep = BRIGHTNESS_COUNT-1;
 
         static bool streaming_mode;
