@@ -4,9 +4,11 @@
 #include "blinkytile.h"
 #include "brightness_table.h"
 
+#define FAST_DMX
+
 #ifdef FAST_DMX
 
-#define BAUD_RATE                250000	// TODO
+#define BAUD_RATE                500000
 
 #define FRAME_SPACING            4000         // uS between frames
 #define BREAK_LENGTH             88

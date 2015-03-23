@@ -6,14 +6,7 @@ The ARM toolchain 'arm-none-eabi-gcc' is used to compile this project. Specifica
 
 https://launchpad.net/gcc-arm-embedded/4.8/4.8-2014-q2-update
 
-note: https://launchpad.net/gcc-arm-embedded/+milestone/4.8-2014-q3-update might work as well.
-
-## Installing tools for OS X using brew
-for OS X the PX4 brew formula work (this also installs the dfu-utils):
-
-    brew tap PX4/homebrew-px4  
-    brew update  
-    brew install gcc-arm-none-eabi
+You'll also need dfu-util. Homebrew is possibly the easiest way to get this.
 
 You'll also need GNU Make, which probably requires Xcode on OS/X, or similar developer tools on Linux. The version is probably not as important.
 
