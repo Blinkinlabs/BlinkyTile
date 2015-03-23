@@ -64,7 +64,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 150
+ledCount = 42
 
 
 frameCount = 12
@@ -121,7 +121,7 @@ while True:
     import subprocess
 
     time.sleep(1)
-    subprocess.call(["dfu-util", "-D", "/Users/matthewmets/Blinkinlabs-Projects/BlinkyTile/bin/lightbuddy-firmware-v100.dfu"])
+    subprocess.call(["dfu-util", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
     
     time.sleep(1)
 
@@ -129,7 +129,7 @@ while True:
     bt = blinkytape.BlinkyTape()
 
     # first, erase the flash memory
-    bt.flashErase()
+#    bt.flashErase()
     
     #for sector in range(0, 100):
     #    bt.deleteFile(sector)
