@@ -29,7 +29,7 @@
 #define ANIMATION_HEADER_LENGTH 16
 
 // Max. number of animations that can be read from the flash (arbitrary)
-#define MAX_ANIMATIONS_COUNT 100
+#define MAX_ANIMATIONS_COUNT 20
 
 class Animation {
   public:
