@@ -128,9 +128,9 @@ void dmxSetup() {
     DMA_SERQ = DMA_SERQ_SERQ(1);        // Configure DMA2 to enable the request signal
     DMA_SERQ = DMA_SERQ_SERQ(2);        // Configure DMA2 to enable the request signal
  
-    // Enable interrupt on major completion for DMA channel 2
-    DMA_TCD2_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
-    NVIC_ENABLE_IRQ(IRQ_DMA_CH2);         // Enable interrupt request
+    // Enable interrupt on major completion for DMA channel 1
+    DMA_TCD1_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
+    NVIC_ENABLE_IRQ(IRQ_DMA_CH1);         // Enable interrupt request
  
     // DMAMUX
     SIM_SCGC6 |= SIM_SCGC6_DMAMUX; // Enable DMAMUX clock
@@ -170,22 +170,15 @@ void dmxSetup() {
 
 
 // At the end of the DMX frame, start it again
-void dma_ch2_isr(void) {
-    DMA_CINT = DMA_CINT_CINT(2);
+void dma_ch1_isr(void) {
+    DMA_CINT = DMA_CINT_CINT(1);
 
+    // Wait until DMA2 is triggered, then stop the counter
+    while(FTM0_CNT < 0x28) {}
 
     // TODO: Turning off the timer this late into the cycle causes a small glitch :-/
     FTM0_SC = 0;                   // Turn off the clock so we can update CNTIN and MODULO?
 
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-    GPIOC_PCOR = 0xFF;
-
-    
     if(swapBuffers) {
         uint8_t* lastBuffer = frontBuffer;
         frontBuffer = backBuffer;
