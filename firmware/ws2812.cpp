@@ -189,7 +189,18 @@ void ws2812Setup() {
 
 
 void ws2812Stop() {
-    // TODO: stop!
+    FTM0_SC = 0;                        // Disable FTM0 clock
+
+    DMA_TCD1_CSR = 0;                   // Disable interrupt on major complete
+    NVIC_DISABLE_IRQ(IRQ_DMA_CH1);      // Disable interrupt request
+
+    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
+    DMAMUX0_CHCFG1 = DMAMUX_DISABLE;
+    DMAMUX0_CHCFG2 = DMAMUX_DISABLE;
+
+    SIM_SCGC6 &= ~SIM_SCGC6_FTM0;       // Disable FTM0 clock
+    SIM_SCGC6 &= ~SIM_SCGC6_DMAMUX;     // turn off DMA MUX clock
+    SIM_SCGC7 &= ~SIM_SCGC7_DMA;        // turn off DMA clock
 }
 
 

@@ -13,8 +13,10 @@ uint8_t drawBuffer[DRAW_BUFFER_SIZE];
 // System brightness scaler
 uint8_t brightness;
 
-CDmaLed::CDmaLed() {
-    outputType = DMX;
+CDmaLed::CDmaLed() :
+    outputType(DMX),
+    running(false) {
+    brightness = 255;
 }
 
 void CDmaLed::setBrightness(uint8_t scale) {
@@ -23,6 +25,16 @@ void CDmaLed::setBrightness(uint8_t scale) {
 
 uint8_t CDmaLed::getBrightness() {
     return brightness;
+}
+
+// Untested
+void CDmaLed::clearData() {
+    memset(drawBuffer, 0, DRAW_BUFFER_SIZE);
+
+}
+
+void CDmaLed::delay(unsigned long ms) {
+    delay(ms);
 }
 
 void CDmaLed::show() {
@@ -45,20 +57,19 @@ void CDmaLed::setPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
 
 
 void CDmaLed::setOutputType(output_type_t type) {
+    if(running) {
 
-    // TODO: Move these to a setup() function
-    brightness = 255;
-    memset(drawBuffer, 0, DRAW_BUFFER_SIZE);
-
-    switch(outputType) {
-        case DMX:
-            dmxStop();
-            break;
-        case WS2812:
-            ws2812Stop();
-            break;
+        switch(outputType) {
+            case DMX:
+                dmxStop();
+                break;
+            case WS2812:
+                ws2812Stop();
+                break;
+        }
     }
 
+    running = true;
     outputType = type;
     switch(outputType) {
         case DMX:

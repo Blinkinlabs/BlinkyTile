@@ -209,8 +209,16 @@ extern "C" int main()
                 frame = 0;
             }
             else if(button == BUTTON_B) {
-                brightnessStep = (brightnessStep + 1) % BRIGHTNESS_COUNT;
-                DmaLed.setBrightness(brightnessLevels[brightnessStep]);
+                
+                if(DmaLed.getOutputType() == CDmaLed::DMX) {
+                    DmaLed.setOutputType(CDmaLed::WS2812);
+                }
+                else {
+                    DmaLed.setOutputType(CDmaLed::DMX);
+                }
+
+//                brightnessStep = (brightnessStep + 1) % BRIGHTNESS_COUNT;
+//                DmaLed.setBrightness(brightnessLevels[brightnessStep]);
             }
         }
 

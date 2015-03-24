@@ -19,6 +19,7 @@ public:
     void setPixel(int pixel, uint8_t r, uint8_t g, uint8_t b);
 
     void setOutputType(output_type_t type);
+    output_type_t getOutputType() {return outputType;}
 
     uint8_t* getPixels();
 
@@ -39,13 +40,17 @@ public:
 
 /*
     void clear(boolean writeData = false);
+*/
     void clearData();
+/*
 
     void showColor(const struct CRGB & color, uint8_t scale);
     void showColor(const struct CRGB & color) { showColor(color, m_Scale); }
+*/
 
     void delay(unsigned long ms);
 
+/*
     void setTemperature(const struct CRGB & temp);
     void setCorrection(const struct CRGB & correction);
     void setDither(uint8_t ditherMode = BINARY_DITHER);
@@ -74,6 +79,7 @@ public:
 private:
     output_type_t outputType;
 
+    bool running;   // True if the LED engine is running
 };
 
 // Size of the input buffer

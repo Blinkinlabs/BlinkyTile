@@ -165,7 +165,17 @@ void dmxSetup() {
 
 
 void dmxStop() {
-    // TODO: Stop!
+    UART1_C2 = 0;                       // Disable UART
+
+    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;    // Disable DMA
+
+    // Enable interrupt on major completion for DMX data
+    DMA_TCD0_CSR = 0;                   // Disable DMA0 interrupt generation
+    NVIC_DISABLE_IRQ(IRQ_DMA_CH0);      // Disable DMA0 interrupt request
+
+    SIM_SCGC4 &= ~SIM_SCGC4_UART1;	// turn off UART clock
+    SIM_SCGC6 &= ~SIM_SCGC6_DMAMUX;     // turn off DMA MUX clock
+    SIM_SCGC7 &= ~SIM_SCGC7_DMA;        // turn off DMA clock
 }
 
 bool dmxWaiting() {
