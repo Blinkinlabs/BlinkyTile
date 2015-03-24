@@ -6,7 +6,7 @@
 
 class CDmaLed {
 public:
-    enum output_type_t {DMX, WS2812};
+    enum output_type_t {DMX, WS2812, LPD8806};
 
     CDmaLed();
 
@@ -82,13 +82,21 @@ private:
     bool running;   // True if the LED engine is running
 };
 
+class DmaLedController {
+public:
+    virtual void start();       // Initialize, set up the controller
+    virtual void stop();        // Stop the controller
+    virtual void show();        // Tell the controller to flip the display
+    virtual bool waiting();     // True if the controller has a display flip pending
+};
+
 // Size of the input buffer
 // TODO: Convert this to a FastLED style array?
 #define DRAW_BUFFER_SIZE LED_COUNT*BYTES_PER_PIXEL
 
 // Size of the output buffer, implementation dependent.
 // Needs to be as large as the largest implementation
-#define DMA_BUFFER_SIZE LED_COUNT*BYTES_PER_PIXEL*8*2
+#define DMA_BUFFER_SIZE (LED_COUNT*BYTES_PER_PIXEL+3)*8*2
 
 extern uint8_t dmaBuffer[DMA_BUFFER_SIZE];
 extern uint8_t drawBuffer[DRAW_BUFFER_SIZE];        // Buffer for the user to draw into

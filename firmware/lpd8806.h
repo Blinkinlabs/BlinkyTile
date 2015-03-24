@@ -1,7 +1,7 @@
 /*
- * Hardware-based WS2812 LED engine
+ * Hardware-based LPD8806 LED engine
  *
- * Outputs WS2812 signal to a single channel using DMA
+ * Outputs LPD8806 signal to a single channel using DMA
  * 
  * Copyright (c) 2015 Matt Mets
  * 
@@ -23,10 +23,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef WS2812_H
-#define WS2812_H
+#ifndef LPD8806_H
+#define LPD8806_H
 
-class WS2812Controller : public DmaLedController {
+class LPD8806Controller : public DmaLedController {
 public:
     void start();
     void stop();
@@ -34,6 +34,6 @@ public:
     bool waiting();
 };
 
-extern WS2812Controller ws2812;
+extern LPD8806Controller lpd8806;
 
 #endif

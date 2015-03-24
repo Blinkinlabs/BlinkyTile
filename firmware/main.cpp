@@ -119,7 +119,7 @@ extern "C" int main()
 
     flash.begin(FlashClass::autoDetect);
 
-    DmaLed.setOutputType(CDmaLed::WS2812);
+    DmaLed.setOutputType(CDmaLed::LPD8806);
 
     reloadAnimations = true;
 
@@ -132,7 +132,8 @@ extern "C" int main()
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
-        static int brightnessStep = BRIGHTNESS_COUNT-1;
+        //static int brightnessStep = BRIGHTNESS_COUNT-1;
+        static int brightnessStep = 3;
 
         static bool streaming_mode;
 
@@ -212,6 +213,9 @@ extern "C" int main()
                 
                 if(DmaLed.getOutputType() == CDmaLed::DMX) {
                     DmaLed.setOutputType(CDmaLed::WS2812);
+                }
+                else if(DmaLed.getOutputType() == CDmaLed::WS2812) {
+                    DmaLed.setOutputType(CDmaLed::LPD8806);
                 }
                 else {
                     DmaLed.setOutputType(CDmaLed::DMX);

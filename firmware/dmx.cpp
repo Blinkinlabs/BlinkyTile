@@ -32,12 +32,15 @@
 #error DMA Buffer too small, cannot use DMX output.
 #endif
 
+DmxController dmx;
+
 namespace DMX {
 
 uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
+#define DATA_PIN_OFFSET 4
 
 // TCD0 writes DMX channel data to the UART 
 void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
@@ -84,6 +87,7 @@ void setupUart() {
 
     SIM_SCGC4 |= SIM_SCGC4_UART1;	// turn on clock
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(3);	// Configure TX Pin
+    GPIOC_PDDR |= _BV(DATA_PIN_OFFSET);
 
     UART1_C2 = 0;	// disable transmitter
 
@@ -110,6 +114,7 @@ void dmxTransmit() {
 
     // TODO: Do this with a timer instead of hard delay here?
     digitalWriteFast(DATA_PIN, HIGH);    // Break - 88us
+    
     delayMicroseconds(FRAME_SPACING);
 
     digitalWriteFast(DATA_PIN, LOW);    // Break - 88us
@@ -143,7 +148,7 @@ void dma_ch0_isr(void) {
     DMX::dmxTransmit();
 }
 
-void dmxSetup() {
+void DmxController::start() {
 
     DMX::frontBuffer = dmaBuffer;
     DMX::backBuffer =  dmaBuffer + OUTPUT_BYTES;
@@ -164,7 +169,7 @@ void dmxSetup() {
 }
 
 
-void dmxStop() {
+void DmxController::stop() {
     UART1_C2 = 0;                       // Disable UART
 
     DMAMUX0_CHCFG0 = DMAMUX_DISABLE;    // Disable DMA
@@ -178,11 +183,7 @@ void dmxStop() {
     SIM_SCGC7 &= ~SIM_SCGC7_DMA;        // turn off DMA clock
 }
 
-bool dmxWaiting() {
-    return DMX::swapBuffers;
-}
-
-void dmxShow() {
+void DmxController::show() {
     // If a draw is already pending, skip the new frame
     if(DMX::swapBuffers == true) {
         return;
@@ -195,3 +196,6 @@ void dmxShow() {
     DMX::swapBuffers = true;
 }
 
+bool DmxController::waiting() {
+    return DMX::swapBuffers;
+}

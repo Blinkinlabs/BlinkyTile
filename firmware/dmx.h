@@ -26,15 +26,14 @@
 #ifndef DMX_H
 #define DMX_H
 
-// Initialize the LED engine
-void dmxSetup();
+class DmxController : public DmaLedController {
+public:
+    void start();
+    void stop();
+    void show();
+    bool waiting();
+};
 
-// Stop the LED engine
-void dmxStop();
-
-// Emit the DMX signal
-void dmxShow();
-
-bool dmxWaiting();
+extern DmxController dmx;
 
 #endif

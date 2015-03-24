@@ -3,6 +3,7 @@
 
 #include <dmx.h>
 #include <ws2812.h>
+#include <lpd8806.h>
 
 // Big LED buffer that can be used by the different DMA engines
 uint8_t dmaBuffer[DMA_BUFFER_SIZE];
@@ -12,6 +13,7 @@ uint8_t drawBuffer[DRAW_BUFFER_SIZE];
 
 // System brightness scaler
 uint8_t brightness;
+
 
 CDmaLed::CDmaLed() :
     outputType(DMX),
@@ -61,10 +63,13 @@ void CDmaLed::setOutputType(output_type_t type) {
 
         switch(outputType) {
             case DMX:
-                dmxStop();
+                dmx.stop();
                 break;
             case WS2812:
-                ws2812Stop();
+                ws2812.stop();
+                break;
+            case LPD8806:
+                lpd8806.stop();
                 break;
         }
     }
@@ -73,10 +78,13 @@ void CDmaLed::setOutputType(output_type_t type) {
     outputType = type;
     switch(outputType) {
         case DMX:
-            dmxSetup();
+            dmx.start();
             break;
         case WS2812:
-            ws2812Setup();
+            ws2812.start();
+            break;
+        case LPD8806:
+            lpd8806.start();
             break;
     }
 }
@@ -85,10 +93,13 @@ void CDmaLed::setOutputType(output_type_t type) {
 void CDmaLed::show(uint8_t scale) {
     switch(outputType) {
         case DMX:
-            dmxShow();
+            dmx.show();
             break;
         case WS2812:
-            ws2812Show();
+            ws2812.show();
+            break;
+        case LPD8806:
+            lpd8806.show();
             break;
     }
 }

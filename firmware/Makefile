@@ -43,7 +43,8 @@ CPP_FILES = \
 	blinkytile.cpp \
 	dmaLed.cpp \
 	ws2812.cpp \
-	hardwaredmx.cpp \
+	dmx.cpp \
+	lpd8806.cpp \
 	addressprogrammer.cpp \
 	patterns.cpp \
 	serialloop.cpp \
