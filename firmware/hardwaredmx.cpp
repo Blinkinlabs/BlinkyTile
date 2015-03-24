@@ -1,5 +1,6 @@
 #include "WProgram.h"
 #include "pins_arduino.h"
+#include "dmaLed.h"
 #include "dmx.h"
 #include "blinkytile.h"
 
@@ -24,16 +25,19 @@
 #define BAUD2DIV(baud)  (((F_CPU * 2) + ((baud) >> 1)) / (baud))
 
 
-#define INPUT_BYTES              LED_COUNT*BYTES_PER_PIXEL
 #define OUTPUT_BYTES             1 + LED_COUNT*BYTES_PER_PIXEL
 
-uint8_t drawBuffer[INPUT_BYTES];        // Buffer for the user to draw into
-uint8_t dmaBuffer[2][OUTPUT_BYTES];     // Double-buffered output for the DMA engine
+// Check that the output buffer size is sufficient
+#if DMA_BUFFER_SIZE < OUTPUT_BYTES*2
+#error DMA Buffer too small, cannot use DMX output.
+#endif
+
+namespace DMX {
+
 uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
-uint8_t brightness;
 
 // TCD0 writes DMX channel data to the UART 
 void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
@@ -120,28 +124,8 @@ void dmxTransmit() {
     UART1_C2 |= UART_C2_TIE;
 }
 
-void dmxSetup() {
-    // Set up the UART
-    setupUart();
 
-    // Configure TX DMA
-    setupDMA(frontBuffer, OUTPUT_BYTES, 1);
-
-    frontBuffer = dmaBuffer[0];
-    backBuffer = dmaBuffer[1];
-    swapBuffers = false;
-
-    // Clear the display
-    memset(drawBuffer, 0, INPUT_BYTES);
-    memset(frontBuffer, 0, OUTPUT_BYTES);
-
-    backBuffer[0] = 0x0;
-    frontBuffer[0] = 0x0;
-
-    brightness = 255;
-
-    dmxTransmit();
-}
+}; // namespace DMX
 
 
 // At the end of the DMX frame, start it again
@@ -149,44 +133,55 @@ void dma_ch0_isr(void) {
     DMA_CINT = DMA_CINT_CINT(0);
     UART1_C2 &= ~UART_C2_TIE;
 
-    if(swapBuffers) {
-        uint8_t* lastBuffer = frontBuffer;
-        frontBuffer = backBuffer;
-        backBuffer = lastBuffer;
-        swapBuffers = false;
+    if(DMX::swapBuffers) {
+        uint8_t* lastBuffer = DMX::frontBuffer;
+        DMX::frontBuffer = DMX::backBuffer;
+        DMX::backBuffer = lastBuffer;
+        DMX::swapBuffers = false;
     }
   
-    dmxTransmit();
+    DMX::dmxTransmit();
+}
+
+void dmxSetup() {
+
+    DMX::frontBuffer = dmaBuffer;
+    DMX::backBuffer =  dmaBuffer + OUTPUT_BYTES;
+    DMX::swapBuffers = false;
+
+    // Set up the UART
+    DMX::setupUart();
+    // Configure TX DMA
+    DMX::setupDMA(DMX::frontBuffer, OUTPUT_BYTES, 1);
+
+    // Clear the display
+    memset(DMX::frontBuffer, 0, OUTPUT_BYTES);
+
+    DMX::backBuffer[0] = 0x0;
+    DMX::frontBuffer[0] = 0x0;
+
+    DMX::dmxTransmit();
+}
+
+
+void dmxStop() {
+    // TODO: Stop!
 }
 
 bool dmxWaiting() {
-    return swapBuffers;
+    return DMX::swapBuffers;
 }
 
 void dmxShow() {
     // If a draw is already pending, skip the new frame
-    if(swapBuffers == true) {
+    if(DMX::swapBuffers == true) {
         return;
     }
 
     // Copy the data, but scale it based on the system brightness
-    for(int i = 0; i < INPUT_BYTES; i++) {
-        backBuffer[i + 1] = (drawBuffer[i]*brightness)/255;
+    for(int i = 0; i < DRAW_BUFFER_SIZE; i++) {
+        DMX::backBuffer[i + 1] = (drawBuffer[i]*brightness)/255;
     }
-    swapBuffers = true;
-}
-
-uint8_t* dmxGetPixels() {
-    return drawBuffer;
-}
-
-void dmxSetBrightness(uint8_t newBrightness) {
-    brightness = newBrightness;
-}
-
-void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-    drawBuffer[pixel*BYTES_PER_PIXEL + 0] = r;
-    drawBuffer[pixel*BYTES_PER_PIXEL + 1] = g;
-    drawBuffer[pixel*BYTES_PER_PIXEL + 2] = b;
+    DMX::swapBuffers = true;
 }
 

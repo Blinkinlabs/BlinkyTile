@@ -41,14 +41,15 @@ CPP_FILES = \
 	nofatstorage.cpp \
 	spi4teensy3.cpp \
 	blinkytile.cpp \
+	dmaLed.cpp \
 	ws2812.cpp \
+	hardwaredmx.cpp \
 	addressprogrammer.cpp \
 	patterns.cpp \
 	serialloop.cpp \
 	buttons.cpp \
         animation.cpp \
 	fc_usb.cpp
-	#hardwaredmx.cpp \
 
 # Headers
 INCLUDES = -I.

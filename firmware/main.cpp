@@ -36,7 +36,7 @@
 #include "animation.h"
 #include "jedecflash.h"
 #include "nofatstorage.h"
-#include "dmx.h"
+#include "dmaLed.h"
 #include "addressprogrammer.h"
 #include "patterns.h"
 #include "serialloop.h"
@@ -57,6 +57,8 @@ Animations animations;
 
 // Button inputs
 Buttons userButtons;
+
+CDmaLed DmaLed;
 
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
@@ -111,13 +113,13 @@ extern "C" int main()
 
     userButtons.setup();
 
-    dmxSetup();
-
     enableOutputPower();
 
     serialReset();
 
     flash.begin(FlashClass::autoDetect);
+
+    DmaLed.setOutputType(CDmaLed::WS2812);
 
     reloadAnimations = true;
 
@@ -138,7 +140,7 @@ extern "C" int main()
         static int frame;              // current frame to display
         static uint32_t nextTime;           // Time to display next frame
 
-        dmxSetBrightness(brightnessLevels[brightnessStep]);
+        DmaLed.setBrightness(brightnessLevels[brightnessStep]);
 
         if(reloadAnimations) {
             reloadAnimations = false;
@@ -155,13 +157,13 @@ extern "C" int main()
             // If the flash wasn't initialized, show a default flashing pattern
             if(animations.getCount() == 0) {
                 count_up_loop();
-                dmxShow();
+                DmaLed.show();
             }
             else {
 
                 // Flash-based
                 if(millis() > nextTime) {
-                    animations.getAnimation(animation)->getFrame(frame, dmxGetPixels());
+                    animations.getAnimation(animation)->getFrame(frame, DmaLed.getPixels());
                     frame++;
                     if(frame >= animations.getAnimation(animation)->frameCount) {
                         frame = 0;
@@ -174,7 +176,7 @@ extern "C" int main()
                         nextTime = millis() + animations.getAnimation(animation)->speed;
                     }
     
-                    dmxShow();
+                    DmaLed.show();
                 }
             }
         }
@@ -183,13 +185,13 @@ extern "C" int main()
         if(buffers.finalizeFrame()) {
 	    streaming_mode = true;
 
-            if(!dmxWaiting()) {
+            if(!DmaLed.drawWaiting()) {
                 for(int i = 0; i <  LED_COUNT; i++) {
-                    dmxSetPixel(i, *(buffers.fbNext->pixel(i)+2),
-                                   *(buffers.fbNext->pixel(i)+1),
-                                   *(buffers.fbNext->pixel(i)));
+                    DmaLed.setPixel(i, *(buffers.fbNext->pixel(i)+2),
+                                       *(buffers.fbNext->pixel(i)+1),
+                                       *(buffers.fbNext->pixel(i)));
                 }
-                dmxShow();
+                DmaLed.show();
             }
         }
 
@@ -208,7 +210,7 @@ extern "C" int main()
             }
             else if(button == BUTTON_B) {
                 brightnessStep = (brightnessStep + 1) % BRIGHTNESS_COUNT;
-                dmxSetBrightness(brightnessLevels[brightnessStep]);
+                DmaLed.setBrightness(brightnessLevels[brightnessStep]);
             }
         }
 

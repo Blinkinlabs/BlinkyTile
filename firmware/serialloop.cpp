@@ -2,7 +2,7 @@
 #include "blinkytile.h"
 #include "serialloop.h"
 #include "usb_serial.h"
-#include "dmx.h"
+#include "dmaLed.h"
 #include "addressprogrammer.h"
 #include "nofatstorage.h"
 #include "jedecflash.h"
@@ -76,7 +76,8 @@ void dataLoop() {
 
             // Prevent overflow by ignoring any pixel data beyond LED_COUNT
             if(pixelIndex < LED_COUNT) {
-                dmxSetPixel(pixelIndex, buffer[2], buffer[1], buffer[0]);
+// TODO: Wire me in
+//                DmaLed.setPixel(pixelIndex, buffer[2], buffer[1], buffer[0]);
                 pixelIndex++;
             }
         }
@@ -92,7 +93,8 @@ void dataLoop() {
 
         // If this is the first escape character, refresh the output
         if(escapeRunCount == 1) {
-            dmxShow();
+// TODO: Wire me in
+//            DmaLed.show();
         }
         
         if(escapeRunCount > 8) {

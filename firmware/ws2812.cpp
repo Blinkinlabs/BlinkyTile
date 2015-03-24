@@ -1,26 +1,25 @@
 #include "WProgram.h"
 #include "pins_arduino.h"
-#include "dmx.h"
+#include "dmaLed.h"
+#include "ws2812.h"
 #include "blinkytile.h"
 
 
-#define INPUT_BYTES             LED_COUNT*BYTES_PER_PIXEL
-#define OUTPUT_BYTES            LED_COUNT*BYTES_PER_PIXEL
+#define OUTPUT_BYTES        LED_COUNT*BYTES_PER_PIXEL*8
 
-#define OUTPUT_BITCOUNT         LED_COUNT*BYTES_PER_PIXEL*8
 
+// Check that the output buffer size is sufficient
+#if DMA_BUFFER_SIZE < OUTPUT_BYTES*2
+#error DMA Buffer too small, cannot use ws2812 output.
+#endif
 
 #define OUT_OFFSET              4       // Offset of our output pin in port C
 
-uint8_t drawBuffer[INPUT_BYTES];        // Buffer for the user to draw into
-uint8_t dmaBuffer[2][OUTPUT_BITCOUNT];  // Double-buffered output for the DMA engine
+namespace WS2812 {
+
 uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
-
-uint8_t brightness;
-
-
 
 uint8_t ONE = _BV(OUT_OFFSET);
 
@@ -100,13 +99,13 @@ void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BITCOUNT);
-    setupTCD1(frontBuffer, 1, OUTPUT_BITCOUNT);
-    setupTCD2(&ONE, 1, OUTPUT_BITCOUNT);
+    setupTCD0(&ONE, 1, OUTPUT_BYTES);
+    setupTCD1(frontBuffer, 1, OUTPUT_BYTES);
+    setupTCD2(&ONE, 1, OUTPUT_BYTES);
 }
 
 // Send a DMX frame with new data
-void dmxTransmit() {
+void ws2812Transmit() {
     setupTCDs();
 
     DMA_SSRT = DMA_SSRT_SAST;
@@ -114,7 +113,30 @@ void dmxTransmit() {
     FTM0_SC |= FTM_SC_CLKS(1);
 }
 
-void dmxSetup() {
+} // namespace WS2812
+
+// At the end of the DMX frame, start it again
+void dma_ch1_isr(void) {
+    DMA_CINT = DMA_CINT_CINT(1);
+
+    // Wait until DMA2 is triggered, then stop the counter
+    while(FTM0_CNT < 0x28) {}
+
+    // TODO: Turning off the timer this late into the cycle causes a small glitch :-/
+    FTM0_SC = 0;                   // Turn off the clock so we can update CNTIN and MODULO?
+
+    if(WS2812::swapBuffers) {
+        uint8_t* lastBuffer = WS2812::frontBuffer;
+        WS2812::frontBuffer = WS2812::backBuffer;
+        WS2812::backBuffer = lastBuffer;
+        WS2812::swapBuffers = false;
+    }
+
+    // TODO: Re-start this chain here  
+//    ws2812Transmit();
+}
+
+void ws2812Setup() {
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
     GPIOC_PDDR |= _BV(4);
 
@@ -149,56 +171,37 @@ void dmxSetup() {
     DMAMUX0_CHCFG2 = DMAMUX_SOURCE_FTM0_CH2 | DMAMUX_ENABLE;
  
     // Load this frame of data into the DMA engine
-    setupTCDs();
+    WS2812::setupTCDs();
  
     // FTM
     SIM_SCGC6 |= SIM_SCGC6_FTM0;  // Enable FTM0 clock
-    setupFTM0();
+    WS2812::setupFTM0();
 
-    frontBuffer = dmaBuffer[0];
-    backBuffer = dmaBuffer[1];
-    swapBuffers = false;
+    WS2812::frontBuffer = dmaBuffer;
+    WS2812::backBuffer =  dmaBuffer + OUTPUT_BYTES;
+    WS2812::swapBuffers = false;
 
     // Clear the display
-    memset(drawBuffer, 0, INPUT_BYTES);
-    memset(frontBuffer, 0, OUTPUT_BYTES);
+    memset(WS2812::frontBuffer, 0xFF, OUTPUT_BYTES);
 
-    brightness = 255;
-
-    dmxTransmit();
+    WS2812::ws2812Transmit();
 }
 
 
-// At the end of the DMX frame, start it again
-void dma_ch1_isr(void) {
-    DMA_CINT = DMA_CINT_CINT(1);
-
-    // Wait until DMA2 is triggered, then stop the counter
-    while(FTM0_CNT < 0x28) {}
-
-    // TODO: Turning off the timer this late into the cycle causes a small glitch :-/
-    FTM0_SC = 0;                   // Turn off the clock so we can update CNTIN and MODULO?
-
-    if(swapBuffers) {
-        uint8_t* lastBuffer = frontBuffer;
-        frontBuffer = backBuffer;
-        backBuffer = lastBuffer;
-        swapBuffers = false;
-    }
-  
-//    dmxTransmit();
+void ws2812Stop() {
+    // TODO: stop!
 }
 
 
-bool dmxWaiting() {
-    return swapBuffers;
+bool ws2812Waiting() {
+    return WS2812::swapBuffers;
 }
 
-void dmxShow() {
-    dmxTransmit();
+void ws2812Show() {
+    WS2812::ws2812Transmit();
 
     // If a draw is already pending, skip the new frame
-    if(swapBuffers == true) {
+    if(WS2812::swapBuffers == true) {
         return;
     }
 
@@ -211,25 +214,12 @@ void dmxShow() {
         uint8_t blue =  (drawBuffer[led*3+2]*brightness)/255;
 
         for(int bit = 0; bit < 8; bit++) {
-            backBuffer[led*3*8 +  0 + bit] = ~((( green >> (7-bit))&0x1) << OUT_OFFSET);
-            backBuffer[led*3*8 +  8 + bit] = ~((( red >>   (7-bit))&0x1) << OUT_OFFSET);
-            backBuffer[led*3*8 + 16 + bit] = ~((( blue >>  (7-bit))&0x1) << OUT_OFFSET);
+            WS2812::backBuffer[led*3*8 +  0 + bit] = ~((( green >> (7-bit))&0x1) << OUT_OFFSET);
+            WS2812::backBuffer[led*3*8 +  8 + bit] = ~((( red >>   (7-bit))&0x1) << OUT_OFFSET);
+            WS2812::backBuffer[led*3*8 + 16 + bit] = ~((( blue >>  (7-bit))&0x1) << OUT_OFFSET);
         }
     }
-    swapBuffers = true;
+    WS2812::swapBuffers = true;
 }
 
-uint8_t* dmxGetPixels() {
-    return drawBuffer;
-}
-
-void dmxSetBrightness(uint8_t newBrightness) {
-    brightness = newBrightness;
-}
-
-void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b) {
-    drawBuffer[pixel*BYTES_PER_PIXEL + 0] = r;
-    drawBuffer[pixel*BYTES_PER_PIXEL + 1] = g;
-    drawBuffer[pixel*BYTES_PER_PIXEL + 2] = b;
-}
 

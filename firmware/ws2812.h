@@ -1,9 +1,9 @@
 /*
- * Hardware-based DMX engine
+ * Hardware-based WS2812 LED engine
  *
- * Outputs DMX on a single channel using the UART hardware
+ * Outputs WS2812 signal to a single channel using DMA
  * 
- * Copyright (c) 2014 Matt Mets
+ * Copyright (c) 2015 Matt Mets
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -23,18 +23,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DMX_H
-#define DMX_H
+#ifndef WS2812_H
+#define WS2812_H
 
 // Initialize the LED engine
-void dmxSetup();
+void ws2812Setup();
 
 // Stop the LED engine
-void dmxStop();
+void ws2812Stop();
+
 
 // Emit the DMX signal
-void dmxShow();
+void ws2812Show();
 
-bool dmxWaiting();
+bool ws2812Waiting();
 
 #endif
