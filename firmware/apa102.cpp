@@ -27,9 +27,9 @@ bool swapBuffers;
 
 uint8_t ONE = _BV(CLOCK_PIN_OFFSET);
 
-#define TIMER_PERIOD        0x0040
+#define TIMER_PERIOD        0x0018
 #define TIMER_DATA_PWM      0x0001
-#define TIMER_CLOCK_PWM     0x0020
+#define TIMER_CLOCK_PWM     0x000A
 
 // FTM0 drives our whole operation!
 void setupFTM0(){
@@ -165,6 +165,7 @@ void APA102Controller::start() {
 
     // Clear the display
     memset(APA102::frontBuffer, 0x00, OUTPUT_BYTES);
+    memset(APA102::backBuffer, 0x00, OUTPUT_BYTES);
 
     APA102::apa102Transmit();
 }

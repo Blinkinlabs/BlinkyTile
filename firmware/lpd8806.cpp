@@ -165,6 +165,7 @@ void LPD8806Controller::start() {
 
     // Clear the display
     memset(LPD8806::frontBuffer, 0x00, OUTPUT_BYTES);
+    memset(LPD8806::backBuffer, 0x00, OUTPUT_BYTES);
 
     LPD8806::lpd8806Transmit();
 }

@@ -217,7 +217,7 @@ extern "C" int main()
                 else if(DmaLed.getOutputType() == CDmaLed::WS2812) {
                     DmaLed.setOutputType(CDmaLed::LPD8806);
                 }
-                else if(DmaLed.getOutputType() == CDmaLed::APA102) {
+                else if(DmaLed.getOutputType() == CDmaLed::LPD8806) {
                     DmaLed.setOutputType(CDmaLed::APA102);
                 }
                 else {
