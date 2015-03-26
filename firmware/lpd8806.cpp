@@ -25,7 +25,7 @@ uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
-uint8_t ONE = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
+uint8_t ONE = _BV(CLOCK_PIN_OFFSET);
 
 // FTM0 drives our whole operation!
 void setupFTM0(){
@@ -60,7 +60,7 @@ void setupTCD0(uint8_t* source, int minorLoopSize, int majorLoops) {
   DMA_TCD0_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
   DMA_TCD0_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
   DMA_TCD0_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD0_DADDR = &GPIOC_PCOR;                                   // Address to write to
+  DMA_TCD0_DADDR = &GPIOC_PSOR;                                   // Address to write to
   DMA_TCD0_DOFF = 0;                                              // Bytes to increment destination register between write
   DMA_TCD0_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
   DMA_TCD0_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
@@ -74,7 +74,7 @@ void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
   DMA_TCD2_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
   DMA_TCD2_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
   DMA_TCD2_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD2_DADDR = &GPIOC_PSOR;                                   // Address to write to
+  DMA_TCD2_DADDR = &GPIOC_PDOR;                                   // Address to write to
   DMA_TCD2_DOFF = 0;                                              // Bytes to increment destination register between write
   DMA_TCD2_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
   DMA_TCD2_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
@@ -91,7 +91,7 @@ void setupTCDs() {
 void lpd8806Transmit() {
     setupTCDs();
 
-    DMA_SSRT = DMA_SSRT_SAST;
+//    DMA_SSRT = DMA_SSRT_SAST;
 
     FTM0_SC |= FTM_SC_CLKS(1);
 }
@@ -164,11 +164,11 @@ void LPD8806Controller::start() {
     // Clear the display
     memset(LPD8806::frontBuffer, 0x00, OUTPUT_BYTES);
 
-    // The last 24 bits transmitted should always be data zeros
-    for(int offset = 0; offset < 24; offset++) {
-        LPD8806::frontBuffer[LED_COUNT*3*8+offset] = _BV(CLOCK_PIN_OFFSET);
-        LPD8806::backBuffer[LED_COUNT*3*8+offset]  = _BV(CLOCK_PIN_OFFSET);
-    }
+//    // The last 24 bits transmitted should always be data zeros
+//    for(int offset = 0; offset < 24; offset++) {
+//        LPD8806::frontBuffer[LED_COUNT*3*8+offset] = _BV(CLOCK_PIN_OFFSET);
+//        LPD8806::backBuffer[LED_COUNT*3*8+offset]  = _BV(CLOCK_PIN_OFFSET);
+//    }
 
     LPD8806::lpd8806Transmit();
 }
@@ -210,15 +210,21 @@ void LPD8806Controller::show() {
         uint8_t blue =  (drawBuffer[led*3+2]*brightness)/255;
 
         // MSB is low when clocking data
-        LPD8806::backBuffer[led*3*8 +  0] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
-        LPD8806::backBuffer[led*3*8 +  8] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
-        LPD8806::backBuffer[led*3*8 + 16] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
+//        LPD8806::backBuffer[led*3*8 +  0] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
+//        LPD8806::backBuffer[led*3*8 +  8] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
+//        LPD8806::backBuffer[led*3*8 + 16] = _BV(CLOCK_PIN_OFFSET) | _BV(DATA_PIN_OFFSET);
+        LPD8806::backBuffer[led*3*8 +  0] = _BV(DATA_PIN_OFFSET);
+        LPD8806::backBuffer[led*3*8 +  8] = _BV(DATA_PIN_OFFSET);
+        LPD8806::backBuffer[led*3*8 + 16] = _BV(DATA_PIN_OFFSET);
 
         // Shift the remaining bits by 1, since this is a 7 bit LED controller
         for(int bit = 1; bit < 8; bit++) {
-            LPD8806::backBuffer[led*3*8 +  0 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( green >> (8-bit))&0x1) << DATA_PIN_OFFSET);
-            LPD8806::backBuffer[led*3*8 +  8 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( red >>   (8-bit))&0x1) << DATA_PIN_OFFSET);
-            LPD8806::backBuffer[led*3*8 + 16 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( blue >>  (8-bit))&0x1) << DATA_PIN_OFFSET);
+//            LPD8806::backBuffer[led*3*8 +  0 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( green >> (8-bit))&0x1) << DATA_PIN_OFFSET);
+//            LPD8806::backBuffer[led*3*8 +  8 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( red >>   (8-bit))&0x1) << DATA_PIN_OFFSET);
+//            LPD8806::backBuffer[led*3*8 + 16 + bit] = _BV(CLOCK_PIN_OFFSET) | ((( blue >>  (8-bit))&0x1) << DATA_PIN_OFFSET);
+            LPD8806::backBuffer[led*3*8 +  0 + bit] = ((( green >> (8-bit))&0x1) << DATA_PIN_OFFSET);
+            LPD8806::backBuffer[led*3*8 +  8 + bit] = ((( red >>   (8-bit))&0x1) << DATA_PIN_OFFSET);
+            LPD8806::backBuffer[led*3*8 + 16 + bit] = ((( blue >>  (8-bit))&0x1) << DATA_PIN_OFFSET);
         }
     }
     LPD8806::swapBuffers = true;
