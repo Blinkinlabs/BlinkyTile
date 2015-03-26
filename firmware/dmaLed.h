@@ -6,7 +6,7 @@
 
 class CDmaLed {
 public:
-    enum output_type_t {DMX, WS2812, LPD8806};
+    enum output_type_t {DMX, WS2812, LPD8806, APA102};
 
     CDmaLed();
 
@@ -96,7 +96,8 @@ public:
 
 // Size of the output buffer, implementation dependent.
 // Needs to be as large as the largest implementation
-#define DMA_BUFFER_SIZE (LED_COUNT*BYTES_PER_PIXEL+3)*8*2
+//#define DMA_BUFFER_SIZE (LED_COUNT*BYTES_PER_PIXEL+3)*8*2
+#define DMA_BUFFER_SIZE (4+LED_COUNT*4+4)*8*2
 
 extern uint8_t dmaBuffer[DMA_BUFFER_SIZE];
 extern uint8_t drawBuffer[DRAW_BUFFER_SIZE];        // Buffer for the user to draw into

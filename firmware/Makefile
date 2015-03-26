@@ -45,6 +45,7 @@ CPP_FILES = \
 	ws2812.cpp \
 	dmx.cpp \
 	lpd8806.cpp \
+	apa102.cpp \
 	addressprogrammer.cpp \
 	patterns.cpp \
 	serialloop.cpp \

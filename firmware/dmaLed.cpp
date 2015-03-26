@@ -4,6 +4,7 @@
 #include <dmx.h>
 #include <ws2812.h>
 #include <lpd8806.h>
+#include <apa102.h>
 
 // Big LED buffer that can be used by the different DMA engines
 uint8_t dmaBuffer[DMA_BUFFER_SIZE];
@@ -71,6 +72,9 @@ void CDmaLed::setOutputType(output_type_t type) {
             case LPD8806:
                 lpd8806.stop();
                 break;
+            case APA102:
+                apa102.stop();
+                break;
         }
     }
 
@@ -86,6 +90,9 @@ void CDmaLed::setOutputType(output_type_t type) {
         case LPD8806:
             lpd8806.start();
             break;
+        case APA102:
+            apa102.start();
+            break;
     }
 }
 
@@ -100,6 +107,9 @@ void CDmaLed::show(uint8_t scale) {
             break;
         case LPD8806:
             lpd8806.show();
+            break;
+        case APA102:
+            apa102.show();
             break;
     }
 }
