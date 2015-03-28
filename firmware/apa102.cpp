@@ -40,11 +40,9 @@ uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
-uint8_t ONE = _BV(CLOCK_PIN_OFFSET);
-
-#define TIMER_PERIOD        0x0018
+#define TIMER_PERIOD        0x000D
 #define TIMER_DATA_PWM      0x0001
-#define TIMER_CLOCK_PWM     0x000A
+#define TIMER_CLOCK_PWM     (TIMER_PERIOD/2)
 
 // FTM0 drives our whole operation!
 void setupFTM0(){
@@ -56,11 +54,10 @@ void setupFTM0(){
 
   FTM0_MODE |= FTM_MODE_INIT;         // Enable FTM0
 
-  FTM0_C0SC = 0x40          // Enable interrupt
+  FTM0_C2SC = 0
   | 0x20                    // Mode select: Edge-aligned PWM 
-  | 0x04                    // Low-true pulses (inverted)
-  | 0x01;                   // Enable DMA out
-  FTM0_C0V = TIMER_CLOCK_PWM;  // Duty cycle of PWM signal
+  | 0x08;                   // high-true pulses
+  FTM0_C2V = TIMER_CLOCK_PWM;  // Duty cycle of PWM signal
 
   FTM0_C3SC = 0x40          // Enable interrupt
   | 0x20                    // Mode select: Edge-aligned PWM 
@@ -69,21 +66,6 @@ void setupFTM0(){
   FTM0_C3V = TIMER_DATA_PWM;  // Duty cycle of PWM signal
 
   FTM0_SYNC |= 0x80;        // set PWM value update
-}
-
-
-// TCD0 sets the clock output
-void setupTCD0(uint8_t* source, int minorLoopSize, int majorLoops) {
-  DMA_TCD0_SADDR = source;                                        // Address to read from
-  DMA_TCD0_SOFF = 0;                                              // Bytes to increment source register between writes 
-  DMA_TCD0_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
-  DMA_TCD0_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD0_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD0_DADDR = &GPIOC_PSOR;                                   // Address to write to
-  DMA_TCD0_DOFF = 0;                                              // Bytes to increment destination register between write
-  DMA_TCD0_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
-  DMA_TCD0_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
-  DMA_TCD0_DLASTSGA = 0;                                          // Address of next TCD (N/A)
 }
 
 // TCD3 sets the data and clears the clock clock output
@@ -102,7 +84,6 @@ void setupTCD3(uint8_t* source, int minorLoopSize, int majorLoops) {
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
     setupTCD3(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
 }
 
@@ -132,9 +113,6 @@ void dma_ch3_isr(void) {
         APA102::backBuffer = lastBuffer;
         APA102::swapBuffers = false;
     }
-
-    // TODO: Re-start this chain here  
-//    apa102Transmit();
 }
 
 void APA102Controller::start() {
@@ -151,8 +129,8 @@ void APA102Controller::start() {
 #endif
 
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
-    PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure RX Pin for digital
-    GPIOC_PDDR |= _BV(DATA_PIN_OFFSET) | _BV(CLOCK_PIN_OFFSET);
+    PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(4);	// Configure RX Pin for FTM0_CH2
+    GPIOC_PDDR |= _BV(DATA_PIN_OFFSET);
 
     // DMA
     // Configure DMA
@@ -160,7 +138,6 @@ void APA102Controller::start() {
     DMA_CR = 0;  // Use default configuration
  
     // Configure the DMA request input for DMA0
-    DMA_SERQ = DMA_SERQ_SERQ(0);        // Configure DMA0 to enable the request signal
     DMA_SERQ = DMA_SERQ_SERQ(3);        // Configure DMA2 to enable the request signal
  
     // Enable interrupt on major completion for DMA channel 1
@@ -169,11 +146,6 @@ void APA102Controller::start() {
  
     // DMAMUX
     SIM_SCGC6 |= SIM_SCGC6_DMAMUX; // Enable DMAMUX clock
-
-    // Timer DMA channel:
-    // Configure DMAMUX to trigger DMA0 from FTM0_CH0
-    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
-    DMAMUX0_CHCFG0 = DMAMUX_SOURCE_FTM0_CH0 | DMAMUX_ENABLE;
 
     // Configure DMAMUX to trigger DMA2 from FTM0_CH3
     DMAMUX0_CHCFG3 = DMAMUX_DISABLE;
@@ -196,7 +168,7 @@ void APA102Controller::stop() {
     DMA_TCD3_CSR = 0;                   // Disable interrupt on major complete
     NVIC_DISABLE_IRQ(IRQ_DMA_CH3);      // Disable interrupt request
 
-    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
+//    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
     DMAMUX0_CHCFG3 = DMAMUX_DISABLE;
 
     SIM_SCGC6 &= ~SIM_SCGC6_FTM0;       // Disable FTM0 clock

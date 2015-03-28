@@ -30,11 +30,9 @@ uint8_t* frontBuffer;
 uint8_t* backBuffer;
 bool swapBuffers;
 
-uint8_t ONE = _BV(CLOCK_PIN_OFFSET);
-
-#define TIMER_PERIOD        0x0040
+#define TIMER_PERIOD        0x000D
 #define TIMER_DATA_PWM      0x0001
-#define TIMER_CLOCK_PWM     0x0020
+#define TIMER_CLOCK_PWM     (TIMER_PERIOD/2)
 
 // FTM0 drives our whole operation!
 void setupFTM0(){
@@ -46,54 +44,38 @@ void setupFTM0(){
 
   FTM0_MODE |= FTM_MODE_INIT;         // Enable FTM0
 
-  FTM0_C0SC = 0x40          // Enable interrupt
+  FTM0_C2SC = 0
   | 0x20                    // Mode select: Edge-aligned PWM 
-  | 0x04                    // Low-true pulses (inverted)
-  | 0x01;                   // Enable DMA out
-  FTM0_C0V = TIMER_CLOCK_PWM;  // Duty cycle of PWM signal
+  | 0x08;                   // high-true pulses
+  FTM0_C2V = TIMER_CLOCK_PWM;  // Duty cycle of PWM signal
 
-  FTM0_C2SC = 0x40          // Enable interrupt
+  FTM0_C1SC = 0x40          // Enable interrupt
   | 0x20                    // Mode select: Edge-aligned PWM 
   | 0x04                    // Low-true pulses (inverted)
   | 0x01;                   // Enable DMA out
-  FTM0_C2V = TIMER_DATA_PWM;  // Duty cycle of PWM signal
+  FTM0_C1V = TIMER_DATA_PWM;  // Duty cycle of PWM signal
 
   FTM0_SYNC |= 0x80;        // set PWM value update
 }
 
 
-// TCD0 clears the clock output
-void setupTCD0(uint8_t* source, int minorLoopSize, int majorLoops) {
-  DMA_TCD0_SADDR = source;                                        // Address to read from
-  DMA_TCD0_SOFF = 0;                                              // Bytes to increment source register between writes 
-  DMA_TCD0_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
-  DMA_TCD0_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD0_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD0_DADDR = &GPIOC_PSOR;                                   // Address to write to
-  DMA_TCD0_DOFF = 0;                                              // Bytes to increment destination register between write
-  DMA_TCD0_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
-  DMA_TCD0_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
-  DMA_TCD0_DLASTSGA = 0;                                          // Address of next TCD (N/A)
-}
-
-// TCD2 sets the data and clock outputs
-void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
-  DMA_TCD2_SADDR = source;                                        // Address to read from
-  DMA_TCD2_SOFF = 1;                                              // Bytes to increment source register between writes 
-  DMA_TCD2_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
-  DMA_TCD2_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD2_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD2_DADDR = &GPIOC_PDOR;                                   // Address to write to
-  DMA_TCD2_DOFF = 0;                                              // Bytes to increment destination register between write
-  DMA_TCD2_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
-  DMA_TCD2_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
-  DMA_TCD2_DLASTSGA = 0;                                          // Address of next TCD (N/A)
+// TCD1 sets the data outputs
+void setupTCD1(uint8_t* source, int minorLoopSize, int majorLoops) {
+  DMA_TCD1_SADDR = source;                                        // Address to read from
+  DMA_TCD1_SOFF = 1;                                              // Bytes to increment source register between writes 
+  DMA_TCD1_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
+  DMA_TCD1_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
+  DMA_TCD1_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
+  DMA_TCD1_DADDR = &GPIOC_PDOR;                                   // Address to write to
+  DMA_TCD1_DOFF = 0;                                              // Bytes to increment destination register between write
+  DMA_TCD1_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
+  DMA_TCD1_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
+  DMA_TCD1_DLASTSGA = 0;                                          // Address of next TCD (N/A)
 }
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
-    setupTCD2(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD1(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
 }
 
 // Send a DMX frame with new data
@@ -106,9 +88,9 @@ void lpd8806Transmit() {
 } // namespace LPD8806
 
 // At the end of the DMX frame, start it again
-// TODO: This is on channel 2, because channel 0 and 1 are used. Can we stack these somehow?
-void dma_ch2_isr(void) {
-    DMA_CINT = DMA_CINT_CINT(2);
+// TODO: This is on channel 1, because channel 0 and 1 are used. Can we stack these somehow?
+void dma_ch1_isr(void) {
+    DMA_CINT = DMA_CINT_CINT(1);
 
     // Wait until DMA2 is triggered, then stop the counter
     while(FTM0_CNT < TIMER_CLOCK_PWM) {}
@@ -140,8 +122,8 @@ void LPD8806Controller::start() {
 #endif
 
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
-    PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure RX Pin for digital
-    GPIOC_PDDR |= _BV(DATA_PIN_OFFSET) | _BV(CLOCK_PIN_OFFSET);
+    PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(4);	// Configure RX Pin for digital
+    GPIOC_PDDR |= _BV(DATA_PIN_OFFSET);
 
     // DMA
     // Configure DMA
@@ -149,24 +131,18 @@ void LPD8806Controller::start() {
     DMA_CR = 0;  // Use default configuration
  
     // Configure the DMA request input for DMA0
-    DMA_SERQ = DMA_SERQ_SERQ(0);        // Configure DMA0 to enable the request signal
-    DMA_SERQ = DMA_SERQ_SERQ(2);        // Configure DMA2 to enable the request signal
+    DMA_SERQ = DMA_SERQ_SERQ(1);        // Configure DMA2 to enable the request signal
  
     // Enable interrupt on major completion for DMA channel 1
-    DMA_TCD2_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
-    NVIC_ENABLE_IRQ(IRQ_DMA_CH2);         // Enable interrupt request
+    DMA_TCD1_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
+    NVIC_ENABLE_IRQ(IRQ_DMA_CH1);         // Enable interrupt request
  
     // DMAMUX
     SIM_SCGC6 |= SIM_SCGC6_DMAMUX; // Enable DMAMUX clock
 
-    // Timer DMA channel:
-    // Configure DMAMUX to trigger DMA0 from FTM0_CH0
-    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
-    DMAMUX0_CHCFG0 = DMAMUX_SOURCE_FTM0_CH0 | DMAMUX_ENABLE;
-
-    // Configure DMAMUX to trigger DMA2 from FTM0_CH2
-    DMAMUX0_CHCFG2 = DMAMUX_DISABLE;
-    DMAMUX0_CHCFG2 = DMAMUX_SOURCE_FTM0_CH2 | DMAMUX_ENABLE;
+    // Configure DMAMUX to trigger DMA1 from FTM0_CH1
+    DMAMUX0_CHCFG1 = DMAMUX_DISABLE;
+    DMAMUX0_CHCFG1 = DMAMUX_SOURCE_FTM0_CH1 | DMAMUX_ENABLE;
  
     // Load this frame of data into the DMA engine
     LPD8806::setupTCDs();
@@ -182,11 +158,10 @@ void LPD8806Controller::start() {
 void LPD8806Controller::stop() {
     FTM0_SC = 0;                        // Disable FTM0 clock
 
-    DMA_TCD2_CSR = 0;                   // Disable interrupt on major complete
-    NVIC_DISABLE_IRQ(IRQ_DMA_CH2);      // Disable interrupt request
+    DMA_TCD1_CSR = 0;                   // Disable interrupt on major complete
+    NVIC_DISABLE_IRQ(IRQ_DMA_CH1);      // Disable interrupt request
 
-    DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
-    DMAMUX0_CHCFG2 = DMAMUX_DISABLE;
+    DMAMUX0_CHCFG1 = DMAMUX_DISABLE;
 
     SIM_SCGC6 &= ~SIM_SCGC6_FTM0;       // Disable FTM0 clock
     SIM_SCGC6 &= ~SIM_SCGC6_DMAMUX;     // turn off DMA MUX clock

@@ -54,13 +54,13 @@ void setupFTM0(){
   | 0x20                    // Mode select: Edge-aligned PWM 
   | 0x04                    // Low-true pulses (inverted)
   | 0x01;                   // Enable DMA out
-  FTM0_C1V = 0x0014;        // Duty cycle of PWM signal
+  FTM0_C1V = 0x0028;        // Duty cycle of PWM signal
 
   FTM0_C2SC = 0x40          // Enable interrupt
   | 0x20                    // Mode select: Edge-aligned PWM 
   | 0x04                    // Low-true pulses (inverted)
   | 0x01;                   // Enable DMA out
-  FTM0_C2V = 0x0028;        // Duty cycle of PWM signal
+  FTM0_C2V = 0x0014;        // Duty cycle of PWM signal
 
   FTM0_SYNC |= 0x80;        // set PWM value update
 }
@@ -81,23 +81,9 @@ void setupTCD0(uint8_t* source, int minorLoopSize, int majorLoops) {
 }
 
 // TCD2 sets the outputs to 0 further along the cycle
-void setupTCD1(uint8_t* source, int minorLoopSize, int majorLoops) {
-  DMA_TCD1_SADDR = source;                                        // Address to read from
-  DMA_TCD1_SOFF = 1;                                              // Bytes to increment source register between writes 
-  DMA_TCD1_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
-  DMA_TCD1_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
-  DMA_TCD1_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
-  DMA_TCD1_DADDR = &GPIOC_PCOR;                                   // Address to write to
-  DMA_TCD1_DOFF = 0;                                              // Bytes to increment destination register between write
-  DMA_TCD1_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
-  DMA_TCD1_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
-  DMA_TCD1_DLASTSGA = 0;                                          // Address of next TCD (N/A)
-}
-
-// TCD2 sets the outputs to 0 further along the cycle
 void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
   DMA_TCD2_SADDR = source;                                        // Address to read from
-  DMA_TCD2_SOFF = 0;                                              // Bytes to increment source register between writes 
+  DMA_TCD2_SOFF = 1;                                              // Bytes to increment source register between writes 
   DMA_TCD2_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
   DMA_TCD2_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
   DMA_TCD2_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
@@ -108,11 +94,25 @@ void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
   DMA_TCD2_DLASTSGA = 0;                                          // Address of next TCD (N/A)
 }
 
+// TCD1 sets the outputs to 0 further along the cycle
+void setupTCD1(uint8_t* source, int minorLoopSize, int majorLoops) {
+  DMA_TCD1_SADDR = source;                                        // Address to read from
+  DMA_TCD1_SOFF = 0;                                              // Bytes to increment source register between writes 
+  DMA_TCD1_ATTR = DMA_TCD_ATTR_SSIZE(0) | DMA_TCD_ATTR_DSIZE(0);  // 8-bit input and output
+  DMA_TCD1_NBYTES_MLNO = minorLoopSize;                           // Number of bytes to transfer in the minor loop
+  DMA_TCD1_SLAST = 0;                                             // Bytes to add after a major iteration count (N/A)
+  DMA_TCD1_DADDR = &GPIOC_PCOR;                                   // Address to write to
+  DMA_TCD1_DOFF = 0;                                              // Bytes to increment destination register between write
+  DMA_TCD1_CITER_ELINKNO = majorLoops;                            // Number of major loops to complete
+  DMA_TCD1_BITER_ELINKNO = majorLoops;                            // Reset value for CITER (must be equal to CITER)
+  DMA_TCD1_DLASTSGA = 0;                                          // Address of next TCD (N/A)
+}
+
 
 void setupTCDs() {
     setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
-    setupTCD1(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
-    setupTCD2(&ONE, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD1(&ONE, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD2(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
 }
 
 // Send a DMX frame with new data
@@ -127,8 +127,8 @@ void ws2812Transmit() {
 } // namespace WS2812
 
 // At the end of the DMX frame, start it again
-void dma_ch1_isr(void) {
-    DMA_CINT = DMA_CINT_CINT(1);
+void dma_ch2_isr(void) {
+    DMA_CINT = DMA_CINT_CINT(2);
 
     // Wait until DMA2 is triggered, then stop the counter
     while(FTM0_CNT < 0x28) {}
@@ -174,8 +174,8 @@ void WS2812Controller::start() {
     DMA_SERQ = DMA_SERQ_SERQ(2);        // Configure DMA2 to enable the request signal
  
     // Enable interrupt on major completion for DMA channel 1
-    DMA_TCD1_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
-    NVIC_ENABLE_IRQ(IRQ_DMA_CH1);         // Enable interrupt request
+    DMA_TCD2_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
+    NVIC_ENABLE_IRQ(IRQ_DMA_CH2);         // Enable interrupt request
  
     // DMAMUX
     SIM_SCGC6 |= SIM_SCGC6_DMAMUX; // Enable DMAMUX clock
@@ -207,8 +207,8 @@ void WS2812Controller::start() {
 void WS2812Controller::stop() {
     FTM0_SC = 0;                        // Disable FTM0 clock
 
-    DMA_TCD1_CSR = 0;                   // Disable interrupt on major complete
-    NVIC_DISABLE_IRQ(IRQ_DMA_CH1);      // Disable interrupt request
+    DMA_TCD2_CSR = 0;                   // Disable interrupt on major complete
+    NVIC_DISABLE_IRQ(IRQ_DMA_CH2);      // Disable interrupt request
 
     DMAMUX0_CHCFG0 = DMAMUX_DISABLE;
     DMAMUX0_CHCFG1 = DMAMUX_DISABLE;
