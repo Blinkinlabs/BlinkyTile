@@ -24,8 +24,7 @@
 #ifndef BLINKYTILE_H
 #define BLINKYTILE_H
 
-//#define LED_COUNT           120  // Number of LEDs we are controlling
-#define LED_COUNT           60  // Number of LEDs we are controlling
+#define LED_COUNT           200  // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL     3
 
 #define BUTTON_COUNT        2   // Two input buttons

@@ -6,13 +6,18 @@
 
 
 // Send 3 zeros at the end of the data stream
-#define OUTPUT_BYTES        (LED_COUNT*BYTES_PER_PIXEL+3)*8
-
+#define OUTPUT_BUFFER_SIZE        (LED_COUNT*BYTES_PER_PIXEL+3)*8
 
 // Check that the output buffer size is sufficient
-#if DMA_BUFFER_SIZE < OUTPUT_BYTES*2
-#error DMA Buffer too small, cannot use lpd8806 output.
-#endif
+#if defined(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE*2)
+    #error DMA Buffer too small
+    #endif
+#else // define(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE)
+    #error DMA Buffer too small
+    #endif
+#endif // define(DOUBLE_BUFFER)
 
 #define DATA_PIN_OFFSET              4       // Offset of our data pin in port C
 #define CLOCK_PIN_OFFSET             3      // Offset of our clock pin in port C
@@ -87,8 +92,8 @@ void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BYTES);
-    setupTCD2(frontBuffer, 1, OUTPUT_BYTES);
+    setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD2(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
 }
 
 // Send a DMX frame with new data
@@ -123,6 +128,17 @@ void dma_ch2_isr(void) {
 }
 
 void LPD8806Controller::start() {
+    // Clear the display
+    memset(dmaBuffer, 0, DMA_BUFFER_SIZE);
+
+    LPD8806::swapBuffers = false;
+    LPD8806::frontBuffer = dmaBuffer;
+#if defined(DOUBLE_BUFFER)
+    LPD8806::backBuffer =  dmaBuffer + OUTPUT_BUFFER_SIZE;
+#else
+    LPD8806::backBuffer =  dmaBuffer;
+#endif
+
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
     PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure RX Pin for digital
     GPIOC_PDDR |= _BV(DATA_PIN_OFFSET) | _BV(CLOCK_PIN_OFFSET);
@@ -158,14 +174,6 @@ void LPD8806Controller::start() {
     // FTM
     SIM_SCGC6 |= SIM_SCGC6_FTM0;  // Enable FTM0 clock
     LPD8806::setupFTM0();
-
-    LPD8806::frontBuffer = dmaBuffer;
-    LPD8806::backBuffer =  dmaBuffer + OUTPUT_BYTES;
-    LPD8806::swapBuffers = false;
-
-    // Clear the display
-    memset(LPD8806::frontBuffer, 0x00, OUTPUT_BYTES);
-    memset(LPD8806::backBuffer, 0x00, OUTPUT_BYTES);
 
     LPD8806::lpd8806Transmit();
 }

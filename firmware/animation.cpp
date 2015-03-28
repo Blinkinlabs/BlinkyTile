@@ -58,6 +58,11 @@ void Animation::getFrame(uint32_t frame, uint8_t* buffer) {
 }
 
 
+Animations::Animations() :
+    animationCount(0),
+    initialized(false) {
+}
+
 bool Animations::isInitialized() {
     return initialized;
 }

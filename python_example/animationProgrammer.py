@@ -64,7 +64,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 120
+ledCount = 240
 
 
 frameCount = 12
@@ -130,9 +130,6 @@ while True:
 
     # first, erase the flash memory
     bt.flashErase()
-    
-    #for sector in range(0, 100):
-    #    bt.deleteFile(sector)
     
     #print "free space: ", bt.getFreeSpace()
     #print "largest file availabe: ", bt.getLargestFile()

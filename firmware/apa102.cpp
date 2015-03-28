@@ -5,14 +5,29 @@
 #include "blinkytile.h"
 
 
-// Send 3 zeros at the end of the data stream
-#define OUTPUT_BYTES        (4+LED_COUNT*4 + 4)*8
+// APA102 frame consists of:
+// 4 bytes of 0x00 to start the frame
+// LED_COUNT*4 bytes of pixel data
+// - Each LED has 1 byte brightness, then G, R, B
+// LED_COUNT/2 bits of 0 to clock out the data
 
+// For the software-defined SPI implementation, each output bit must be stored in it's own
+// byte, so this ends up being rather memory inefficient.
+
+
+#define OUTPUT_BUFFER_SIZE   (4 + LED_COUNT*4)*8 + (LED_COUNT + 1)/2
 
 // Check that the output buffer size is sufficient
-#if DMA_BUFFER_SIZE < (OUTPUT_BYTES*2)
-#error DMA Buffer too small, cannot use apa102 output.
-#endif
+#if defined(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE*2)
+    #error DMA Buffer too small
+    #endif
+#else // define(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE)
+    #error DMA Buffer too small
+    #endif
+#endif // define(DOUBLE_BUFFER)
+
 
 #define DATA_PIN_OFFSET              4       // Offset of our data pin in port C
 #define CLOCK_PIN_OFFSET             3      // Offset of our clock pin in port C
@@ -87,8 +102,8 @@ void setupTCD3(uint8_t* source, int minorLoopSize, int majorLoops) {
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BYTES);
-    setupTCD3(frontBuffer, 1, OUTPUT_BYTES);
+    setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD3(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
 }
 
 // Send a DMX frame with new data
@@ -123,6 +138,18 @@ void dma_ch3_isr(void) {
 }
 
 void APA102Controller::start() {
+    // Clear the display
+    // Note that index 0 in each frame should also be set to 0.
+    memset(dmaBuffer, 0, DMA_BUFFER_SIZE);
+
+    APA102::swapBuffers = false;
+    APA102::frontBuffer = dmaBuffer;
+#if defined(DOUBLE_BUFFER)
+    APA102::backBuffer =  dmaBuffer + OUTPUT_BUFFER_SIZE;
+#else
+    APA102::backBuffer =  dmaBuffer;
+#endif
+
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
     PORTC_PCR3 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure RX Pin for digital
     GPIOC_PDDR |= _BV(DATA_PIN_OFFSET) | _BV(CLOCK_PIN_OFFSET);
@@ -158,14 +185,6 @@ void APA102Controller::start() {
     // FTM
     SIM_SCGC6 |= SIM_SCGC6_FTM0;  // Enable FTM0 clock
     APA102::setupFTM0();
-
-    APA102::frontBuffer = dmaBuffer;
-    APA102::backBuffer =  dmaBuffer + OUTPUT_BYTES;
-    APA102::swapBuffers = false;
-
-    // Clear the display
-    memset(APA102::frontBuffer, 0x00, OUTPUT_BYTES);
-    memset(APA102::backBuffer, 0x00, OUTPUT_BYTES);
 
     APA102::apa102Transmit();
 }

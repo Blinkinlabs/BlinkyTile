@@ -4,6 +4,25 @@
 #include "dmx.h"
 #include "blinkytile.h"
 
+// DMX frame consists of:
+// 1 byte start frame (0x00)
+// LED_COUNT*3 bytes of pixel data
+// - Each LED has ?, ?, ? byte order
+
+#define OUTPUT_BUFFER_SIZE             1 + LED_COUNT*BYTES_PER_PIXEL
+
+// Check that the output buffer size is sufficient
+#if defined(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE*2)
+    #error DMA Buffer too small
+    #endif
+#else // define(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE)
+    #error DMA Buffer too small
+    #endif
+#endif // define(DOUBLE_BUFFER)
+
+
 #ifdef FAST_DMX
 
 #define BAUD_RATE                250000	// TODO
@@ -25,12 +44,6 @@
 #define BAUD2DIV(baud)  (((F_CPU * 2) + ((baud) >> 1)) / (baud))
 
 
-#define OUTPUT_BYTES             1 + LED_COUNT*BYTES_PER_PIXEL
-
-// Check that the output buffer size is sufficient
-#if DMA_BUFFER_SIZE < OUTPUT_BYTES*2
-#error DMA Buffer too small, cannot use DMX output.
-#endif
 
 DmxController dmx;
 
@@ -124,7 +137,7 @@ void dmxTransmit() {
     delayMicroseconds(MAB_LENGTH);
 
     // Set up a TCD and kick off the DMA engine
-    scheduleDMA(frontBuffer, OUTPUT_BYTES);
+    scheduleDMA(frontBuffer, OUTPUT_BUFFER_SIZE);
 
     UART1_C2 |= UART_C2_TIE;
 }
@@ -149,21 +162,22 @@ void dma_ch0_isr(void) {
 }
 
 void DmxController::start() {
+    // Clear the display
+    // Note that index 0 in each frame should also be set to 0.
+    memset(dmaBuffer, 0, DMA_BUFFER_SIZE);
 
-    DMX::frontBuffer = dmaBuffer;
-    DMX::backBuffer =  dmaBuffer + OUTPUT_BYTES;
     DMX::swapBuffers = false;
+    DMX::frontBuffer = dmaBuffer;
+#if defined(DOUBLE_BUFFER)
+    DMX::backBuffer =  dmaBuffer + OUTPUT_BUFFER_SIZE;
+#else
+    DMX::backBuffer =  dmaBuffer;
+#endif
 
     // Set up the UART
     DMX::setupUart();
     // Configure TX DMA
-    DMX::setupDMA(DMX::frontBuffer, OUTPUT_BYTES, 1);
-
-    // Clear the display
-    memset(DMX::frontBuffer, 0, OUTPUT_BYTES);
-
-    DMX::backBuffer[0] = 0x0;
-    DMX::frontBuffer[0] = 0x0;
+    DMX::setupDMA(DMX::frontBuffer, OUTPUT_BUFFER_SIZE, 1);
 
     DMX::dmxTransmit();
 }

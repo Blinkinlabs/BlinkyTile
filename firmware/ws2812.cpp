@@ -4,14 +4,23 @@
 #include "ws2812.h"
 #include "blinkytile.h"
 
+// WS2812 frame consists of:
+// LED_COUNT*3 bytes of pixel data
+// - Each LED has ?, ?, ? byte order
 
-#define OUTPUT_BYTES        LED_COUNT*BYTES_PER_PIXEL*8
-
+#define OUTPUT_BUFFER_SIZE        LED_COUNT*BYTES_PER_PIXEL*8
 
 // Check that the output buffer size is sufficient
-#if DMA_BUFFER_SIZE < OUTPUT_BYTES*2
-#error DMA Buffer too small, cannot use ws2812 output.
-#endif
+#if defined(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE*2)
+    #error DMA Buffer too small
+    #endif
+#else // define(DOUBLE_BUFFER)
+    #if DMA_BUFFER_SIZE < (OUTPUT_BUFFER_SIZE)
+    #error DMA Buffer too small
+    #endif
+#endif // define(DOUBLE_BUFFER)
+
 
 #define DATA_PIN_OFFSET              4       // Offset of our data pin in port C
 
@@ -101,9 +110,9 @@ void setupTCD2(uint8_t* source, int minorLoopSize, int majorLoops) {
 
 
 void setupTCDs() {
-    setupTCD0(&ONE, 1, OUTPUT_BYTES);
-    setupTCD1(frontBuffer, 1, OUTPUT_BYTES);
-    setupTCD2(&ONE, 1, OUTPUT_BYTES);
+    setupTCD0(&ONE, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD1(frontBuffer, 1, OUTPUT_BUFFER_SIZE);
+    setupTCD2(&ONE, 1, OUTPUT_BUFFER_SIZE);
 }
 
 // Send a DMX frame with new data
@@ -139,6 +148,18 @@ void dma_ch1_isr(void) {
 }
 
 void WS2812Controller::start() {
+    // Clear the display
+    // Note that index 0 in each frame should also be set to 0.
+    memset(dmaBuffer, 0xFF, DMA_BUFFER_SIZE);
+
+    WS2812::swapBuffers = false;
+    WS2812::frontBuffer = dmaBuffer;
+#if defined(DOUBLE_BUFFER)
+    WS2812::backBuffer =  dmaBuffer + OUTPUT_BUFFER_SIZE;
+#else
+    WS2812::backBuffer =  dmaBuffer;
+#endif
+
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
     GPIOC_PDDR |= _BV(DATA_PIN_OFFSET);
 
@@ -178,13 +199,6 @@ void WS2812Controller::start() {
     // FTM
     SIM_SCGC6 |= SIM_SCGC6_FTM0;  // Enable FTM0 clock
     WS2812::setupFTM0();
-
-    WS2812::frontBuffer = dmaBuffer;
-    WS2812::backBuffer =  dmaBuffer + OUTPUT_BYTES;
-    WS2812::swapBuffers = false;
-
-    // Clear the display
-    memset(WS2812::frontBuffer, 0xFF, OUTPUT_BYTES);
 
     WS2812::ws2812Transmit();
 }

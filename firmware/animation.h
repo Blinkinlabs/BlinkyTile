@@ -62,6 +62,8 @@ class Animations {
     bool initialized;           // True if initialized correctly
 
   public:
+    Animations();
+
     // Initialize the animations table
     // @param storage_ Storage container to read from
     void begin(NoFatStorage& storage_);
