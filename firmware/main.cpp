@@ -132,8 +132,8 @@ extern "C" int main()
 
         #define BRIGHTNESS_COUNT 5
         static int brightnessLevels[BRIGHTNESS_COUNT] = {5,20,60,120,255};
-        //static int brightnessStep = BRIGHTNESS_COUNT-1;
-        static int brightnessStep = 3;
+        static int brightnessStep = BRIGHTNESS_COUNT-1;
+        //static int brightnessStep = 3;
 
         static bool streaming_mode;
 

@@ -185,9 +185,9 @@ void LPD8806Controller::show() {
     for(int led = 0; led < LED_COUNT; led++) {
 
         // TODO: Make the pattern order RGB
-        uint8_t red =   (drawBuffer[led*3+0]*brightness)/255;
+        uint8_t red =   (drawBuffer[led*3+2]*brightness)/255;
         uint8_t green = (drawBuffer[led*3+1]*brightness)/255;
-        uint8_t blue =  (drawBuffer[led*3+2]*brightness)/255;
+        uint8_t blue =  (drawBuffer[led*3+0]*brightness)/255;
 
         // MSB is low when clocking data
         LPD8806::backBuffer[led*3*8 +  0] = _BV(DATA_PIN_OFFSET);

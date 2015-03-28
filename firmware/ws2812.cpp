@@ -236,9 +236,9 @@ void WS2812Controller::show() {
     for(int led = 0; led < LED_COUNT; led++) {
 
         // TODO: Make the pattern order RGB
-        uint8_t red =   (drawBuffer[led*3+0]*brightness)/255;
+        uint8_t red =   (drawBuffer[led*3+2]*brightness)/255;
         uint8_t green = (drawBuffer[led*3+1]*brightness)/255;
-        uint8_t blue =  (drawBuffer[led*3+2]*brightness)/255;
+        uint8_t blue =  (drawBuffer[led*3+0]*brightness)/255;
 
         for(int bit = 0; bit < 8; bit++) {
             WS2812::backBuffer[led*3*8 +  0 + bit] = ~((( green >> (7-bit))&0x1) << DATA_PIN_OFFSET);
