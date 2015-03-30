@@ -9,7 +9,7 @@ void initBoard() {
     pinMode(POWER_ENABLE_PIN, OUTPUT);
     pinMode(ADDRESS_PIN, OUTPUT);
     pinMode(DATA_PIN, OUTPUT);
-
+ 
     setStatusLed(255);
     disableOutputPower();
 }
