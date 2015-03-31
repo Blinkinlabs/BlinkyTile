@@ -58,8 +58,6 @@ Animations animations;
 // Button inputs
 Buttons userButtons;
 
-CDmaLed DmaLed;
-
 // Reserved RAM area for signalling entry to bootloader
 extern uint32_t boot_token;
 
@@ -115,11 +113,11 @@ extern "C" int main()
 
     enableOutputPower();
 
-    serialReset();
+    serialReset(SERIAL_MODE_DATA);
 
     flash.begin(FlashClass::autoDetect);
 
-    DmaLed.setOutputType(CDmaLed::APA102);
+    DmaLed.setOutputType(CDmaLed::WS2812);
 
     reloadAnimations = true;
 
@@ -199,7 +197,16 @@ extern "C" int main()
         // Check for serial data
         if(usb_serial_available() > 0) {
             streaming_mode = true;
-            serialLoop();
+            while(usb_serial_available() > 0) {
+                serialLoop();
+                watchdog_refresh();
+            }
+/*
+            for(int i = 0; i <  LED_COUNT; i++) {
+                DmaLed.setPixel(i, 0,0,0);
+            }
+            DmaLed.show();
+*/
         }
 
         if(userButtons.isPressed()) {

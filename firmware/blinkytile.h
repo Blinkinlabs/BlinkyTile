@@ -24,9 +24,9 @@
 #ifndef BLINKYTILE_H
 #define BLINKYTILE_H
 
-//#define DOUBLE_BUFFER     // If defined, use double buffering for the display
+#define DOUBLE_BUFFER     // If defined, use double buffering for the display
 
-#define LED_COUNT           170  // Number of LEDs we are controlling
+#define LED_COUNT           100  // Number of LEDs we are controlling
 #define BYTES_PER_PIXEL     3
 
 #define BUTTON_COUNT        2   // Two input buttons

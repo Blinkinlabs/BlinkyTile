@@ -6,6 +6,9 @@
 #include <lpd8806.h>
 #include <apa102.h>
 
+
+CDmaLed DmaLed;
+
 // Big LED buffer that can be used by the different DMA engines
 uint8_t dmaBuffer[DMA_BUFFER_SIZE];
 

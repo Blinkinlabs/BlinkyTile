@@ -62,19 +62,6 @@ class BlinkyTape(object):
             self.sendPixel(r, g, b)
         self.show()
 
-    def send_list(self, colors):
-        data = ""
-        for r, g, b in colors:
-            if r >= 255:
-                r = 254
-            if g >= 255:
-                g = 254
-            if b >= 255:
-                b = 254
-            data += chr(r) + chr(g) + chr(b)
-        self.serial.write(data)
-        self.show()
-
     def sendPixel(self, r, g, b):
         """Sends the next pixel data triplet in RGB format.
 
@@ -95,15 +82,16 @@ class BlinkyTape(object):
             g = 254
         if b >= 255:
             b = 254
+
         data = chr(r) + chr(g) + chr(b)
-        if len(data)*3 < self.ledCount:
-            if self.buffered:
+        if self.buffered:
+            if (len(self.buf)+3)/3 <= self.ledCount:
                 self.buf += data
             else:
-                self.serial.write(data)
-                self.serial.flush()
+                raise RuntimeError("Attempting to set pixel outside range!")
         else:
-            raise RuntimeError("Attempting to set pixel outside range!")
+            self.serial.write(data)
+            self.serial.flush()
 
     def show(self):
         """Sends the command(s) to display all accumulated pixel data.
@@ -112,6 +100,8 @@ class BlinkyTape(object):
         and discards any accumulated responses from BlinkyTape.
         """
         control = chr(0) + chr(0) + chr(255)
+
+        print len(self.buf+control)
         if self.buffered:
             self.serial.write(self.buf + control)
             self.buf = ""
@@ -378,10 +368,10 @@ if __name__ == "__main__":
 
     port = options.portname
 
-    bt = BlinkyTape(port)
+    LED_COUNT = 20
 
+    bt = BlinkyTape(port, LED_COUNT, True)
 
-    LED_COUNT = 40
 
     while True:
         for pixel in range(0, LED_COUNT):
@@ -390,6 +380,6 @@ if __name__ == "__main__":
                 if pos == pixel:
                     bt.sendPixel(0,0,255)
                 else:
-                    bt.sendPixel(0,0,0)
+                    bt.sendPixel(0,255,0)
             bt.show()
-            time.sleep(.5)
+            time.sleep(.1)

@@ -24,10 +24,9 @@
 #ifndef SERIALLOOP_H
 #define SERIALLOOP_H
 
-#define SERIAL_MODE_DATA     0x01
-#define SERIAL_MODE_COMMAND  0x02
+enum serial_mode_t {SERIAL_MODE_DATA, SERIAL_MODE_COMMAND};
 
-extern void serialReset();
+extern void serialReset(serial_mode_t mode);
 extern void serialLoop();
 
 #endif

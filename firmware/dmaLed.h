@@ -97,13 +97,15 @@ public:
 // Size of the output buffer, implementation dependent.
 // Needs to be as large as the largest implementation (set by hand)
 
-#define DMA_BUFFER_FRAME_SIZE (4+LED_COUNT*4)*8 + (LED_COUNT + 1)/2
+#define DMA_BUFFER_FRAME_SIZE ((4+LED_COUNT*4)*8 + (LED_COUNT + 1)/2)
 
 #if defined(DOUBLE_BUFFER)
 #define DMA_BUFFER_SIZE DMA_BUFFER_FRAME_SIZE*2
 #else
 #define DMA_BUFFER_SIZE DMA_BUFFER_FRAME_SIZE
 #endif
+
+extern CDmaLed DmaLed;
 
 extern uint8_t dmaBuffer[DMA_BUFFER_SIZE];
 extern uint8_t drawBuffer[DRAW_BUFFER_SIZE];        // Buffer for the user to draw into

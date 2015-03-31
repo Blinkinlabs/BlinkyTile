@@ -24,7 +24,6 @@ int serialMode;         // Serial protocol we are speaking
 void dataLoop();
 
 int escapeRunCount;     // Count of how many escape characters we've received
-uint8_t buffer[3];      // Buffer for one pixel of data
 int bufferIndex;        // Current location in the buffer
 int pixelIndex;         // Pixel we are currently writing to
 
@@ -32,18 +31,18 @@ int pixelIndex;         // Pixel we are currently writing to
 void commandLoop();
 
 #define CONTROL_BUFFER_SIZE 300
-uint8_t controlBuffer[CONTROL_BUFFER_SIZE];     // Buffer for receiving command data
-int controlBufferIndex;     // Current location in the buffer
+uint8_t serialBuffer[CONTROL_BUFFER_SIZE];     // Buffer for receiving command data
+int serialBufferIndex;     // Current location in the buffer
 
-void serialReset() {
-    serialMode = SERIAL_MODE_DATA;
+void serialReset(serial_mode_t mode) {
+    serialMode = mode;
 
     bufferIndex = 0;
     pixelIndex = 0;
 
     escapeRunCount = 0;
 
-    controlBufferIndex = 0;
+    serialBufferIndex = 0;
 }
 
 void serialLoop() {
@@ -55,36 +54,18 @@ void serialLoop() {
             commandLoop();
             break;
         default:
-            serialReset();
+            serialReset(SERIAL_MODE_DATA);
     }
 }
 
 void dataLoop() {
-    uint8_t c = usb_serial_getchar();
+    int c = usb_serial_getchar();
 
-    // Pixel character
-    if(c != 0xFF) {
-        // Reset the control character state variables
-        escapeRunCount = 0;
-
-        // Buffer the color
-        buffer[bufferIndex++] = c;
-
-        // If this makes a complete pixel color, update the display and reset for the next color
-        if(bufferIndex > 2) {
-            bufferIndex = 0;
-
-            // Prevent overflow by ignoring any pixel data beyond LED_COUNT
-            if(pixelIndex < LED_COUNT) {
-// TODO: Wire me in
-//                DmaLed.setPixel(pixelIndex, buffer[2], buffer[1], buffer[0]);
-                pixelIndex++;
-            }
-        }
+    if(c == -1) {
+        return;
     }
 
-    // Control character
-    else {
+    if(c == 0xFF) {
         // reset the pixel character state vairables
         bufferIndex = 0;
         pixelIndex = 0;
@@ -93,13 +74,34 @@ void dataLoop() {
 
         // If this is the first escape character, refresh the output
         if(escapeRunCount == 1) {
-// TODO: Wire me in
-//            DmaLed.show();
+            DmaLed.show();
+            for(int i = 0; i<LED_COUNT; i++) {
+                DmaLed.setPixel(i, 0,0,0);
+            }
         }
         
         if(escapeRunCount > 8) {
-            serialMode = SERIAL_MODE_COMMAND;
-            controlBufferIndex = 0;
+            serialReset(SERIAL_MODE_COMMAND);
+        }
+    }
+    else {
+        // Reset the control character state variables
+        escapeRunCount = 0;
+
+        // Buffer the color
+        serialBuffer[bufferIndex++] = c;
+
+        // If this makes a complete pixel color, update the display and reset for the next color
+        if(bufferIndex > 2) {
+            bufferIndex = 0;
+
+            // Prevent overflow by ignoring any pixel data beyond LED_COUNT
+            if(pixelIndex < LED_COUNT) {
+                DmaLed.setPixel(pixelIndex++,
+                    serialBuffer[2],
+                    serialBuffer[1],
+                    serialBuffer[0]);
+            }
         }
     }
 }
@@ -148,29 +150,29 @@ void commandLoop() {
     uint8_t c = usb_serial_getchar();
 
     // If we get extra 0xFF bytes before the command byte, ignore them
-    if((controlBufferIndex == 0) && (c == 0xFF))
+    if((serialBufferIndex == 0) && (c == 0xFF))
         return;
 
-    controlBuffer[controlBufferIndex++] = c;
+    serialBuffer[serialBufferIndex++] = c;
 
     for(Command *command = commands; 1; command++) {
         // If the command isn't found in the list, bail
         if(command->name == 0xFF) {
-            serialReset();
+            serialReset(SERIAL_MODE_DATA);
             break;
         }
 
         // If this iteration isn't the correct one, keep looking
-        if(command->name != controlBuffer[0])
+        if(command->name != serialBuffer[0])
             continue;
 
         // Now we're on to something- have we gotten enough data though?
-        if(controlBufferIndex >= command->length) {
-            if(command->function(controlBuffer + 1)) {
+        if(serialBufferIndex >= command->length) {
+            if(command->function(serialBuffer + 1)) {
                 usb_serial_putchar('P');
-                usb_serial_putchar((char)controlBuffer[1]);
+                usb_serial_putchar((char)serialBuffer[1]);
 
-                usb_serial_write(controlBuffer + 2, controlBuffer[1] + 1);
+                usb_serial_write(serialBuffer + 2, serialBuffer[1] + 1);
             }
             else {
                 usb_serial_putchar('F');
@@ -178,7 +180,7 @@ void commandLoop() {
                 usb_serial_putchar(char(0x00));
             }
 
-            serialReset();
+            serialReset(SERIAL_MODE_DATA);
         }
         break;
     }
