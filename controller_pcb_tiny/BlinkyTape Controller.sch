@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -5869,7 +5869,7 @@ These are standard reverse protection diodes and small signal diodes. SMA packag
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0.2032" drill="0.3302">
+<class number="0" name="default" width="0.2032" drill="0.25">
 </class>
 <class number="1" name="power" width="0.3048" drill="0">
 </class>
@@ -5909,7 +5909,6 @@ These are standard reverse protection diodes and small signal diodes. SMA packag
 <part name="U$2" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$3" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$4" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
-<part name="U$5" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$6" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$7" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$8" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
@@ -5924,7 +5923,8 @@ These are standard reverse protection diodes and small signal diodes. SMA packag
 <part name="RECT_PAD3" library="blinkinlabs" deviceset="TEST_PAD_SMT" device="RECT_PAD"/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
-<part name="C7" library="adafruit" deviceset="C-US" device="C0402" value="1uF"/>
+<part name="C7" library="adafruit" deviceset="C-US" device="C0603" value="1uF"/>
+<part name="RECT_PAD1" library="blinkinlabs" deviceset="TEST_PAD_SMT" device="RECT_PAD"/>
 </parts>
 <sheets>
 <sheet>
@@ -6038,7 +6038,6 @@ these buttons.</text>
 <instance part="U$2" gate="G$1" x="317.5" y="139.7"/>
 <instance part="U$3" gate="G$1" x="317.5" y="137.16"/>
 <instance part="U$4" gate="G$1" x="317.5" y="134.62"/>
-<instance part="U$5" gate="G$1" x="335.28" y="139.7" rot="R180"/>
 <instance part="U$6" gate="G$1" x="335.28" y="137.16" rot="R180"/>
 <instance part="U$7" gate="G$1" x="335.28" y="134.62" rot="R180"/>
 <instance part="U$8" gate="G$1" x="335.28" y="132.08" rot="R180"/>
@@ -6058,6 +6057,7 @@ these buttons.</text>
 <attribute name="VALUE" x="342.9" y="87.63" size="1.778" layer="96"/>
 </instance>
 <instance part="C7" gate="G$1" x="139.7" y="218.44"/>
+<instance part="RECT_PAD1" gate="G$1" x="317.5" y="86.36" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -6111,11 +6111,6 @@ these buttons.</text>
 <pinref part="U4" gate="G$2" pin="GND"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 <wire x1="127" y1="55.88" x2="127" y2="58.42" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<wire x1="340.36" y1="139.7" x2="347.98" y2="139.7" width="0.1524" layer="91"/>
-<label x="342.9" y="139.7" size="1.778" layer="95"/>
-<pinref part="U$5" gate="G$1" pin="P$1"/>
 </segment>
 <segment>
 <pinref part="Q1" gate="G$1" pin="P$1"/>
@@ -6413,6 +6408,11 @@ these buttons.</text>
 <junction x="91.44" y="200.66"/>
 <label x="93.98" y="200.66" size="1.778" layer="95"/>
 <pinref part="D2" gate="G$1" pin="A"/>
+</segment>
+<segment>
+<pinref part="RECT_PAD1" gate="G$1" pin="P$1"/>
+<wire x1="322.58" y1="86.36" x2="337.82" y2="86.36" width="0.1524" layer="91"/>
+<label x="327.66" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="BUTTON1" class="0">
