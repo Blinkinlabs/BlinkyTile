@@ -9,8 +9,8 @@
 <grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.05" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="Route2" color="11" fill="1" visible="no" active="yes"/>
-<layer number="3" name="Route3" color="6" fill="1" visible="no" active="yes"/>
+<layer number="2" name="Route2" color="11" fill="1" visible="yes" active="yes"/>
+<layer number="3" name="Route3" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
 <layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
@@ -36,10 +36,10 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
-<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="yes" active="yes"/>
 <layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
@@ -159,10 +159,10 @@
 <rectangle x1="12.25" y1="2.85" x2="16.25" y2="3.05" layer="41"/>
 <rectangle x1="12.25" y1="2.85" x2="12.45" y2="6.85" layer="41"/>
 <rectangle x1="12.25" y1="6.65" x2="16.25" y2="6.85" layer="41"/>
-<wire x1="0" y1="10" x2="0" y2="0" width="0.127" layer="20"/>
-<wire x1="0" y1="0" x2="29" y2="0" width="0.127" layer="20"/>
-<wire x1="29" y1="0" x2="29" y2="10" width="0.127" layer="20"/>
-<wire x1="29" y1="10" x2="0" y2="10" width="0.127" layer="20"/>
+<wire x1="0" y1="10" x2="0" y2="0" width="0.1" layer="20"/>
+<wire x1="0" y1="0" x2="29" y2="0" width="0.1" layer="20"/>
+<wire x1="29" y1="0" x2="29" y2="10" width="0.1" layer="20"/>
+<wire x1="29" y1="10" x2="0" y2="10" width="0.1" layer="20"/>
 <text x="30.94" y="16.46" size="0.75" layer="26" rot="MR180" align="center">+5V</text>
 <text x="31.27" y="13.79" size="0.75" layer="26" rot="MR0" align="center">DATA</text>
 <text x="31.98" y="11.29" size="0.75" layer="26" rot="MR0" align="center">ADDRESS</text>
@@ -12860,8 +12860,6 @@ Blinkinlabs.com</text>
 <circle x="16.8" y="21.3" radius="0.360553125" width="0.254" layer="25"/>
 <circle x="6.6" y="13" radius="0.14141875" width="0.254" layer="25"/>
 <rectangle x1="23.35" y1="1.05" x2="28.35" y2="7.05" layer="39" rot="R180"/>
-<dimension x1="0" y1="-1" x2="29" y2="-1" x3="14.5" y3="-4" textsize="1.778" layer="20"/>
-<dimension x1="-1" y1="0" x2="-1" y2="10" x3="-3.1" y3="5" textsize="1.778" layer="20"/>
 </plain>
 <libraries>
 <library name="adafruit">
@@ -13115,19 +13113,23 @@ chip</description>
 <text x="-3" y="-3" size="1.27" layer="27">&gt;VALUE</text>
 <text x="-3" y="2" size="1.27" layer="25">&gt;NAME</text>
 </package>
-<package name="WS2812B_CONNECTOR">
-<smd name="5V" x="0" y="2.5" dx="2.7" dy="1.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
+<package name="WS2812B_CONNECTOR_COMBINED">
+<smd name="5V" x="0" y="3" dx="2.7" dy="1.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
 <smd name="DATA" x="0" y="0" dx="2.7" dy="1.6" layer="1" roundness="25" thermals="no" cream="no"/>
-<smd name="GND" x="0" y="-2.5" dx="2.7" dy="1.6" layer="1" roundness="50" thermals="no" cream="no"/>
+<smd name="GND" x="0" y="-3" dx="2.7" dy="2.6" layer="1" roundness="50" thermals="no" cream="no"/>
 <pad name="5V_1" x="1.35" y="2.5" drill="1" thermals="no"/>
 <pad name="DATA_1" x="1.35" y="0" drill="1" diameter="1.5" thermals="no"/>
 <pad name="GND_1" x="1.35" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
 <pad name="5V_2" x="-0.5" y="2.5" drill="1" thermals="no"/>
 <pad name="DATA_2" x="-0.5" y="0" drill="1" diameter="1.5" thermals="no"/>
 <pad name="GND_2" x="-0.5" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
-<smd name="5V1" x="0" y="2.5" dx="2.7" dy="1.6" layer="1" roundness="25" thermals="no" cream="no"/>
+<smd name="5V1" x="0" y="3" dx="2.7" dy="2.6" layer="1" roundness="25" thermals="no" cream="no"/>
 <smd name="DATA1" x="0" y="0" dx="2.7" dy="1.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
-<smd name="GND1" x="0" y="-2.5" dx="2.7" dy="1.6" layer="16" roundness="50" rot="R180" thermals="no" cream="no"/>
+<smd name="GND1" x="0" y="-3" dx="2.7" dy="2.6" layer="16" roundness="50" rot="R180" thermals="no" cream="no"/>
+<pad name="GND_3" x="1.35" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
+<pad name="GND_4" x="1.35" y="-3.6" drill="1" diameter="1.5" thermals="no"/>
+<pad name="5V_3" x="1.35" y="3.6" drill="1" thermals="no"/>
+<smd name="5V2" x="0" y="3" dx="2.7" dy="2.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
 </package>
 <package name="POGO_PIN_SMD">
 <smd name="P$1" x="0" y="0" dx="1" dy="1" layer="1" roundness="70" cream="no"/>
@@ -13430,9 +13432,9 @@ Modified from Laen's PCB Order Design Rules</description>
 <attribute name="VALUE" x="-3.525" y="8.81" size="1.27" layer="27" rot="R270"/>
 <attribute name="NAME" x="1.485" y="5.01" size="1.016" layer="25" font="vector" rot="R270" align="center"/>
 </element>
-<element name="U4" library="74xx-little-us" package="SC70-5" value="74LVC1G17DCK" x="23.9" y="8.85" smashed="yes" rot="R270">
-<attribute name="NAME" x="25.67" y="8.99" size="1.016" layer="25" font="vector" rot="R270" align="center"/>
-<attribute name="VALUE" x="21.36" y="11.39" size="1.27" layer="27" rot="R270"/>
+<element name="U4" library="74xx-little-us" package="SC70-5" value="74LVC1G17DCK" x="23.85" y="8.85" smashed="yes" rot="R270">
+<attribute name="NAME" x="25.62" y="8.99" size="1.016" layer="25" font="vector" rot="R270" align="center"/>
+<attribute name="VALUE" x="21.31" y="11.39" size="1.27" layer="27" rot="R270"/>
 </element>
 <element name="U1" library="blinkinlabs" package="QFN32_5X5_LONGLEADS" value="MK20D--VFM5" x="14.25" y="4.85" smashed="yes">
 <attribute name="NAME" x="14.25" y="4.9" size="1.016" layer="25" font="vector" align="center"/>
@@ -13447,7 +13449,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <attribute name="NAME" x="6.505" y="2.475" size="1.016" layer="25" font="vector" rot="R180" align="center"/>
 </element>
 <element name="SW1" library="blinkinlabs" package="BUTTON_MOMENTARY_KMR211G" value="" x="19.65" y="7.2" rot="R270"/>
-<element name="U$1" library="blinkinlabs" package="WS2812B_CONNECTOR" value="WS2812B_CONNECTORSTANDARD" x="27.5" y="5" smashed="yes" rot="MR180"/>
+<element name="U$1" library="blinkinlabs" package="WS2812B_CONNECTOR_COMBINED" value="WS2812B_CONNECTOR" x="27.5" y="5" smashed="yes" rot="MR180"/>
 <element name="U$2" library="blinkinlabs" package="POGO_PIN_SMD" value="POGO_PINSMD" x="11.5" y="1" rot="MR90"/>
 <element name="U$3" library="blinkinlabs" package="POGO_PIN_SMD" value="POGO_PINSMD" x="13" y="2" rot="MR90"/>
 <element name="U$4" library="blinkinlabs" package="POGO_PIN_SMD" value="POGO_PINSMD" x="16" y="2" rot="MR90"/>
@@ -13463,6 +13465,8 @@ Modified from Laen's PCB Order Design Rules</description>
 <element name="RECT_PAD3" library="blinkinlabs" package="TEST_PAD_SMT" value="TEST_PAD_SMTRECT_PAD" x="6.5" y="1" rot="MR90"/>
 <element name="C7" library="adafruit" package="C0603" value="1uF" x="7.15" y="7.35"/>
 <element name="RECT_PAD1" library="blinkinlabs" package="TEST_PAD_SMT" value="TEST_PAD_SMTRECT_PAD" x="6.5" y="6.9" rot="MR270"/>
+<element name="U$5" library="blinkinlabs" package="POGO_PIN_SMD" value="POGO_PINSMD" x="13.65" y="9.2"/>
+<element name="U$9" library="blinkinlabs" package="POGO_PIN_SMD" value="POGO_PINSMD" x="12.05" y="9.2"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -13538,10 +13542,12 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="11.25" y1="1.9" x2="11.7" y2="2.35" width="0.254" layer="1"/>
 <via x="5.35" y="4" extent="1-16" drill="0.25" diameter="0.2"/>
 <via x="5.3" y="3.2" extent="1-16" drill="0.25" diameter="0.2"/>
-<via x="22.15" y="8.2" extent="1-16" drill="0.25"/>
+<via x="22.1" y="8.2" extent="1-16" drill="0.25"/>
 <wire x1="11.475" y1="6.1" x2="10.425" y2="6.1" width="0.254" layer="1"/>
 <wire x1="10.425" y1="6.1" x2="10.15" y2="6.375" width="0.254" layer="1"/>
-<wire x1="27.5" y1="7.5" x2="27.5" y2="7.5" width="0" layer="19" extent="1-16"/>
+<contactref element="U$1" pad="GND_3"/>
+<contactref element="U$1" pad="GND_4"/>
+<wire x1="27.5" y1="8" x2="27.5" y2="8" width="0" layer="19" extent="1-16"/>
 </signal>
 <signal name="N$2">
 <contactref element="Q1" pad="P$3"/>
@@ -13570,12 +13576,12 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="7.75" y1="5.6" x2="7.75" y2="5.7" width="0.254" layer="1"/>
 <wire x1="7.75" y1="5.7" x2="7.6" y2="5.85" width="0.254" layer="1"/>
 <wire x1="7.6" y1="5.85" x2="6.55" y2="5.85" width="0.254" layer="1"/>
-<wire x1="4.175" y1="5" x2="4.9" y2="5" width="0.254" layer="1"/>
+<wire x1="4.175" y1="5" x2="5" y2="5" width="0.254" layer="1"/>
 <wire x1="6.5" y1="4.6" x2="6.15" y2="4.95" width="0.254" layer="1"/>
 <wire x1="6.55" y1="5.85" x2="6.15" y2="5.45" width="0.254" layer="1"/>
 <wire x1="6.15" y1="5.45" x2="6.15" y2="4.95" width="0.254" layer="1"/>
-<wire x1="4.9" y1="5" x2="5.1" y2="4.8" width="0.254" layer="1"/>
-<wire x1="5.1" y1="4.8" x2="5.7" y2="4.8" width="0.254" layer="1"/>
+<wire x1="5" y1="5" x2="5.2" y2="4.8" width="0.254" layer="1"/>
+<wire x1="5.2" y1="4.8" x2="5.7" y2="4.8" width="0.254" layer="1"/>
 <wire x1="5.7" y1="4.8" x2="5.85" y2="4.95" width="0.254" layer="1"/>
 <wire x1="5.85" y1="4.95" x2="6.15" y2="4.95" width="0.254" layer="1"/>
 </signal>
@@ -13614,7 +13620,7 @@ Modified from Laen's PCB Order Design Rules</description>
 <via x="10.75" y="8.65" extent="1-16" drill="0.25"/>
 <via x="10.75" y="9.3" extent="1-16" drill="0.25"/>
 <wire x1="10.75" y1="8.65" x2="10.75" y2="9.3" width="0.8128" layer="1"/>
-<via x="25.85" y="9.15" extent="1-16" drill="0.25"/>
+<via x="25.7" y="9.35" extent="1-16" drill="0.25"/>
 <wire x1="11.475" y1="4.1" x2="10.65" y2="4.1" width="0.254" layer="1"/>
 <polygon width="0.254" layer="3">
 <vertex x="5" y="10"/>
@@ -13639,16 +13645,18 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="9.55" y1="2.15" x2="9.95" y2="2.55" width="0.254" layer="1"/>
 <wire x1="10.65" y1="4.1" x2="9.95" y2="3.4" width="0.254" layer="1"/>
 <wire x1="9.95" y1="3.4" x2="9.95" y2="2.55" width="0.254" layer="1"/>
-<wire x1="24.75" y1="9.5" x2="25.596" y2="9.5" width="0.254" layer="1"/>
-<wire x1="25.596" y1="9.5" x2="25.85" y2="9.246" width="0.254" layer="1"/>
-<wire x1="25.85" y1="9.246" x2="25.85" y2="9.15" width="0.254" layer="1"/>
+<wire x1="24.7" y1="9.5" x2="25.546" y2="9.5" width="0.254" layer="1"/>
+<wire x1="25.546" y1="9.5" x2="25.7" y2="9.346" width="0.254" layer="1"/>
+<wire x1="25.7" y1="9.346" x2="25.7" y2="9.35" width="0.254" layer="1"/>
 <wire x1="7.654" y1="9" x2="7" y2="8.346" width="0.6096" layer="1"/>
 <wire x1="9.5" y1="9" x2="7.654" y2="9" width="0.6096" layer="1"/>
 <wire x1="6.3" y1="7.35" x2="6.3" y2="7.45" width="0.6096" layer="1"/>
 <wire x1="6.3" y1="7.45" x2="7" y2="8.15" width="0.6096" layer="1"/>
 <wire x1="9.5" y1="9" x2="10.75" y2="9" width="0.8128" layer="1"/>
 <wire x1="10.75" y1="9" x2="10.75" y2="8.65" width="0.8128" layer="1"/>
-<wire x1="27.5" y1="2.5" x2="27.5" y2="2.5" width="0" layer="19" extent="1-16"/>
+<contactref element="U$1" pad="5V2"/>
+<contactref element="U$1" pad="5V_3"/>
+<wire x1="27.5" y1="2" x2="27.5" y2="2" width="0" layer="19" extent="1-16"/>
 </signal>
 <signal name="+3V3">
 <contactref element="U2" pad="3"/>
@@ -13855,10 +13863,10 @@ Modified from Laen's PCB Order Design Rules</description>
 <via x="5.4" y="6.4" extent="1-16" drill="0.25"/>
 <via x="6.15" y="2.5" extent="1-16" drill="0.25"/>
 <polygon width="0.3048" layer="1">
-<vertex x="6" y="12"/>
+<vertex x="6" y="10"/>
 <vertex x="6" y="6"/>
 <vertex x="5" y="6"/>
-<vertex x="5" y="12"/>
+<vertex x="5" y="10"/>
 </polygon>
 <polygon width="0.254" layer="3">
 <vertex x="5" y="7.75"/>
@@ -13897,11 +13905,11 @@ Modified from Laen's PCB Order Design Rules</description>
 <wire x1="17.075" y1="7.95" x2="16.65" y2="7.525" width="0.254" layer="16"/>
 <wire x1="16" y1="7.625" x2="16.55" y2="7.625" width="0.254" layer="1"/>
 <wire x1="16.55" y1="7.625" x2="16.65" y2="7.525" width="0.254" layer="1"/>
-<wire x1="23.05" y1="8.85" x2="21.65" y2="8.85" width="0.254" layer="1"/>
-<wire x1="21.65" y1="8.85" x2="21.4" y2="8.6" width="0.254" layer="1"/>
-<wire x1="21.4" y1="8.6" x2="21.4" y2="8.3" width="0.254" layer="1"/>
-<wire x1="20.25" y1="8.05" x2="21.15" y2="8.05" width="0.254" layer="1"/>
-<wire x1="21.15" y1="8.05" x2="21.4" y2="8.3" width="0.254" layer="1"/>
+<wire x1="23" y1="8.85" x2="21.6" y2="8.85" width="0.254" layer="1"/>
+<wire x1="21.6" y1="8.85" x2="21.35" y2="8.6" width="0.254" layer="1"/>
+<wire x1="21.35" y1="8.6" x2="21.35" y2="8.3" width="0.254" layer="1"/>
+<wire x1="20.25" y1="8.05" x2="21.1" y2="8.05" width="0.254" layer="1"/>
+<wire x1="21.1" y1="8.05" x2="21.35" y2="8.3" width="0.254" layer="1"/>
 </signal>
 <signal name="LED_DATA">
 <contactref element="U4" pad="4"/>
@@ -13911,11 +13919,10 @@ Modified from Laen's PCB Order Design Rules</description>
 <contactref element="U$1" pad="DATA1"/>
 <wire x1="27" y1="5" x2="27.5" y2="5" width="0.254" layer="1"/>
 <wire x1="27.5" y1="5" x2="28.85" y2="5" width="0.254" layer="1"/>
-<wire x1="24.75" y1="8.2" x2="25.6" y2="8.2" width="0.254" layer="1"/>
-<wire x1="25.6" y1="8.2" x2="25.7" y2="8.3" width="0.254" layer="1"/>
-<via x="25.7" y="8.3" extent="1-16" drill="0.25"/>
-<wire x1="25.7" y1="8.3" x2="25.6" y2="8.2" width="0.254" layer="16"/>
-<wire x1="25.6" y1="8.2" x2="25.6" y2="5.8" width="0.254" layer="16"/>
+<wire x1="24.7" y1="8.2" x2="25.5" y2="8.2" width="0.254" layer="1"/>
+<wire x1="25.5" y1="8.2" x2="25.6" y2="8.3" width="0.254" layer="1"/>
+<via x="25.6" y="8.3" extent="1-16" drill="0.25"/>
+<wire x1="25.6" y1="8.3" x2="25.6" y2="5.8" width="0.254" layer="16"/>
 <wire x1="25.6" y1="5.8" x2="26.4" y2="5" width="0.254" layer="16"/>
 <wire x1="26.4" y1="5" x2="27" y2="5" width="0.254" layer="16"/>
 <wire x1="27.5" y1="5" x2="27.5" y2="5" width="0" layer="19" extent="1-16"/>
@@ -13995,12 +14002,20 @@ Modified from Laen's PCB Order Design Rules</description>
 </signal>
 <signal name="PD5">
 <contactref element="U1" pad="30"/>
+<contactref element="U$5" pad="P$1"/>
+<wire x1="13.5" y1="7.625" x2="13.5" y2="9.05" width="0.254" layer="1"/>
+<wire x1="13.5" y1="9.05" x2="13.65" y2="9.2" width="0.254" layer="1"/>
 </signal>
 <signal name="PD7">
 <contactref element="U1" pad="32"/>
 </signal>
 <signal name="PD6">
 <contactref element="U1" pad="31"/>
+<contactref element="U$9" pad="P$1"/>
+<wire x1="13" y1="7.625" x2="13" y2="8.5" width="0.254" layer="1"/>
+<wire x1="13" y1="8.5" x2="12.75" y2="8.75" width="0.254" layer="1"/>
+<wire x1="12.75" y1="8.75" x2="12.5" y2="8.75" width="0.254" layer="1"/>
+<wire x1="12.5" y1="8.75" x2="12.05" y2="9.2" width="0.254" layer="1"/>
 </signal>
 </signals>
 <errors>
@@ -14089,37 +14104,134 @@ Modified from Laen's PCB Order Design Rules</description>
 <approved hash="5,1,3cfa57a4a32db150"/>
 <approved hash="19,16,f9b741883da4a54f"/>
 <approved hash="19,16,e6570068218a7d99"/>
-<approved hash="5,1,28fe19b1e7fad4b5"/>
-<approved hash="5,1,d12fbeedbb7cb5d9"/>
-<approved hash="5,1,4d4926bca323b1f3"/>
-<approved hash="5,1,a011cfedbb7cb5e7"/>
-<approved hash="5,1,3c7757bca323b1cd"/>
-<approved hash="4,1,ccc0d7a039a00ed0"/>
-<approved hash="4,1,c807c5e535f90a03"/>
 <approved hash="4,1,803ae11e1f0e702a"/>
+<approved hash="4,1,ccc0d7a039a00ed0"/>
+<approved hash="4,16,ccc0d7a039a00ed0"/>
+<approved hash="4,16,803ae11e1f0e702a"/>
+<approved hash="4,1,c807c5e535f90a03"/>
+<approved hash="4,1,dd69d61726131d6d"/>
+<approved hash="4,1,c5900874496b6d50"/>
+<approved hash="4,1,4559b15ede72de22"/>
 <approved hash="4,1,d7a547bf4cf42805"/>
+<approved hash="4,1,425f35a737d14045"/>
 <approved hash="4,1,6ad50dad0fd768db"/>
+<approved hash="4,1,6074174e157a6278"/>
 <approved hash="4,1,425f35a737d14045"/>
 <approved hash="4,1,76280192039e741c"/>
+<approved hash="4,1,44bc3006323246a0"/>
+<approved hash="4,2,6074174e157a6278"/>
+<approved hash="4,2,44bc3006323246a0"/>
+<approved hash="4,2,425f35a737d14045"/>
 <approved hash="4,2,425f35a737d14045"/>
 <approved hash="4,2,76280192039e741c"/>
 <approved hash="4,2,6ad50dad0fd768db"/>
+<approved hash="4,3,6074174e157a6278"/>
+<approved hash="4,3,44bc3006323246a0"/>
+<approved hash="4,3,425f35a737d14045"/>
 <approved hash="4,3,425f35a737d14045"/>
 <approved hash="4,3,76280192039e741c"/>
 <approved hash="4,3,6ad50dad0fd768db"/>
-<approved hash="4,16,00f63222e9e0faf2"/>
 <approved hash="4,16,f3eae851dc3de640"/>
-<approved hash="19,16,6872886c8e329c81"/>
-<approved hash="19,16,6ea63cc030b05eda"/>
-<approved hash="19,16,f7b03f403fbff74f"/>
-<approved hash="19,16,f8f078004504c5f4"/>
-<approved hash="19,16,c63419c41807c7f7"/>
+<approved hash="4,16,00f63222e9e0faf2"/>
+<approved hash="4,16,4559b15ede72de22"/>
+<approved hash="4,16,c5900874496b6d50"/>
 <approved hash="4,16,c807c5e535f90a03"/>
-<approved hash="4,16,ccc0d7a039a00ed0"/>
-<approved hash="4,16,803ae11e1f0e702a"/>
+<approved hash="4,16,6074174e157a6278"/>
 <approved hash="4,16,6ad50dad0fd768db"/>
+<approved hash="4,16,44bc3006323246a0"/>
 <approved hash="4,16,76280192039e741c"/>
 <approved hash="4,16,425f35a737d14045"/>
+<approved hash="4,16,425f35a737d14045"/>
+<approved hash="2,20,fe1239c03bd6fc04"/>
+<approved hash="18,29,3b0ad64646b2099b"/>
+<approved hash="18,29,2192ce567cd13170"/>
+<approved hash="18,29,9e8ecbf06f0c0e33"/>
+<approved hash="18,29,d5a39ff552828eb7"/>
+<approved hash="18,29,6b40239ef89c2621"/>
+<approved hash="18,29,903f63d363d3903f"/>
+<approved hash="18,29,0b3cc4baf50166dd"/>
+<approved hash="18,29,60920d143ef0ff7e"/>
+<approved hash="18,29,e66b48e5e96a6c81"/>
+<approved hash="18,29,924f7893d935c5fa"/>
+<approved hash="18,29,3583251080ef6a7f"/>
+<approved hash="18,29,74b6cc774c68f4a9"/>
+<approved hash="18,29,b82cf3ed73e13820"/>
+<approved hash="18,29,7bb1b08c352e241c"/>
+<approved hash="18,29,e31f5bdfdbc06300"/>
+<approved hash="4,1,6012aa10580c600c"/>
+<approved hash="4,1,6f127f13ab0c6f0c"/>
+<approved hash="4,1,6c1228127e0c6c0c"/>
+<approved hash="4,1,61125b122b0c610c"/>
+<approved hash="4,1,4cf5fb1a560a71e8"/>
+<approved hash="4,1,02fb7b1b6a312fd3"/>
+<approved hash="4,1,8ace392e283213d0"/>
+<approved hash="4,1,081919ad89bfc833"/>
+<approved hash="4,1,e80539b289a0e82c"/>
+<approved hash="4,1,04336fa475e41e71"/>
+<approved hash="4,1,0c1cb8fbeb04821c"/>
+<approved hash="4,1,8c1cd8fbab04021b"/>
+<approved hash="4,1,23624ca061bfee7c"/>
+<approved hash="4,1,746346a179a63964"/>
+<approved hash="4,1,7e789bb934a6c167"/>
+<approved hash="4,1,7d026bb69ba47d28"/>
+<approved hash="4,1,7d12ada63db47d38"/>
+<approved hash="5,1,28fe19b1e7fad4b5"/>
+<approved hash="5,1,4d4926bca323b1f3"/>
+<approved hash="5,1,d12fbeedbb7cb5d9"/>
+<approved hash="5,1,3c7757bca323b1cd"/>
+<approved hash="5,1,a011cfedbb7cb5e7"/>
+<approved hash="4,1,50a1b4ac41266ff8"/>
+<approved hash="4,1,4f9d25a5244d48b5"/>
+<approved hash="4,1,87ef65aa6bf68183"/>
+<approved hash="4,1,42ffb060475a7d42"/>
+<approved hash="4,1,6045f05f4cf42805"/>
+<approved hash="4,1,6a6a71747f257b87"/>
+<approved hash="4,1,6a2a71747ce16797"/>
+<approved hash="4,1,6a2a71347ee16407"/>
+<approved hash="4,1,6a6a71b47fa1641b"/>
+<approved hash="4,1,6a6a71b47fa1641b"/>
+<approved hash="4,1,6aea71747f5964bf"/>
+<approved hash="4,2,6012aa10580c600c"/>
+<approved hash="4,2,6f127f13ab0c6f0c"/>
+<approved hash="4,2,6c1228127e0c6c0c"/>
+<approved hash="4,2,61125b122b0c610c"/>
+<approved hash="4,2,6a6a71b47fa1641b"/>
+<approved hash="4,2,6a6a71b47fa1641b"/>
+<approved hash="4,2,6a2a71347ee16407"/>
+<approved hash="4,2,6a2a71747ce16797"/>
+<approved hash="4,2,6a6a71747f257b87"/>
+<approved hash="4,2,6aea71747f5964bf"/>
+<approved hash="4,3,6012aa10580c600c"/>
+<approved hash="4,3,6f127f13ab0c6f0c"/>
+<approved hash="4,3,6c1228127e0c6c0c"/>
+<approved hash="4,3,61125b122b0c610c"/>
+<approved hash="4,3,6a6a71b47fa1641b"/>
+<approved hash="4,3,6a6a71b47fa1641b"/>
+<approved hash="4,3,6a2a71347ee16407"/>
+<approved hash="4,3,6a2a71747ce16797"/>
+<approved hash="4,3,6a6a71747f257b87"/>
+<approved hash="4,3,6aea71747f5964bf"/>
+<approved hash="4,16,0fa67ae473b156f6"/>
+<approved hash="4,16,6012aa10580c600c"/>
+<approved hash="4,16,6f127f13ab0c6f0c"/>
+<approved hash="4,16,6c1228127e0c6c0c"/>
+<approved hash="4,16,61125b122b0c610c"/>
+<approved hash="4,16,41d8082e9c1c2de8"/>
+<approved hash="4,16,380d1c257c73085e"/>
+<approved hash="19,16,6872886c8e329c81"/>
+<approved hash="19,16,f7b03f403fbff74f"/>
+<approved hash="19,16,6ea63cc030b05eda"/>
+<approved hash="19,16,f8f078004504c5f4"/>
+<approved hash="19,16,c63419c41807c7f7"/>
+<approved hash="4,16,4f9d25a5244d48b5"/>
+<approved hash="4,16,50a1b4ac41266ff8"/>
+<approved hash="4,16,87ef65aa6bf68183"/>
+<approved hash="4,16,6aea71747f5964bf"/>
+<approved hash="4,16,6a6a71747f257b87"/>
+<approved hash="4,16,6a6a71b47fa1641b"/>
+<approved hash="4,16,6a6a71b47fa1641b"/>
+<approved hash="4,16,6a2a71747ce16797"/>
+<approved hash="4,16,6a2a71347ee16407"/>
 </errors>
 </board>
 </drawing>

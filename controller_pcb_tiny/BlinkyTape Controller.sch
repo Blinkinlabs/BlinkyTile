@@ -4922,6 +4922,24 @@ type 0309, grid 2.5 mm</description>
 <rectangle x1="-0.889" y1="1.9558" x2="-0.381" y2="3.0988" layer="51"/>
 <rectangle x1="-2.159" y1="1.9558" x2="-1.651" y2="3.0988" layer="51"/>
 </package>
+<package name="WS2812B_CONNECTOR_COMBINED">
+<smd name="5V" x="0" y="3" dx="2.7" dy="1.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
+<smd name="DATA" x="0" y="0" dx="2.7" dy="1.6" layer="1" roundness="25" thermals="no" cream="no"/>
+<smd name="GND" x="0" y="-3" dx="2.7" dy="2.6" layer="1" roundness="50" thermals="no" cream="no"/>
+<pad name="5V_1" x="1.35" y="2.5" drill="1" thermals="no"/>
+<pad name="DATA_1" x="1.35" y="0" drill="1" diameter="1.5" thermals="no"/>
+<pad name="GND_1" x="1.35" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
+<pad name="5V_2" x="-0.5" y="2.5" drill="1" thermals="no"/>
+<pad name="DATA_2" x="-0.5" y="0" drill="1" diameter="1.5" thermals="no"/>
+<pad name="GND_2" x="-0.5" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
+<smd name="5V1" x="0" y="3" dx="2.7" dy="2.6" layer="1" roundness="25" thermals="no" cream="no"/>
+<smd name="DATA1" x="0" y="0" dx="2.7" dy="1.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
+<smd name="GND1" x="0" y="-3" dx="2.7" dy="2.6" layer="16" roundness="50" rot="R180" thermals="no" cream="no"/>
+<pad name="GND_3" x="1.35" y="-2.5" drill="1" diameter="1.5" thermals="no"/>
+<pad name="GND_4" x="1.35" y="-3.6" drill="1" diameter="1.5" thermals="no"/>
+<pad name="5V_3" x="1.35" y="3.6" drill="1" thermals="no"/>
+<smd name="5V2" x="0" y="3" dx="2.7" dy="2.6" layer="16" roundness="25" rot="R180" thermals="no" cream="no"/>
+</package>
 </packages>
 <symbols>
 <symbol name="USB_MICRO">
@@ -5266,6 +5284,16 @@ type 0309, grid 2.5 mm</description>
 <connect gate="G$1" pin="5V" pad="5V 5V1 5V_1 5V_2"/>
 <connect gate="G$1" pin="DATA" pad="DATA DATA1 DATA_1 DATA_2"/>
 <connect gate="G$1" pin="GND" pad="GND GND1 GND_1 GND_2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="" package="WS2812B_CONNECTOR_COMBINED">
+<connects>
+<connect gate="G$1" pin="5V" pad="5V 5V1 5V2 5V_1 5V_2 5V_3"/>
+<connect gate="G$1" pin="DATA" pad="DATA DATA1 DATA_1 DATA_2"/>
+<connect gate="G$1" pin="GND" pad="GND GND1 GND_1 GND_2 GND_3 GND_4"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -5905,7 +5933,7 @@ These are standard reverse protection diodes and small signal diodes. SMA packag
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="U6" library="blinkinlabs" deviceset="TPD4S012" device=""/>
 <part name="SW1" library="blinkinlabs" deviceset="BUTTON_MOMENTARY" device=""/>
-<part name="U$1" library="blinkinlabs" deviceset="WS2812B_CONNECTOR" device="STANDARD"/>
+<part name="U$1" library="blinkinlabs" deviceset="WS2812B_CONNECTOR" device="" value="WS2812B_CONNECTOR"/>
 <part name="U$2" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$3" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 <part name="U$4" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
@@ -5925,6 +5953,8 @@ These are standard reverse protection diodes and small signal diodes. SMA packag
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
 <part name="C7" library="adafruit" deviceset="C-US" device="C0603" value="1uF"/>
 <part name="RECT_PAD1" library="blinkinlabs" deviceset="TEST_PAD_SMT" device="RECT_PAD"/>
+<part name="U$5" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
+<part name="U$9" library="blinkinlabs" deviceset="POGO_PIN" device="SMD" value="POGO_PINSMD"/>
 </parts>
 <sheets>
 <sheet>
@@ -5981,6 +6011,11 @@ these buttons.</text>
 <wire x1="198.12" y1="45.72" x2="274.32" y2="45.72" width="0.6096" layer="94"/>
 <wire x1="274.32" y1="129.54" x2="274.32" y2="45.72" width="0.6096" layer="94"/>
 <text x="203.2" y="119.38" size="5.08" layer="94">IR receiver</text>
+<wire x1="35.56" y1="40.64" x2="124.46" y2="40.64" width="0.6096" layer="94"/>
+<text x="40.64" y="30.48" size="5.08" layer="94">Extra</text>
+<wire x1="35.56" y1="40.64" x2="35.56" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="124.46" y1="40.64" x2="124.46" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="35.56" y1="5.08" x2="124.46" y2="5.08" width="0.6096" layer="94"/>
 </plain>
 <instances>
 <instance part="C2" gate="G$1" x="104.14" y="220.98"/>
@@ -6058,6 +6093,8 @@ these buttons.</text>
 </instance>
 <instance part="C7" gate="G$1" x="139.7" y="218.44"/>
 <instance part="RECT_PAD1" gate="G$1" x="317.5" y="86.36" rot="R180"/>
+<instance part="U$5" gate="G$1" x="50.8" y="22.86" rot="R180"/>
+<instance part="U$9" gate="G$1" x="50.8" y="15.24" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -6503,6 +6540,11 @@ these buttons.</text>
 <wire x1="210.82" y1="170.18" x2="228.6" y2="170.18" width="0.1524" layer="91"/>
 <label x="218.44" y="170.18" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="U$5" gate="G$1" pin="P$1"/>
+<wire x1="55.88" y1="22.86" x2="78.74" y2="22.86" width="0.1524" layer="91"/>
+<label x="63.5" y="22.86" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="PD7" class="0">
 <segment>
@@ -6516,6 +6558,11 @@ these buttons.</text>
 <pinref part="U1" gate="G$1" pin="PTD6"/>
 <wire x1="210.82" y1="167.64" x2="228.6" y2="167.64" width="0.1524" layer="91"/>
 <label x="218.44" y="167.64" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="U$9" gate="G$1" pin="P$1"/>
+<wire x1="55.88" y1="15.24" x2="78.74" y2="15.24" width="0.1524" layer="91"/>
+<label x="63.5" y="15.24" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SHIELD" class="0">
