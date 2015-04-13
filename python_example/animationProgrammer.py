@@ -129,7 +129,8 @@ while True:
     bt = blinkytape.BlinkyTape()
 
     # first, erase the flash memory
-#    bt.flashErase()
+    print "erasing the flash... (this will take a while)"
+    bt.flashErase()
     
     #for sector in range(0, 100):
     #    bt.deleteFile(sector)
