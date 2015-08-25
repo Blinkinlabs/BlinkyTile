@@ -3,6 +3,8 @@ import time
 
 bt = blinkytape.BlinkyTape()
 
+maxAddress = 126
+
 while True:
     address = input("enter an address to program:")
     address = int(address) - 1
@@ -10,7 +12,7 @@ while True:
     bt.programAddress(address)
     time.sleep(1)
 
-    for pos in range(0, 14):
+    for pos in range(0, maxAddress):
         if pos == address:
             bt.sendPixel(100,0,0)
         else:
@@ -20,7 +22,7 @@ while True:
     bt.show()
     time.sleep(.5)
 
-    for pos in range(0, 14):
+    for pos in range(0, maxAddress):
         if pos == address:
             bt.sendPixel(0,100,0)
         else:
@@ -30,7 +32,7 @@ while True:
     bt.show()
     time.sleep(.5)
 
-    for pos in range(0, 14):
+    for pos in range(0, maxAddress):
         if pos == address:
             bt.sendPixel(0,0,100)
         else:
@@ -40,7 +42,7 @@ while True:
     bt.show()
     time.sleep(.5)
 
-    for pos in range(0, 14):
+    for pos in range(0, maxAddress):
         if pos == address:
             bt.sendPixel(100,100,100)
         else:
