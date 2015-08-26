@@ -3,6 +3,7 @@ import time
 import random
 import shimmer
 import colorloop
+import pornjshimmer
 
 def loadAnimation(animation):
     ledCount = animation[0]
@@ -64,8 +65,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 42
-
+ledCount = 14
 
 frameCount = 12
 speed = 30
@@ -91,6 +91,18 @@ for frame in range(0, frameCount):
     data += shim.getData()
 
 shimmerAnimation = [ledCount, frameCount, speed, data]
+
+
+
+frameCount = 2250
+speed = 20
+data = ''
+
+pornj = pornjshimmer.pornjshimmer(ledCount)
+for frame in range(0, frameCount):
+    data += pornj.getData()
+
+pornjshimmerAnimation = [ledCount, frameCount, speed, data]
 
 
 frameCount = 985
@@ -120,10 +132,9 @@ while True:
 
     import subprocess
 
-    time.sleep(1)
-    subprocess.call(["dfu-util", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
-    
-    time.sleep(1)
+#    time.sleep(1)
+#    subprocess.call(["dfu-util", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
+#    time.sleep(1)
 
 
     bt = blinkytape.BlinkyTape()
@@ -141,10 +152,11 @@ while True:
     #print "first free sector: ", bt.getFirstFreeSector()
     
     
-    loadAnimation(shadowAnimation)
-    loadAnimation(shimmerAnimation)
-    loadAnimation(colorAnimation)
-    loadAnimation(flashlightAnimation)
+    #loadAnimation(shadowAnimation)
+    #loadAnimation(shimmerAnimation)
+    #loadAnimation(colorAnimation)
+    #loadAnimation(flashlightAnimation)
+    loadAnimation(pornjshimmerAnimation)
 
     bt.reloadAnimations()
     bt.close()
