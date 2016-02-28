@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -73,6 +73,7 @@
 <layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="97" name="Info" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="98" name="Guide" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="99" name="SpiceOrder" color="7" fill="1" visible="no" active="no"/>
 <layer number="100" name="Muster" color="7" fill="1" visible="no" active="no"/>
 <layer number="101" name="Patch_Top" color="12" fill="4" visible="yes" active="yes"/>
 <layer number="102" name="Vscore" color="7" fill="1" visible="yes" active="yes"/>
@@ -86,7 +87,9 @@
 <layer number="110" name="fp0" color="7" fill="1" visible="no" active="yes"/>
 <layer number="111" name="LPC17xx" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="112" name="tSilk" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="113" name="ReferenceLS" color="7" fill="1" visible="no" active="no"/>
 <layer number="116" name="Patch_BOT" color="9" fill="4" visible="yes" active="yes"/>
+<layer number="118" name="Rect_Pads" color="7" fill="1" visible="no" active="no"/>
 <layer number="121" name="_tsilk" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="122" name="_bsilk" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="123" name="tTestmark" color="7" fill="1" visible="no" active="yes"/>
@@ -130,11 +133,15 @@
 <layer number="222" name="222bmp" color="23" fill="1" visible="no" active="no"/>
 <layer number="223" name="223bmp" color="24" fill="1" visible="no" active="no"/>
 <layer number="224" name="224bmp" color="25" fill="1" visible="no" active="no"/>
+<layer number="231" name="Eagle3D_PG1" color="7" fill="1" visible="no" active="no"/>
+<layer number="232" name="Eagle3D_PG2" color="7" fill="1" visible="no" active="no"/>
+<layer number="233" name="Eagle3D_PG3" color="7" fill="1" visible="no" active="no"/>
 <layer number="248" name="Housing" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="249" name="Edge" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="250" name="Descript" color="3" fill="1" visible="no" active="no"/>
 <layer number="251" name="SMDround" color="12" fill="11" visible="no" active="no"/>
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="255" name="routoute" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
@@ -6180,11 +6187,11 @@ Source: http://www.osram.convergy.de/</description>
 <text x="-3.81" y="3.81" size="1.27" layer="25">&gt;NAME</text>
 </package>
 <package name="USB_MICRO_THRUHOLE">
-<smd name="PIN$1" x="-1.3" y="2.7" dx="0.4" dy="1.35" layer="1"/>
-<smd name="PIN$2" x="-0.65" y="2.7" dx="0.4" dy="1.35" layer="1"/>
-<smd name="PIN$3" x="0" y="2.7" dx="0.4" dy="1.35" layer="1"/>
-<smd name="PIN$4" x="0.65" y="2.7" dx="0.4" dy="1.35" layer="1"/>
-<smd name="PIN$5" x="1.3" y="2.7" dx="0.4" dy="1.35" layer="1"/>
+<smd name="PIN$1" x="-1.3" y="2.85" dx="0.4" dy="1.65" layer="1"/>
+<smd name="PIN$2" x="-0.65" y="2.85" dx="0.4" dy="1.65" layer="1"/>
+<smd name="PIN$3" x="0" y="2.85" dx="0.4" dy="1.65" layer="1"/>
+<smd name="PIN$4" x="0.65" y="2.85" dx="0.4" dy="1.65" layer="1"/>
+<smd name="PIN$5" x="1.3" y="2.85" dx="0.4" dy="1.65" layer="1"/>
 <wire x1="-4" y1="-2.5" x2="-4" y2="3" width="0.127" layer="51"/>
 <wire x1="-4" y1="3" x2="4" y2="3" width="0.127" layer="51"/>
 <wire x1="4" y1="3" x2="4" y2="-2.5" width="0.127" layer="51"/>
@@ -6192,11 +6199,11 @@ Source: http://www.osram.convergy.de/</description>
 <wire x1="-3" y1="-1.45" x2="3" y2="-1.45" width="0.127" layer="51" style="shortdash"/>
 <smd name="PAD$5" x="-2.5" y="2.7" dx="1.25" dy="0.95" layer="1" roundness="75" thermals="no"/>
 <smd name="PAD$10" x="2.5" y="2.7" dx="1.25" dy="0.95" layer="16" roundness="75" thermals="no" cream="no"/>
-<smd name="PAD$1" x="-3.1225" y="0" dx="1.645" dy="1.55" layer="1" thermals="no"/>
-<smd name="PAD$4" x="3.1225" y="0" dx="1.645" dy="1.55" layer="1" thermals="no"/>
+<smd name="PAD$1" x="-3.1725" y="0" dx="1.645" dy="1.55" layer="1" thermals="no"/>
+<smd name="PAD$4" x="3.1725" y="0" dx="1.645" dy="1.55" layer="1" thermals="no"/>
 <smd name="PAD$9" x="-2.5" y="2.7" dx="1.25" dy="0.95" layer="16" roundness="75" thermals="no" cream="no"/>
-<smd name="PAD$7" x="-3.5" y="0" dx="0.9" dy="1.55" layer="16" roundness="100" thermals="no" cream="no"/>
-<smd name="PAD$8" x="3.5" y="0" dx="0.9" dy="1.55" layer="16" roundness="100" thermals="no" cream="no"/>
+<smd name="PAD$7" x="-3.55" y="0" dx="0.9" dy="1.55" layer="16" roundness="100" thermals="no" cream="no"/>
+<smd name="PAD$8" x="3.55" y="0" dx="0.9" dy="1.55" layer="16" roundness="100" thermals="no" cream="no"/>
 <smd name="PAD$6" x="2.5" y="2.7" dx="1.25" dy="0.95" layer="1" roundness="75" thermals="no"/>
 <smd name="PAD$2" x="-1" y="0" dx="1.5" dy="1.55" layer="1" thermals="no"/>
 <smd name="PAD$3" x="1" y="0" dx="1.5" dy="1.55" layer="1" thermals="no"/>
@@ -6214,18 +6221,18 @@ Source: http://www.osram.convergy.de/</description>
 <wire x1="2.35" y1="2.975" x2="2.65" y2="2.975" width="0.127" layer="46"/>
 <wire x1="2.65" y1="2.975" x2="2.925" y2="2.7" width="0.127" layer="46" curve="-90"/>
 <wire x1="2.925" y1="2.7" x2="2.65" y2="2.425" width="0.127" layer="46" curve="-90"/>
-<wire x1="-3.25" y1="0.325" x2="-3.25" y2="-0.325" width="0.127" layer="46"/>
-<wire x1="-3.25" y1="-0.325" x2="-3.5" y2="-0.575" width="0.127" layer="46" curve="-90"/>
-<wire x1="-3.5" y1="-0.575" x2="-3.75" y2="-0.325" width="0.127" layer="46" curve="-90"/>
-<wire x1="-3.75" y1="-0.325" x2="-3.75" y2="0.325" width="0.127" layer="46"/>
-<wire x1="-3.75" y1="0.325" x2="-3.5" y2="0.575" width="0.127" layer="46" curve="-90"/>
-<wire x1="-3.5" y1="0.575" x2="-3.25" y2="0.325" width="0.127" layer="46" curve="-90"/>
-<wire x1="3.5" y1="-0.575" x2="3.25" y2="-0.325" width="0.127" layer="46" curve="-90"/>
-<wire x1="3.25" y1="-0.325" x2="3.25" y2="0.325" width="0.127" layer="46"/>
-<wire x1="3.25" y1="0.325" x2="3.5" y2="0.575" width="0.127" layer="46" curve="-90"/>
-<wire x1="3.5" y1="0.575" x2="3.75" y2="0.325" width="0.127" layer="46" curve="-90"/>
-<wire x1="3.75" y1="0.325" x2="3.75" y2="-0.325" width="0.127" layer="46"/>
-<wire x1="3.75" y1="-0.325" x2="3.5" y2="-0.575" width="0.127" layer="46" curve="-90"/>
+<wire x1="-3.3" y1="0.325" x2="-3.3" y2="-0.325" width="0.127" layer="46"/>
+<wire x1="-3.3" y1="-0.325" x2="-3.55" y2="-0.575" width="0.127" layer="46" curve="-90"/>
+<wire x1="-3.55" y1="-0.575" x2="-3.8" y2="-0.325" width="0.127" layer="46" curve="-90"/>
+<wire x1="-3.8" y1="-0.325" x2="-3.8" y2="0.325" width="0.127" layer="46"/>
+<wire x1="-3.8" y1="0.325" x2="-3.55" y2="0.575" width="0.127" layer="46" curve="-90"/>
+<wire x1="-3.55" y1="0.575" x2="-3.3" y2="0.325" width="0.127" layer="46" curve="-90"/>
+<wire x1="3.55" y1="-0.575" x2="3.3" y2="-0.325" width="0.127" layer="46" curve="-90"/>
+<wire x1="3.3" y1="-0.325" x2="3.3" y2="0.325" width="0.127" layer="46"/>
+<wire x1="3.3" y1="0.325" x2="3.55" y2="0.575" width="0.127" layer="46" curve="-90"/>
+<wire x1="3.55" y1="0.575" x2="3.8" y2="0.325" width="0.127" layer="46" curve="-90"/>
+<wire x1="3.8" y1="0.325" x2="3.8" y2="-0.325" width="0.127" layer="46"/>
+<wire x1="3.8" y1="-0.325" x2="3.55" y2="-0.575" width="0.127" layer="46" curve="-90"/>
 <text x="-3.81" y="-5" size="1.27" layer="27">&gt;VALUE</text>
 <text x="-3.81" y="3.81" size="1.27" layer="25">&gt;NAME</text>
 </package>
@@ -11574,11 +11581,10 @@ buttons.</text>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,124.46,73.66,U4G$2,VCC,+5V,,,"/>
-<approved hash="104,1,116.84,73.66,U5G$2,VCC,+5V,,,"/>
-<approved hash="104,1,132.08,73.66,U3G$2,VCC,+5V,,,"/>
+<approved hash="104,1,124.46,93.98,U4G$2,VCC,+5V,,,"/>
+<approved hash="104,1,116.84,93.98,U5G$2,VCC,+5V,,,"/>
+<approved hash="104,1,132.08,93.98,U3G$2,VCC,+5V,,,"/>
 <approved hash="113,1,194.206,131.976,FRAME1,,,,,"/>
-<approved hash="113,1,215.942,35.3653,SV1,,,,,"/>
 </errors>
 </schematic>
 </drawing>
