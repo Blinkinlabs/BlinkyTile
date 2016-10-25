@@ -25,7 +25,7 @@
  */
 
 
-#include "Wprogram.h"
+#include "WProgram.h"
 #include <errno.h>
 #include "jedecflash.h"
 
