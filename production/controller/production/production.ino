@@ -14,6 +14,7 @@
 
 //ARMKinetisDebug target(swclkPin, swdioPin);
 ARMKinetisDebug target(swclkPin, swdioPin, ARMDebug::LOG_NORMAL);
+//ARMKinetisDebug target(swclkPin, swdioPin, ARMDebug::LOG_TRACE_POWER);
 FcRemote remote(target);
 ElectricalTest etest(target);
 
@@ -107,7 +108,7 @@ void loop()
         return;
 
     // Test for the presence of the flash chip
-    if (!remote.testExternalFlash())
+    if (!remote.testExternalFlash(false))
         return;
 
     // Program firmware, blinking both LEDs in unison for status.

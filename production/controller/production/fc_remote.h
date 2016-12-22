@@ -39,7 +39,7 @@ public:
     bool setFlags(uint8_t cflag);
 
     // Test that the flash chip works
-    bool testExternalFlash();
+    bool testExternalFlash(bool erase);
     
     bool testUserButtons();
 

@@ -28,6 +28,7 @@
 
 // General IO pin that should be tested
 typedef struct testPin {
+    char* name;             // Name of the test pin
     int analogInput;        // analog input the pin is connected to
     int pinNumber;          // pin number on the DUT
     float expectedVoltage;  // Expected voltage (3.3V from the processor, 5V through a buffer)
@@ -44,43 +45,49 @@ float ElectricalTest::analogVolts(int pin)
     const int adcMax = 1023;
 
     const float scale = (reference / adcMax) * ((dividerA + dividerB) / dividerA);
-    return analogRead(pin) * scale;
+    float volts = analogRead(pin) * scale;
+
+            target.log(ARMDebug::LOG_TRACE_POWER,
+                "ETEST: Analog volts read: pin = %d, value = %.2fv",
+                pin, volts);
+
+    return volts;
 }
 
-bool ElectricalTest::analogThreshold(int pin, float nominal, float tolerance)
+bool ElectricalTest::analogThreshold(char* name, int pin, float nominal, float tolerance)
 {
     // Measure an analog input, and verify it's close enough to expected values.
-    return analogThresholdFromSample(analogVolts(pin), pin, nominal, tolerance);
+    return analogThresholdFromSample(name, analogVolts(pin), pin, nominal, tolerance);
 }
 
-bool ElectricalTest::analogThresholdFromSample(float volts, int pin, float nominal, float tolerance)
+bool ElectricalTest::analogThresholdFromSample(char* name, float volts, int pin, float nominal, float tolerance)
 {
     float lower = nominal - tolerance;
     float upper = nominal + tolerance;
 
     if (volts < lower || volts > upper) {
         target.log(LOG_ERROR,
-                "ETEST: Analog value %d outside reference range! "
+                "ETEST: Analog signal %s (ADC pin %d) outside reference range! "
                 "value = %.2fv, ref = %.2fv +/- %.2fv",
-                pin, volts, nominal, tolerance);
+                name, pin, volts, nominal, tolerance);
         return false;
     }
 
     return true;
 }
 
-bool ElectricalTest::testOutputPattern(uint8_t bits)
+bool ElectricalTest::testOutputPattern(uint8_t pinmask)
 {   
     // These are the output pins that we want to cycle through
     #define OUTPUT_PIN_COUNT 4
     testPin outputPins[OUTPUT_PIN_COUNT] {
-//        {0, target.PTA4, 3.3, false},    // GPIO PA4
-        {1, target.PTB0, 3.3, false},    // GPIO PB0
-//        {2, target.PTC1, 3.3, false},    // GPIO PC1
-        {3, target.PTD4, 5, true},       // LED 5V out
-        {4, target.PTC3, 5, false},      // LED ADDR
-//        {5, target.PTB1, 3.3, false},    // GPIO PB1
-        {7, target.PTC4, 5, false},      // LED DATA
+//      {"DUT PA4",       0, target.PTA4, 3.3,  false},    // GPIO PA4
+        {"DUT PB0",       1, target.PTB0, 3.3,  false},    // GPIO PB0
+//      {"DUT PC0",       2, target.PTC1, 3.3,  false},    // GPIO PC1
+        {"DUT 5V out",    3, target.PTD4, 4.7,  true},     // LED 5V out
+        {"DUT ADDR out",  4, target.PTC3, 4.7,  false},    // LED ADDR
+//      {"DUT PB1",       5, target.PTB1, 3.3,  false},    // GPIO PB1
+        {"DUT DATA out",  7, target.PTC4, 4.7,  false},    // LED DATA
     };
 
     // Set the target's output pins to the given bitmask, and check all analog values
@@ -89,24 +96,34 @@ bool ElectricalTest::testOutputPattern(uint8_t bits)
     for(int pin = 0; pin < OUTPUT_PIN_COUNT; pin++) {
         if(!target.pinMode(outputPins[pin].pinNumber, OUTPUT))
             return false;
-        if(!target.digitalWrite(outputPins[pin].pinNumber, (bits >> pin) & 0x01))
+        if(!target.digitalWrite(outputPins[pin].pinNumber, (pinmask >> pin) & 0x01))
             return false;
     }
 
     // Check power supply each time
-    if (!analogThreshold(analogTarget33vPin, 3.3)) return false;
-    if (!analogThreshold(analogTargetVUsbPin, 5.0)) return false;
+    if (!analogThreshold("Target 3.3v", analogTarget33vPin, 3.3, 0.3)) return false;
+    if (!analogThreshold("Target VUSB", analogTargetVUsbPin, 5.0, 0.3)) return false;
 
     // Check all data signal levels
     for(int pin = 0; pin < OUTPUT_PIN_COUNT; pin++)  {
-        bool bit = (bits >> pin) & 1;
-        if(!outputPins[pin].inverted) {
-            if (!analogThreshold(outputPins[pin].analogInput, bit ? outputPins[pin].expectedVoltage : 0.0))
-                return false;
+        bool pinEnabled = (pinmask >> pin) & 1;
+
+        // Determine what the level is expected to be:
+        //
+        // pinEnabled | inverted | test value
+        // -----------|----------|----------------
+        // false      | false    | 0.0
+        // false      | true     | expectedVoltage
+        // true       | false    | expectedVoltage
+        // true       | true     | 0.0
+
+        float expectedVoltage = 0;
+        if(pinEnabled ^ outputPins[pin].inverted) {
+          expectedVoltage = outputPins[pin].expectedVoltage;
         }
-        else {
-            if (!analogThreshold(outputPins[pin].analogInput, bit ? 0.0 : outputPins[pin].expectedVoltage))
-                return false;
+        
+        if (!analogThreshold(outputPins[pin].name, outputPins[pin].analogInput, expectedVoltage, 0.2)) {
+            return false;
         }
     }
 
@@ -180,7 +197,7 @@ bool ElectricalTest::powerOn()
     target.log(logLevel, "ETEST: Enabling power supply");
     const float volts = 5.0;
     setPowerSupplyVoltage(volts);
-    return analogThreshold(analogTargetVUsbPin, volts);
+    return analogThreshold("Target VUSB", analogTargetVUsbPin, volts, .3);
 }
 
 bool ElectricalTest::testHighZ(int pin)

@@ -739,7 +739,7 @@ void ARMDebug::log(int level, const char *fmt, ...)
 {
     if (level <= logLevel && Serial) {
         va_list ap;
-        char buffer[256];
+        char buffer[512];
 
         va_start(ap, fmt);
         int ret = vsnprintf(buffer, sizeof buffer, fmt, ap);
