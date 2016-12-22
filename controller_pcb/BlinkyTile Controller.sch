@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.7.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -10879,10 +10879,10 @@ FRDM-K20D50M reference design.
 Use 1k for R5 because it is
 protecting a 5v input.</text>
 <text x="261.62" y="170.18" size="1.778" layer="91">Design Note:
-This is a generic flash pinout, there are
-equivalent parts from Winbond, Spansion, etc.
 Use the hardware chip select function to avoid
-conflicting with the LED output DMA.</text>
+GPIO write conflicts with the LED output DMA.
+Part number is generic, use:
+S25FL216K0PMFI011</text>
 <text x="261.62" y="45.72" size="1.778" layer="91">Design Note:
 Disconnect USB before connecting to external power
 via this input. There isn't a protection diode to
