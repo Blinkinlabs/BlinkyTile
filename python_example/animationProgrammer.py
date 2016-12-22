@@ -132,9 +132,9 @@ while True:
 
     import subprocess
 
-#    time.sleep(1)
-#    subprocess.call(["dfu-util", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
-#    time.sleep(1)
+    time.sleep(1)
+    subprocess.call(["dfu-util", "-d", "1d50", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
+    time.sleep(1)
 
 
     bt = blinkytape.BlinkyTape()
@@ -152,11 +152,11 @@ while True:
     #print "first free sector: ", bt.getFirstFreeSector()
     
     
-    #loadAnimation(shadowAnimation)
-    #loadAnimation(shimmerAnimation)
-    #loadAnimation(colorAnimation)
-    #loadAnimation(flashlightAnimation)
-    loadAnimation(pornjshimmerAnimation)
+    loadAnimation(shadowAnimation)
+    loadAnimation(shimmerAnimation)
+    loadAnimation(colorAnimation)
+    loadAnimation(flashlightAnimation)
+    #loadAnimation(pornjshimmerAnimation)
 
     bt.reloadAnimations()
     bt.close()
