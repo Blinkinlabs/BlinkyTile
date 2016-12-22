@@ -53,8 +53,8 @@ private:
 
     void setPowerSupplyVoltage(float volts);
     float analogVolts(int pin);
-    bool analogThresholdFromSample(float volts, int pin, float nominal, float tolerance = 0.30);
-    bool analogThreshold(int pin, float nominal, float tolerance = 0.30);
+    bool analogThresholdFromSample(char* name, float volts, int pin, float nominal, float tolerance);
+    bool analogThreshold(char* name, int pin, float nominal, float tolerance);
 
     bool testOutputPattern(uint8_t bits);
     bool testAllOutputPatterns();
