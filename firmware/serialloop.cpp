@@ -184,7 +184,13 @@ void commandLoop() {
 
 
 bool commandProgramAddress(uint8_t* buffer) {
+    // Halt the DMX engine and wait until it finishes the current frame
+    dmxStop();
+    while(dmxIsTransmitting()) {}
+
     programAddress((buffer[0] << 8) + buffer[1]);
+
+    dmxSetup();
 
     buffer[0] = 0;
     return true;

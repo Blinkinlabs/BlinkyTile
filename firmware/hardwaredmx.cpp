@@ -4,7 +4,7 @@
 #include "blinkytile.h"
 #include "brightness_table.h"
 
-#define FAST_DMX
+#undef FAST_DMX
 
 #ifdef FAST_DMX
 
@@ -38,6 +38,9 @@ bool swapBuffers;
 
 uint8_t brightness;
 
+bool isEnabled = false;         // True if the engine is enabled
+bool isTransmitting = false;    // True if currently transmitting a DMX frame
+
 // TCD0 writes DMX channel data to the UART 
 void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
     // Set up the DMA peripheral
@@ -66,6 +69,8 @@ void setupDMA(uint8_t* source, int minorLoopSize, int majorLoops) {
     // Enable interrupt on major completion for DMX data
     DMA_TCD0_CSR = DMA_TCD_CSR_INTMAJOR;  // Enable interrupt on major complete
     NVIC_ENABLE_IRQ(IRQ_DMA_CH0);         // Enable interrupt request
+
+    isEnabled = true;
 }
 
 void scheduleDMA(uint8_t* source, int length) {
@@ -102,8 +107,28 @@ void setupUart() {
     UART1_C2 = UART_C2_TE;
 }
 
+bool dmxIsTransmitting() {
+    return isTransmitting;
+}
+
+bool dmxIsEnabled() {
+    return isEnabled;
+}
+
+// Stop the DMX output engine
+void dmxStop() {
+    isEnabled = false;
+}
+
+
 // Send a DMX frame with new data
 void dmxTransmit() {
+    if(!isEnabled) {
+        return;
+    }
+
+    isTransmitting = true;
+
     // TODO: Use the break hardware here?
     PORTC_PCR4 = PORT_PCR_DSE | PORT_PCR_SRE | PORT_PCR_MUX(1);	// Configure TX Pin for digital
 
@@ -151,6 +176,8 @@ void dmxSetup() {
 void dma_ch0_isr(void) {
     DMA_CINT = DMA_CINT_CINT(0);
     UART1_C2 &= ~UART_C2_TIE;
+
+    isTransmitting = false;
 
     if(swapBuffers) {
         uint8_t* lastBuffer = frontBuffer;

@@ -40,6 +40,14 @@ void dmxSetBrightness(uint8_t newBrightness);
 // @param b uint8_t New red value for the pixel (0 - 255)
 void dmxSetPixel(int pixel, uint8_t r, uint8_t g, uint8_t b);
 
+// Returns true if the DMX engine is enabled
+bool dmxIsEnabled();
+
+bool dmxIsTransmitting();
+
+// Stop the DMX engine after the current transmission completes
+// Call dmxSetup() to start again
+void dmxStop();
 
 // Emit the DMX signal
 void dmxShow();

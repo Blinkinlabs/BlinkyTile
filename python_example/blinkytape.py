@@ -390,6 +390,6 @@ if __name__ == "__main__":
                 if pos == pixel:
                     bt.sendPixel(0,0,255)
                 else:
-                    bt.sendPixel(0,0,0)
+                    bt.sendPixel(1,2,3)
             bt.show()
             time.sleep(.5)
