@@ -100,33 +100,11 @@ void programAddress(int address) {
     #define patternLength 4
     uint8_t pattern[patternLength];
 
-    enum LedType {
-        WS2821      = 0,
-        WS2822S     = 1,
-    };
-
-    LedType ledType = WS2821;
-    
-    if (ledType == WS2821) {
-        // WS2821 (determined experimentally)
-        int channel = (address)*3 + 1;
-        pattern[0] = 0; // start code
-        pattern[1] = flipEndianness(channel%256);
-        pattern[2] = flipEndianness(240 - (channel/256)*15);
-        pattern[3] = flipEndianness(0xD2);
-    }
-    else if (ledType == WS2822S) {
-        // WS2822S (from datasheet)
-        int channel = (address)*3 + 1;
-        pattern[0] = 0; // start code
-        pattern[1] = flipEndianness(channel%256);
-        pattern[2] = flipEndianness(240 - (channel/256)*15);
-        pattern[3] = flipEndianness(0xD2);
-    }
-    else {
-        // Error
-        return;
-    }
+    int channel = (address)*3 + 1;
+    pattern[0] = 0; // start code
+    pattern[1] = flipEndianness(channel%256);
+    pattern[2] = flipEndianness(240 - (channel/256)*15);
+    pattern[3] = flipEndianness(0xD2);
 
     // Pull address high and data low to signal address programming start
     digitalWriteFast(ADDRESS_PIN, HIGH);
