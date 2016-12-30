@@ -8,8 +8,8 @@ static uint8_t dmxBit = 0;
 
 
 #define BIT_LENGTH      4       // Length of a bit, in microseconds
-#define BREAK_LENGTH    5000    // Length of the break, in microseconds
-#define MAB_LENGTH      88      // Length of the mark after break, in microseconds
+#define BREAK_LENGTH    10000    // Length of the break, in microseconds (min: 5000)
+#define MAB_LENGTH      12      // Length of the mark after break, in microseconds (typical: 12)
 
 uint8_t flipEndianness(uint8_t input);
 void sendAddressData(uint8_t* dataArray, int length);
@@ -69,10 +69,10 @@ void sendByte(uint8_t value)
 // Send a DMX frame with new data
 void sendAddressData(uint8_t* dataArray, int length) {
     
-    digitalWriteFast(ADDRESS_PIN, LOW);        // Break - 88us
+    digitalWriteFast(ADDRESS_PIN, LOW);
     delayMicroseconds(BREAK_LENGTH);
 
-    digitalWriteFast(ADDRESS_PIN, HIGH);   // MAB - 8 us
+    digitalWriteFast(ADDRESS_PIN, HIGH);
     delayMicroseconds(MAB_LENGTH);
 
   
@@ -86,12 +86,13 @@ void sendAddressData(uint8_t* dataArray, int length) {
 
 
 void programAddress(int address) {
-    // Function setup
-    // Set up port pointers for interrupt routine
-
+    // Put pins in GPIO mode
+    digitalWrite(DATA_PIN, HIGH);
+    digitalWrite(ADDRESS_PIN, HIGH);
     pinMode(DATA_PIN, OUTPUT);
     pinMode(ADDRESS_PIN, OUTPUT);
 
+    // Set up port pointers for interrupt routine
     dmxPort = portOutputRegister(digitalPinToPort(ADDRESS_PIN));
     dmxBit = digitalPinToBitMask(ADDRESS_PIN);
 
@@ -108,11 +109,11 @@ void programAddress(int address) {
     
     if (ledType == WS2821) {
         // WS2821 (determined experimentally)
-        int channel = (address)*3;
+        int channel = (address)*3 + 1;
         pattern[0] = 0; // start code
         pattern[1] = flipEndianness(channel%256);
         pattern[2] = flipEndianness(240 - (channel/256)*15);
-        pattern[3] = flipEndianness(0xAE);        
+        pattern[3] = flipEndianness(0xD2);
     }
     else if (ledType == WS2822S) {
         // WS2822S (from datasheet)
@@ -137,9 +138,8 @@ void programAddress(int address) {
     sendAddressData(pattern, patternLength);
     
     // pull address and data pins low
-    // TODO: Is the ending correct?
-    digitalWriteFast(ADDRESS_PIN, LOW);
-    digitalWriteFast(DATA_PIN, LOW);
+    digitalWriteFast(ADDRESS_PIN, HIGH);
+    digitalWriteFast(DATA_PIN, HIGH);
 
     // Delay for a while to show the pixel color; white means programming was successful
     for(int i = 0; i < 3; i++) {
@@ -148,7 +148,14 @@ void programAddress(int address) {
     }
 
     // toggle power to reset the LEDs
+    // Set outputs to low first to avoid powering the LEDs through the digital pins
+    digitalWriteFast(ADDRESS_PIN, LOW);
+    digitalWriteFast(DATA_PIN, LOW);
     disableOutputPower();
+
     delay(100);
+
     enableOutputPower();
+    digitalWriteFast(ADDRESS_PIN, HIGH);
+    digitalWriteFast(DATA_PIN, HIGH);
 }

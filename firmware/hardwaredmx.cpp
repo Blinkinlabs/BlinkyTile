@@ -4,7 +4,7 @@
 #include "blinkytile.h"
 #include "brightness_table.h"
 
-#undef FAST_DMX
+//#define FAST_DMX
 
 #ifdef FAST_DMX
 
