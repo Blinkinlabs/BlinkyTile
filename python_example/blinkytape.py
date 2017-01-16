@@ -113,7 +113,13 @@ class BlinkyTape(object):
         """
         control = chr(0) + chr(0) + chr(255)
         if self.buffered:
-            self.serial.write(self.buf + control)
+            chunkSize = 30
+            chunks = [self.buf[i:i+chunkSize] for i in range(0, len(self.buf), chunkSize)]
+            for chunk in chunks:
+                self.serial.write(chunk)
+                time.sleep(.01)
+            self.serial.write(control)
+
             self.buf = ""
         else:
             self.serial.write(control)

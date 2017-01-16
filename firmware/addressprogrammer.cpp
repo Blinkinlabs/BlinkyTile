@@ -85,7 +85,7 @@ void sendAddressData(uint8_t* dataArray, int length) {
 }
 
 
-void programAddress(int address) {
+void programAddress(unsigned int startingAddress, unsigned int count) {
     // Put pins in GPIO mode
     digitalWrite(DATA_PIN, HIGH);
     digitalWrite(ADDRESS_PIN, HIGH);
@@ -97,14 +97,18 @@ void programAddress(int address) {
     dmxBit = digitalPinToBitMask(ADDRESS_PIN);
 
     // Build the output pattern to program this address
-    #define patternLength 4
+    #define patternLength 1+count*3
+
     uint8_t pattern[patternLength];
 
-    int channel = (address)*3 + 1;
     pattern[0] = 0; // start code
-    pattern[1] = flipEndianness(channel%256);
-    pattern[2] = flipEndianness(240 - (channel/256)*15);
-    pattern[3] = flipEndianness(0xD2);
+
+    for(int i = 0; i < count; i++) {
+        int channel = (startingAddress+i)*3 + 1;
+        pattern[i*3+1] = flipEndianness(channel%256);
+        pattern[i*3+2] = flipEndianness(240 - (channel/256)*15);
+        pattern[i*3+3] = flipEndianness(0xD2);
+    }
 
     // Pull address high and data low to signal address programming start
     digitalWriteFast(ADDRESS_PIN, HIGH);

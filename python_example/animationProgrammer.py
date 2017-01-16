@@ -65,7 +65,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 14
+ledCount = 160
 
 frameCount = 12
 speed = 30
@@ -132,9 +132,9 @@ while True:
 
     import subprocess
 
-    time.sleep(1)
-    subprocess.call(["dfu-util", "-d", "1d50", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
-    time.sleep(1)
+    #time.sleep(1)
+    #subprocess.call(["dfu-util", "-d", "1d50", "-D", "../bin/lightbuddy-firmware-v100.dfu"])
+    #time.sleep(1)
 
 
     bt = blinkytape.BlinkyTape()

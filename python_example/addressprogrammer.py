@@ -4,9 +4,12 @@ import blinkytape
 import time
 import argparse
 
-def flashLed(led, ontime = 1, offtime = .5, ledCount = 10):
+def flashLed(led, ontime = 1, offtime = .5, ledCount = 163):
     # Flash an LED with R,G,B,W colors
     # ontime and offtime are amounts of time for the lights to be on for each color
+
+    if ledCount < led:
+        ledCount = led
 
     print("Flashing pixel Red")
     for pos in range(0, ledCount):
@@ -62,7 +65,9 @@ def interactiveMode():
         bt.programAddress(address)
         time.sleep(1)
 
-        flashLed(address)
+        flashLed(address,.3,.1)
+        flashLed(address+1,.3,.1)
+        flashLed(address+2,.3,.1)
 
 parser = argparse.ArgumentParser("BlinkyTile Address Programmer")
 parser.add_argument('--address', help='address to program the tile', type=int)
