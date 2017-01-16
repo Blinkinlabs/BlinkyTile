@@ -184,7 +184,7 @@ void commandLoop() {
 
 
 bool commandProgramAddress(uint8_t* buffer) {
-    programAddress((buffer[0] << 8) + buffer[1]);
+    programAddress((buffer[0] << 8) + buffer[1], 3);
 
     buffer[0] = 0;
     return true;

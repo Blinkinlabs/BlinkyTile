@@ -85,33 +85,30 @@ void sendAddressData(uint8_t* dataArray, int length) {
 }
 
 
-void programAddress(int address) {
-    // Function setup
+void programAddress(unsigned int startingAddress, unsigned int count) {
+    // Put pins in GPIO mode
+    digitalWrite(DATA_PIN, HIGH);
+    digitalWrite(ADDRESS_PIN, HIGH);
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(ADDRESS_PIN, OUTPUT);
+
     // Set up port pointers for interrupt routine
     dmxPort = portOutputRegister(digitalPinToPort(ADDRESS_PIN));
     dmxBit = digitalPinToBitMask(ADDRESS_PIN);
 
     // Build the output pattern to program this address
-    #define patternLength 4
+    #define patternLength 1+count*3
+
     uint8_t pattern[patternLength];
-//    int controllerType = 1;
-    
-//    if (controllerType == 1) {
-        // WS2822S (from datasheet)
-        int channel = (address)*3 + 1;
-        pattern[0] = 0; // start code
-        pattern[1] = flipEndianness(channel%256);
-        pattern[2] = flipEndianness(240 - (channel/256)*15);
-        pattern[3] = flipEndianness(0xD2);
-//    }
-//    else {
-//        // WS2821 (determined experimentally)
-//        int channel = (address)*3;
-//        pattern[0] = 0; // start code
-//        pattern[1] = flipEndianness(channel%256);
-//        pattern[2] = flipEndianness(240 - (channel/256)*15);
-//        pattern[3] = flipEndianness(0xAE);        
-//    }
+
+    pattern[0] = 0; // start code
+
+    for(int i = 0; i < count; i++) {
+        int channel = (startingAddress+i)*3 + 1;
+        pattern[i*3+1] = flipEndianness(channel%256);
+        pattern[i*3+2] = flipEndianness(240 - (channel/256)*15);
+        pattern[i*3+3] = flipEndianness(0xD2);
+    }
 
     // Pull address high and data low to signal address programming start
     digitalWriteFast(ADDRESS_PIN, HIGH);
@@ -122,19 +119,26 @@ void programAddress(int address) {
     // send program data out
     sendAddressData(pattern, patternLength);
     
-    // pull address high again in the end
-    // TODO: set low instead?
+    // pull address and data pins low
     digitalWriteFast(ADDRESS_PIN, HIGH);
     digitalWriteFast(DATA_PIN, HIGH);
 
-    // Show white for a short time
+    // Delay for a while to show the pixel color; white means programming was successful
     for(int i = 0; i < 3; i++) {
         delay(100);
         watchdog_refresh();
     }
 
-    // toggle power
+    // toggle power to reset the LEDs
+    // Set outputs to low first to avoid powering the LEDs through the digital pins
+    digitalWriteFast(ADDRESS_PIN, LOW);
+    digitalWriteFast(DATA_PIN, LOW);
     disableOutputPower();
+
     delay(100);
+
     enableOutputPower();
+    digitalWriteFast(ADDRESS_PIN, HIGH);
+    digitalWriteFast(DATA_PIN, HIGH);
 }
+

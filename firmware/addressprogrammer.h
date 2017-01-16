@@ -26,6 +26,6 @@
 
 // Run an address programming sequence
 // @param address Address to program, starting with 0
-void programAddress(int address);
+void programAddress(unsigned int startingAddress, unsigned int count);
 
 #endif
