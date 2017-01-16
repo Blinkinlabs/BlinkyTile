@@ -65,7 +65,7 @@ def makePixel(r,g,b):
     return data
 
 
-ledCount = 160
+ledCount = 170
 
 frameCount = 12
 speed = 30
