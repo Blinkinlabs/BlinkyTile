@@ -3,8 +3,8 @@
 *.o
 *.d
 *.swp
-*.dfu
 *.pyc
+firmware/*.dfu
 firmware/blinky-firmware.elf
 firmware/blinky-firmware.hex
 firmware/app-image.hex

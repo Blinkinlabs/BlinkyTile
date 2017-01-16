@@ -1,6 +1,6 @@
 /* Teensyduino Core Library
  * http://www.pjrc.com/teensy/
- * Copyright (c) 2013 PJRC.COM, LLC.
+* Copyright (c) 2013 PJRC.COM, LLC.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -86,7 +86,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 #if defined(USB_SERIAL_FC_DFU)
   #define VENDOR_ID		0x1D50
   #define PRODUCT_ID		0x60aa
-  #define DEVICE_VER		0x0010
+  #define DEVICE_VER		0x0101
 
   #define DEVICE_CLASS          0xEF  // Miscellaneous
   #define DEVICE_SUBCLASS       0x02  // Common class
