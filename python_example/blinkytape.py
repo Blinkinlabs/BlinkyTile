@@ -14,6 +14,10 @@
 import serial
 import listports
 import time
+import codecs
+
+def encode(x):
+    return codecs.latin_1_encode(x)[0]
 
 class BlinkyTape(object):
     def __init__(self, port=None, ledCount=60, buffered=True):
@@ -72,7 +76,7 @@ class BlinkyTape(object):
             if b >= 255:
                 b = 254
             data += chr(r) + chr(g) + chr(b)
-        self.serial.write(data)
+        self.serial.write(encode(data))
         self.show()
 
     def sendPixel(self, r, g, b):
@@ -100,7 +104,7 @@ class BlinkyTape(object):
             if self.buffered:
                 self.buf += data
             else:
-                self.serial.write(data)
+                self.serial.write(encode(data))
                 self.serial.flush()
         else:
             raise RuntimeError("Attempting to set pixel outside range!")
@@ -116,13 +120,13 @@ class BlinkyTape(object):
             chunkSize = 30
             chunks = [self.buf[i:i+chunkSize] for i in range(0, len(self.buf), chunkSize)]
             for chunk in chunks:
-                self.serial.write(chunk)
+                self.serial.write(encode(chunk))
                 time.sleep(.01)
-            self.serial.write(control)
+            self.serial.write(encode(control))
 
             self.buf = ""
         else:
-            self.serial.write(control)
+            self.serial.write(encode(control))
         self.serial.flush()
         self.serial.flushInput()  # Clear responses from BlinkyTape, if any
 
@@ -146,8 +150,8 @@ class BlinkyTape(object):
         for i in range(0,10):
             controlEscapeSequence += chr(255);
 
-        self.serial.write(controlEscapeSequence)
-        self.serial.write(command)
+        self.serial.write(encode(controlEscapeSequence))
+        self.serial.write(encode(command))
         self.serial.flush()
 
         # give a small pause and wait for data to be returned
@@ -157,7 +161,9 @@ class BlinkyTape(object):
         status = (ret[0] == 'P')
         returnData = ""
 
-        returnData = self.serial.read(ord(ret[1]) + 1)
+        #returnData = self.serial.read(ord(ret[1]) + 1)
+        data_len = ret[1] + 1
+        returnData = self.serial.read(data_len)
 
         self.serial.flushInput()
         return status, returnData
@@ -391,7 +397,7 @@ if __name__ == "__main__":
 
     while True:
         for pixel in range(0, LED_COUNT):
-            print pixel
+            print(pixel)
             for pos in range(0, LED_COUNT):
                 if pos == pixel:
                     bt.sendPixel(0,0,255)

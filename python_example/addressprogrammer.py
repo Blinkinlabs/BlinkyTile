@@ -66,8 +66,8 @@ def interactiveMode():
         time.sleep(1)
 
         flashLed(address,.3,.1)
-        flashLed(address+1,.3,.1)
-        flashLed(address+2,.3,.1)
+        #flashLed(address+1,.3,.1)
+        #flashLed(address+2,.3,.1)
 
 parser = argparse.ArgumentParser("BlinkyTile Address Programmer")
 parser.add_argument('--address', help='address to program the tile', type=int)

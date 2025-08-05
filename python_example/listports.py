@@ -23,7 +23,7 @@ def listPorts():
     # Regular expression that identifies the serial port to use
     # for OS/X:
     if platform.system() == 'Darwin':
-        match = '/dev/cu\.usb*'
+        match = '/dev/cu.usb*'
 
     # For Linux:
     elif platform.system() == 'Linux':
@@ -45,4 +45,4 @@ def listPorts():
 
 if __name__ == "__main__":
 
-    print listPorts()
+    print(listPorts())
