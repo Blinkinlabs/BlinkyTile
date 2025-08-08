@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import blinkytape
 import time
@@ -56,18 +56,23 @@ def flashLed(led, ontime = 1, offtime = .5, ledCount = 163):
     time.sleep(offtime)
 
 def interactiveMode():
+    nextAddress = 1
     while True:
         print("")
-        address = input("enter an address to program:")
-        address = int(address) - 1
-   
-        print("Programming LED to address %i"%(address)) 
-        bt.programAddress(address)
+        address = input(f"enter an address to program [{nextAddress}]: ")
+        if address:
+            address = int(address)
+        else:
+            address = nextAddress
+
+        startChannel = (address - 1)
+ 
+        print(f"Programming LED to address {address}")
+        bt.programAddress(startChannel)
         time.sleep(1)
 
-        flashLed(address,.3,.1)
-        #flashLed(address+1,.3,.1)
-        #flashLed(address+2,.3,.1)
+        flashLed(startChannel,.3,.1)
+        nextAddress = address + 1
 
 parser = argparse.ArgumentParser("BlinkyTile Address Programmer")
 parser.add_argument('--address', help='address to program the tile', type=int)
@@ -78,7 +83,7 @@ bt = blinkytape.BlinkyTape()
 
 # Address specified, program it then stop
 if args.address!=None:
-        print("Programming LED to address %i"%(args.address))
+        print(f"Programming LED to address {args.address}")
         bt.programAddress(args.address-1)
         time.sleep(1)
         flashLed(args.address-1)
